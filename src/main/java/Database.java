@@ -1,14 +1,15 @@
+import java.util.Collection;
 import java.util.List;
 
 public interface Database {
 
-    void saveInvoice(Invoice invoice);
+    Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException;
 
-    void deleteInvoiceById(Long id);
+    void deleteInvoice(Long id) throws DatabaseOperationException;
 
-    void updateInvoice(Invoice invoice);
+    void updateInvoice(Invoice invoice) throws DatabaseOperationException;
 
-    Invoice getInvoiceById(Long id);
+    Invoice getInvoice(Long id) throws DatabaseOperationException;
 
-    List<Invoice> getInvoices();
+    Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
 }
