@@ -4,10 +4,10 @@ public class Application {
 
   public static void main(String[] args) {
     Application application = new Application();
-    System.out.println(application.print("Hello world"));
+    System.out.println(application.getMessage("Hello world"));
   }
 
-  public String print(String print){
-    return print;
+  public String getMessage(String message){
+    return message;
   }
 }
