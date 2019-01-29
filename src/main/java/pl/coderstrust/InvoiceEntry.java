@@ -1,3 +1,5 @@
+package pl.coderstrust;
+
 import java.math.BigDecimal;
 
 public class InvoiceEntry {
@@ -8,7 +10,8 @@ public class InvoiceEntry {
   private BigDecimal vatValue;
   private Vat vatRate;
 
-  public InvoiceEntry(Integer id, String description, BigDecimal value, BigDecimal vatValue, Vat vatRate) {
+  public InvoiceEntry(Integer id, String description, BigDecimal value, BigDecimal vatValue,
+      Vat vatRate) {
     this.id = id;
     this.description = description;
     this.value = value;

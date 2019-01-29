@@ -1,3 +1,5 @@
+package pl.coderstrust;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -11,7 +13,8 @@ public class Invoice {
   private Company buyer;
   private List<InvoiceEntry> entries;
 
-  public Invoice(Long id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller, Company buyer, List<InvoiceEntry> entries) {
+  public Invoice(Long id, String number, LocalDate issuedDate, LocalDate dueDate, Company seller,
+      Company buyer, List<InvoiceEntry> entries) {
     this.id = id;
     this.number = number;
     this.issuedDate = issuedDate;
