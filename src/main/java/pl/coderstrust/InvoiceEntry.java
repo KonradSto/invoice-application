@@ -31,4 +31,68 @@ public class InvoiceEntry {
     this.grossValue = grossValue;
     this.vatRate = vatRate;
   }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getProductName() {
+    return productName;
+  }
+
+  public void setProductName(String productName) {
+    this.productName = productName;
+  }
+
+  public double getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(double quantity) {
+    this.quantity = quantity;
+  }
+
+  public String getUnit() {
+    return unit;
+  }
+
+  public void setUnit(String unit) {
+    this.unit = unit;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
+
+  public BigDecimal getNettValue() {
+    return nettValue;
+  }
+
+  public void setNettValue(BigDecimal nettValue) {
+    this.nettValue = nettValue;
+  }
+
+  public BigDecimal getGrossValue() {
+    return grossValue;
+  }
+
+  public void setGrossValue(BigDecimal grossValue) {
+    this.grossValue = grossValue;
+  }
+
+  public Vat getVatRate() {
+    return vatRate;
+  }
+
+  public void setVatRate(Vat vatRate) {
+    this.vatRate = vatRate;
+  }
 }

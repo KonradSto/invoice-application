@@ -10,8 +10,13 @@ public class Company {
   private String phoneNumber;
   private String email;
 
-  public Company(Long id, String name, String address, String taxId, String accountNumber,
-      String phoneNumber, String email) {
+  public Company(Long id,
+      String name,
+      String address,
+      String taxId,
+      String accountNumber,
+      String phoneNumber,
+      String email) {
     this.id = id;
     this.name = name;
     this.address = address;

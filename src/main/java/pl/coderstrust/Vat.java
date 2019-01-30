@@ -1,7 +1,7 @@
 package pl.coderstrust;
 
 public enum Vat {
-  VAT_0(0.0f),
+  VAT_0(0f),
   VAT_5(0.05f),
   VAT_8(0.08f),
   VAT_23(0.23f);
@@ -12,7 +12,7 @@ public enum Vat {
     this.rate = rate;
   }
 
-  float getNumericValue() {
+  float getValue() {
     return rate;
   }
 }
