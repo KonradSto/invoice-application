@@ -1,6 +1,7 @@
 package pl.coderstrust;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Invoice {
@@ -27,7 +28,7 @@ public class Invoice {
     this.dueDate = dueDate;
     this.seller = seller;
     this.buyer = buyer;
-    this.entries = entries;
+    this.entries = entries != null ? new ArrayList(entries) : new ArrayList();
   }
 
   public Long getId() {
@@ -84,5 +85,23 @@ public class Invoice {
 
   public void setEntries(List<InvoiceEntry> entries) {
     this.entries = entries;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Invoice invoice = (Invoice) o;
+    return id.equals(invoice.id) &&
+        number.equals(invoice.number) &&
+        issuedDate.equals(invoice.issuedDate) &&
+        dueDate.equals(invoice.dueDate) &&
+        seller.equals(invoice.seller) &&
+        buyer.equals(invoice.buyer) &&
+        entries.equals(invoice.entries);
   }
 }

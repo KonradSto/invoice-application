@@ -95,4 +95,23 @@ public class InvoiceEntry {
   public void setVatRate(Vat vatRate) {
     this.vatRate = vatRate;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    InvoiceEntry that = (InvoiceEntry) o;
+    return Double.compare(that.quantity, quantity) == 0 &&
+        id.equals(that.id) &&
+        productName.equals(that.productName) &&
+        unit.equals(that.unit) &&
+        price.equals(that.price) &&
+        nettValue.equals(that.nettValue) &&
+        grossValue.equals(that.grossValue) &&
+        vatRate == that.vatRate;
+  }
 }
