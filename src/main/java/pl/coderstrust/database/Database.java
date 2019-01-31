@@ -11,4 +11,10 @@ public interface Database {
     Invoice getInvoice(Long id) throws DatabaseOperationException;
 
     Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
+
+    void deleteAll();
+
+    boolean invoiceExists(Long id);
+
+    long count();
 }
