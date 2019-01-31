@@ -8,8 +8,6 @@ public interface Database {
 
     void deleteInvoice(Long id) throws DatabaseOperationException;
 
-    void updateInvoice(Invoice invoice) throws DatabaseOperationException;
-
     Invoice getInvoice(Long id) throws DatabaseOperationException;
 
     Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
