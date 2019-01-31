@@ -12,9 +12,9 @@ public interface Database {
 
     Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
 
-    void deleteAll() throws DatabaseOperationException;
+    void deleteAllInvoices() throws DatabaseOperationException;
 
     boolean invoiceExists(Long id) throws DatabaseOperationException;
 
-    long count() throws DatabaseOperationException;
+    long countInvoices() throws DatabaseOperationException;
 }
