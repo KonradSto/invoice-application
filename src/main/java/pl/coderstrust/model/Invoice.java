@@ -60,14 +60,14 @@ public class Invoice {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    Invoice invoice = (Invoice) o;
+    Invoice invoice = (Invoice) obj;
     return id.equals(invoice.id) &&
         number.equals(invoice.number) &&
         issuedDate.equals(invoice.issuedDate) &&
