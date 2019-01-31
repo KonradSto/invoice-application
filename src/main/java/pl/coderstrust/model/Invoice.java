@@ -1,4 +1,4 @@
-package pl.coderstrust;
+package pl.coderstrust.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
