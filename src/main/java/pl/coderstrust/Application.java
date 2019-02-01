@@ -8,6 +8,13 @@ public class Application {
   }
 
   public String getMessage(String message) {
-    return message;
+    String a = "rr";
+    String b = "rr";
+    String c = "rr";
+    String d = "rr";
+    String e = "rr";
+    String f = "rr";
+    String k = "rr";
+    return a;
   }
 }
