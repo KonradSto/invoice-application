@@ -68,12 +68,12 @@ public class Invoice {
       return false;
     }
     Invoice invoice = (Invoice) obj;
-    return id.equals(invoice.id) &&
-        number.equals(invoice.number) &&
-        issuedDate.equals(invoice.issuedDate) &&
-        dueDate.equals(invoice.dueDate) &&
-        seller.equals(invoice.seller) &&
-        buyer.equals(invoice.buyer) &&
-        entries.equals(invoice.entries);
+    return id.equals(invoice.id)
+        && number.equals(invoice.number)
+        && issuedDate.equals(invoice.issuedDate)
+        && dueDate.equals(invoice.dueDate)
+        && seller.equals(invoice.seller)
+        && buyer.equals(invoice.buyer)
+        && entries.equals(invoice.entries);
   }
 }

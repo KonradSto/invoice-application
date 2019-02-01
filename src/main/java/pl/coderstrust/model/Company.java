@@ -64,12 +64,12 @@ public class Company {
       return false;
     }
     Company company = (Company) obj;
-    return id.equals(company.id) &&
-        name.equals(company.name) &&
-        address.equals(company.address) &&
-        taxId.equals(company.taxId) &&
-        accountNumber.equals(company.accountNumber) &&
-        phoneNumber.equals(company.phoneNumber) &&
-        email.equals(company.email);
+    return id.equals(company.id)
+        && name.equals(company.name)
+        && address.equals(company.address)
+        && taxId.equals(company.taxId)
+        && accountNumber.equals(company.accountNumber)
+        && phoneNumber.equals(company.phoneNumber)
+        && email.equals(company.email);
   }
 }

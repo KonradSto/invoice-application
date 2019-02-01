@@ -73,13 +73,13 @@ public class InvoiceEntry {
       return false;
     }
     InvoiceEntry invoiceEntry = (InvoiceEntry) obj;
-    return Double.compare(invoiceEntry.quantity, quantity) == 0 &&
-        id.equals(invoiceEntry.id) &&
-        productName.equals(invoiceEntry.productName) &&
-        unit.equals(invoiceEntry.unit) &&
-        price.equals(invoiceEntry.price) &&
-        nettValue.equals(invoiceEntry.nettValue) &&
-        grossValue.equals(invoiceEntry.grossValue) &&
-        vatRate == invoiceEntry.vatRate;
+    return Double.compare(invoiceEntry.quantity, quantity) == 0
+        && id.equals(invoiceEntry.id)
+        && productName.equals(invoiceEntry.productName)
+        && unit.equals(invoiceEntry.unit)
+        && price.equals(invoiceEntry.price)
+        && nettValue.equals(invoiceEntry.nettValue)
+        && grossValue.equals(invoiceEntry.grossValue)
+        && vatRate == invoiceEntry.vatRate;
   }
 }
