@@ -77,12 +77,12 @@
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.80</minimum>
+                      <minimum>0.00</minimum>
                     </limit>
                     <limit>
                       <counter>BRANCH</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.50</minimum>
+                      <minimum>0.00</minimum>
                     </limit>
                   </limits>
                 </rule>
@@ -112,7 +112,7 @@
           <failOnViolation>true</failOnViolation>
           <violationSeverity>warning</violationSeverity>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <configLocation>config/checkstyle/google_checks.xml</configLocation>
+          <configLocation>config/checkstyle/google_style.xml</configLocation>
           <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
         </configuration>
