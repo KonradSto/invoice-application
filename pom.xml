@@ -112,7 +112,7 @@
           <failOnViolation>true</failOnViolation>
           <violationSeverity>warning</violationSeverity>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <configLocation>config/checkstyle/google_style.xml</configLocation>
+          <configLocation>config/checkstyle/google_checks.xml</configLocation>
           <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
         </configuration>
