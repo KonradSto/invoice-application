@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 
 class ApplicationTest {
 
-  @Test
-  public void shouldReturnCorrectString() {
-    //given
-    String expected = "Hello world!!";
+    @Test
+    public void shouldReturnCorrectString() {
+        //given
+        String expected = "Hello world!!";
 
-    //when
-    String actual = new Application().getMessage("Hello world!!");
+        //when
+        String actual = new Application().getMessage("Hello world!!");
 
-    //then
-    assertEquals(actual, expected);
-  }
+        //then
+        assertEquals(actual, expected);
+    }
 }
