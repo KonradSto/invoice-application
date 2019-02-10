@@ -19,6 +19,10 @@ public class InMemoryDatabase implements Database {
     this.invoiceMap = invoiceStorage;
   }
 
+  public InMemoryDatabase(Map<Long, Invoice> invoiceStorage) {
+    this.invoiceMap = invoiceStorage;
+  }
+
   @Override
   public Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
     if (invoice == null) {
