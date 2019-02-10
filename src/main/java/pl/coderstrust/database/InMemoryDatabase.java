@@ -2,7 +2,6 @@ package pl.coderstrust.database;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +11,13 @@ import pl.coderstrust.model.InvoiceEntry;
 
 public class InMemoryDatabase implements Database {
 
-  private Map<Long, Invoice> invoiceMap = new HashMap<>();
+  private Map<Long, Invoice> invoiceMap;
 
   private static Long nextId = 1L;
+
+  public InMemoryDatabase(Map<Long, Invoice> invoiceStorage) {
+    this.invoiceMap = invoiceStorage;
+  }
 
   @Override
   public Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
@@ -22,11 +25,9 @@ public class InMemoryDatabase implements Database {
       throw new DatabaseOperationException("Invoice cannot be null");
     }
     if (invoice.getId() == null) {
-      invoiceMap.put(nextId, insertInvoice(invoice));
-    } else {
-      invoiceMap.put(invoice.getId(),updateInvoice(invoice));
+      return insertInvoice(invoice);
     }
-    return invoice;
+    return updateInvoice(invoice);
   }
 
   private Invoice insertInvoice(Invoice invoice) {
@@ -37,11 +38,13 @@ public class InMemoryDatabase implements Database {
     final Company seller = invoice.getSeller();
     final Company buyer = invoice.getBuyer();
     final List<InvoiceEntry> entries = invoice.getEntries();
-    return new Invoice(id, number, issuedDate, dueDate, seller, buyer, entries);
+    Invoice insertedInvoice = new Invoice(id, number, issuedDate, dueDate, seller, buyer, entries);
+    invoiceMap.put(id, insertedInvoice);
+    return insertedInvoice;
   }
 
   private Invoice updateInvoice(Invoice invoice) throws DatabaseOperationException {
-    if (!invoiceMap.containsKey(invoice.getId())){
+    if (!invoiceMap.containsKey(invoice.getId())) {
       throw new DatabaseOperationException("Invoice does not exist");
     } else {
       final Long id = invoice.getId();
@@ -51,10 +54,11 @@ public class InMemoryDatabase implements Database {
       final Company seller = invoice.getSeller();
       final Company buyer = invoice.getBuyer();
       final List<InvoiceEntry> entries = invoice.getEntries();
-      return new Invoice(id, number, issuedDate, dueDate, seller, buyer, entries);
+      Invoice updatedInvoice = new Invoice(id, number, issuedDate, dueDate, seller, buyer, entries);
+      invoiceMap.put(id, updatedInvoice);
+      return updatedInvoice;
     }
   }
-  //2 metody do kopiowania pol invoice. jedna z parametrami invoice, druga z parametrem new long id.
 
   @Override
   public void deleteInvoice(Long id) {
@@ -66,8 +70,6 @@ public class InMemoryDatabase implements Database {
     if (!invoiceMap.containsKey(id)) {
       throw new DatabaseOperationException("Invoice of id: " + id + " does not exist");
     }
-    // sprawdzić czy invoice istnieje - jeśli tak - return invoiceMap.get(id)
-
     return invoiceMap.get(id);
   }
 
