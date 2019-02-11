@@ -3,10 +3,11 @@ package pl.coderstrust.generators;
 import pl.coderstrust.model.Company;
 
 public class CompanyGenerator {
-  public static Company getRandomCompany(){
-    Long id = IdGenerator.getNextId();
-    String name = NameGenerator.getNextName();
+
+  private static Long id = IdGenerator.getNextId();
+  private static String name = CompanyNameGenerator.getNextName();
+
+  public static Company getRandomCompany() {
     return new Company(id, name, null, null, null, null, null);
   }
 }
-
