@@ -9,6 +9,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 class InMemoryDatabaseTest {
@@ -25,7 +26,7 @@ class InMemoryDatabaseTest {
   @Test
   void shouldAddInvoiceToInMemoryDatabase() throws DatabaseOperationException {
     //Given
-    Invoice invoice = new Invoice(null, "666", LocalDate.now(), LocalDate.of(2021, 4, 3), null, null, null);
+    Invoice invoice = InvoiceGenerator.getInvoice();
 
     //When
     Invoice addedInvoice = inMemoryDatabase.saveInvoice(invoice);
