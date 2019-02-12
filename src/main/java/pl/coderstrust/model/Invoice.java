@@ -59,21 +59,34 @@ public class Invoice {
         return entries;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Invoice invoice = (Invoice) obj;
+        return id.equals(invoice.id)
+            && number.equals(invoice.number)
+            && issuedDate.equals(invoice.issuedDate)
+            && dueDate.equals(invoice.dueDate)
+            && seller.equals(invoice.seller)
+            && buyer.equals(invoice.buyer)
+            && entries.equals(invoice.entries);
+    }
+
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null || getClass() != obj.getClass()) {
-      return false;
-    }
-    Invoice invoice = (Invoice) obj;
-    return id.equals(invoice.id)
-        && number.equals(invoice.number)
-        && issuedDate.equals(invoice.issuedDate)
-        && dueDate.equals(invoice.dueDate)
-        && seller.equals(invoice.seller)
-        && buyer.equals(invoice.buyer)
-        && entries.equals(invoice.entries);
+  public String toString() {
+    return "Invoice{" +
+        "id=" + id +
+        ", number='" + number + '\'' +
+        ", issuedDate=" + issuedDate +
+        ", dueDate=" + dueDate +
+        ", seller=" + seller +
+        ", buyer=" + buyer +
+        ", entries=" + entries +
+        '}';
   }
 }
