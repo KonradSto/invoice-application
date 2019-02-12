@@ -13,7 +13,7 @@ public class InMemoryDatabase implements Database {
 
   private Map<Long, Invoice> invoiceMap;
 
-  private static Long nextId = 1L;
+  private Long nextId = 1L;
 
   public InMemoryDatabase(Map<Long, Invoice> invoiceStorage) {
     this.invoiceMap = invoiceStorage;

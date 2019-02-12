@@ -3,6 +3,7 @@ package pl.coderstrust.database;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ class InMemoryDatabaseTest {
   @Test
   void shouldAddInvoiceToInMemoryDatabase() throws DatabaseOperationException {
     //Given
-    Invoice invoice = InvoiceGenerator.getInvoice();
+    Invoice invoice = new InvoiceGenerator().getRandomInvoice();
 
     //When
     Invoice addedInvoice = inMemoryDatabase.saveInvoice(invoice);
@@ -38,21 +39,22 @@ class InMemoryDatabaseTest {
   @Test
   void shouldUpdateInvoiceWithinInMemoryDatabase() throws DatabaseOperationException {
     //Given
-    Invoice invoice = new Invoice(null, "123", LocalDate.now(), LocalDate.of(2021, 4, 3), null, null, null);
-    Invoice invoiceToUpdate = new Invoice(1L, "456", LocalDate.now(), LocalDate.of(2021, 4, 3), null, null, null);
+    Invoice invoice = new InvoiceGenerator().getRandomInvoice();
+    Invoice invoiceToUpdate = new Invoice(1L, "5/2019", LocalDate.now(), LocalDate.now(), invoice.getSeller(), invoice.getBuyer(), null);
 
     //When
-    inMemoryDatabase.saveInvoice(invoice);
+    Invoice addedInvoice = inMemoryDatabase.saveInvoice(invoice);
     Invoice updatedInvoice = inMemoryDatabase.saveInvoice(invoiceToUpdate);
 
     //Then
     assertEquals(updatedInvoice, invoiceStorage.get(updatedInvoice.getId()));
+    assertNotEquals(addedInvoice, invoiceStorage.get(updatedInvoice.getId()));
   }
 
   @Test
   void shouldThrowDatabaseOperationExceptionForNonExistingInvoiceId() {
     Assertions.assertThrows(DatabaseOperationException.class, () -> {
-      Invoice invoiceToUpdate = new Invoice(1L, "123", LocalDate.now(), LocalDate.of(2021, 4, 3), null, null, null);
+      Invoice invoiceToUpdate = new Invoice(1L, "123", LocalDate.now(), LocalDate.now(), null, null, null);
       inMemoryDatabase.saveInvoice(invoiceToUpdate);
     });
   }
@@ -60,11 +62,10 @@ class InMemoryDatabaseTest {
   @Test
   void shouldDeleteInvoiceByIdFromInMemoryDatabase() throws DatabaseOperationException {
     //Given
-    Invoice invoice = new Invoice(null, "123", LocalDate.now(), LocalDate.of(2021, 4, 3), null, null, null);
+    Invoice invoice = new InvoiceGenerator().getRandomInvoice();
 
     //When
     inMemoryDatabase.saveInvoice(invoice);
-    System.out.println(invoiceStorage.containsKey(1L));
     inMemoryDatabase.deleteInvoice(1L);
 
     //Then
@@ -72,52 +73,73 @@ class InMemoryDatabaseTest {
   }
 
   @Test
-  void shouldReturnAllInvoicesStoredWithinInMemoryDatabase(){
+  void shouldReturnAllInvoicesStoredWithinInMemoryDatabase() throws DatabaseOperationException {
     //Given
+    Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
+    Invoice invoice2 = new InvoiceGenerator().getRandomInvoice();
 
     //When
+    inMemoryDatabase.saveInvoice(invoice1);
+    inMemoryDatabase.saveInvoice(invoice2);
+    Collection<Invoice> allInvoices = inMemoryDatabase.getAllInvoices();
 
     //Then
-
+    assertEquals(allInvoices, invoiceStorage.values());
   }
 
   @Test
-  void shouldDeleteAllInvoicesFromInMemoryDatabase(){
+  void shouldDeleteAllInvoicesFromInMemoryDatabase() throws DatabaseOperationException {
     //Given
+    Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
+    Invoice invoice2 = new InvoiceGenerator().getRandomInvoice();
 
     //When
+    inMemoryDatabase.saveInvoice(invoice1);
+    inMemoryDatabase.saveInvoice(invoice2);
+    inMemoryDatabase.deleteAllInvoices();
 
     //Then
-
+    assertTrue(invoiceStorage.isEmpty());
   }
 
   @Test
-  void shouldReturnTrueForExistingInvoice(){
+  void shouldReturnTrueForExistingInvoice() throws DatabaseOperationException {
     //Given
+    Invoice invoice = new InvoiceGenerator().getRandomInvoice();
 
     //When
+    inMemoryDatabase.saveInvoice(invoice);
+    System.out.println();
 
     //Then
-
+    assertTrue(inMemoryDatabase.invoiceExists(1L));
   }
 
   @Test
-  void shouldReturnFalseForExistingInvoice(){
+  void shouldReturnFalseForNonExistingInvoice() throws DatabaseOperationException {
     //Given
+    Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
 
     //When
+    inMemoryDatabase.saveInvoice(invoice1);
 
     //Then
-
+    assertFalse(inMemoryDatabase.invoiceExists(2L));
   }
 
   @Test
-  public void shouldReturnCorrectNumberOfInvoicesFromInMemoryDatabase(){
+   void shouldReturnCorrectNumberOfInvoicesFromInMemoryDatabase() throws DatabaseOperationException {
     //Given
+    Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
+    Invoice invoice2 = new InvoiceGenerator().getRandomInvoice();
+    long expectedNumberOfInvoices = 2;
 
     //When
+    inMemoryDatabase.saveInvoice(invoice1);
+    inMemoryDatabase.saveInvoice(invoice2);
+    long actualNumberOfInvoices = inMemoryDatabase.countInvoices();
 
     //Then
-
+    assertEquals(expectedNumberOfInvoices, actualNumberOfInvoices);
   }
 }
