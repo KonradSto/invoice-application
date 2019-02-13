@@ -3,7 +3,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>pl.coderstrust</groupId>
   <artifactId>project-9-karolina-konrad-lukasz-piotr</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -43,6 +42,14 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.3</version>
+        <configuration>
+          <excludes>
+            <exclude>/pl/coderstrust/model/**</exclude>
+            <exclude>/pl/coderstrust/database/Database.class</exclude>
+            <exclude>/pl/coderstrust/database/DatabaseOperationException.class</exclude>
+            <exclude>/pl/coderstrust/Application.class</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <id>jacoco-report</id>
@@ -78,8 +85,6 @@
                       <minimum>0.50</minimum>
                     </limit>
                   </limits>
-                  <excludes>
-                  </excludes>
                 </rule>
               </rules>
             </configuration>
