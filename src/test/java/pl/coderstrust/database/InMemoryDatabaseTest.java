@@ -37,6 +37,14 @@ class InMemoryDatabaseTest {
   }
 
   @Test
+  void shouldThrowDatabaseOperationExceptionForNullInvoice(){
+    Assertions.assertThrows(DatabaseOperationException.class, () -> {
+      Invoice invoice = null;
+      inMemoryDatabase.saveInvoice(invoice);
+    });
+  }
+
+  @Test
   void shouldUpdateInvoiceWithinInMemoryDatabase() throws DatabaseOperationException {
     //Given
     Invoice invoice = new InvoiceGenerator().getRandomInvoice();
@@ -70,6 +78,25 @@ class InMemoryDatabaseTest {
 
     //Then
     assertFalse(invoiceStorage.containsKey(1L));
+  }
+
+  @Test
+  void shouldReturnInvoiceOfGivenId() throws DatabaseOperationException {
+    //Given
+    Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
+
+    //When
+    Invoice addedInvoice = inMemoryDatabase.saveInvoice(invoice1);
+
+    //Then
+    assertEquals(addedInvoice, inMemoryDatabase.getInvoice(1L));
+  }
+
+  @Test
+  void shouldThrowDatabaseOperationExceptionWhenGettingNonExistingInvoice(){
+    Assertions.assertThrows(DatabaseOperationException.class, () -> {
+      inMemoryDatabase.getInvoice(1L);
+    });
   }
 
   @Test

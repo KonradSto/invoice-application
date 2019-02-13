@@ -76,17 +76,4 @@ public class Invoice {
         && buyer.equals(invoice.buyer)
         && entries.equals(invoice.entries);
   }
-
-  @Override
-  public String toString() {
-    return "Invoice{" +
-        "id=" + id +
-        ", number='" + number + '\'' +
-        ", issuedDate=" + issuedDate +
-        ", dueDate=" + dueDate +
-        ", seller=" + seller +
-        ", buyer=" + buyer +
-        ", entries=" + entries +
-        '}';
-  }
 }
