@@ -72,17 +72,4 @@ public class Company {
         && phoneNumber.equals(company.phoneNumber)
         && email.equals(company.email);
   }
-
-  @Override
-  public String toString() {
-    return "Company{" +
-        "id=" + id +
-        ", name='" + name + '\'' +
-        ", address='" + address + '\'' +
-        ", taxId='" + taxId + '\'' +
-        ", accountNumber='" + accountNumber + '\'' +
-        ", phoneNumber='" + phoneNumber + '\'' +
-        ", email='" + email + '\'' +
-        '}';
-  }
 }
