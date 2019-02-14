@@ -6,17 +6,17 @@ import pl.coderstrust.model.Invoice;
 
 public interface Database {
 
-  Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException;
+    Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException;
 
-  void deleteInvoice(Long id) throws DatabaseOperationException;
+    void deleteInvoice(Long id) throws DatabaseOperationException;
 
-  Invoice getInvoice(Long id) throws DatabaseOperationException;
+    Invoice getInvoice(Long id) throws DatabaseOperationException;
 
-  Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
+    Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
 
-  void deleteAllInvoices() throws DatabaseOperationException;
+    void deleteAllInvoices() throws DatabaseOperationException;
 
-  boolean invoiceExists(Long id) throws DatabaseOperationException;
+    boolean invoiceExists(Long id) throws DatabaseOperationException;
 
-  long countInvoices() throws DatabaseOperationException;
+    long countInvoices() throws DatabaseOperationException;
 }
