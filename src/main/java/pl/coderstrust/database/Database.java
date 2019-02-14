@@ -2,6 +2,8 @@ package pl.coderstrust.database;
 
 import java.util.Collection;
 
+import pl.coderstrust.model.Invoice;
+
 public interface Database {
 
     Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException;
