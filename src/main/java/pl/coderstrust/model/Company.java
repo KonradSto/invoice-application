@@ -11,12 +11,12 @@ public class Company {
     private final String email;
 
     public Company(Long id,
-        String name,
-        String address,
-        String taxId,
-        String accountNumber,
-        String phoneNumber,
-        String email) {
+                   String name,
+                   String address,
+                   String taxId,
+                   String accountNumber,
+                   String phoneNumber,
+                   String email) {
 
         this.id = id;
         this.name = name;
@@ -55,21 +55,34 @@ public class Company {
         return email;
     }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Company company = (Company) obj;
+        return id.equals(company.id)
+            && name.equals(company.name)
+            && address.equals(company.address)
+            && taxId.equals(company.taxId)
+            && accountNumber.equals(company.accountNumber)
+            && phoneNumber.equals(company.phoneNumber)
+            && email.equals(company.email);
     }
-    if (obj == null || getClass() != obj.getClass()) {
-      return false;
+
+    @Override
+    public String toString() {
+        return "Company{"
+            + "id=" + id
+            + ", name='" + name + '\''
+            + ", address='" + address + '\''
+            + ", taxId='" + taxId + '\''
+            + ", accountNumber='" + accountNumber + '\''
+            + ", phoneNumber='" + phoneNumber + '\''
+            + ", email='" + email + '\''
+            + '}';
     }
-    Company company = (Company) obj;
-    return id.equals(company.id)
-        && name.equals(company.name)
-        && address.equals(company.address)
-        && taxId.equals(company.taxId)
-        && accountNumber.equals(company.accountNumber)
-        && phoneNumber.equals(company.phoneNumber)
-        && email.equals(company.email);
-  }
 }
