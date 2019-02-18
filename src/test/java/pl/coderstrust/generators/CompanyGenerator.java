@@ -4,7 +4,7 @@ import pl.coderstrust.model.Company;
 
 public class CompanyGenerator {
 
-    private Long id = IdGenerator.getNextId();
+    private Long id = CompanyIdGenerator.getNextId();
     private String name = new CompanyNameGenerator().getNextName();
 
     public Company getRandomCompany() {
