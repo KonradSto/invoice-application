@@ -17,87 +17,96 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 
 class FileHelper {
 
-    void create(File file) throws IOException {
-        if (file.exists()) {
+    private File file;
+
+    FileHelper(String filePath) {
+        this.file = new File(filePath);
+    }
+
+    void create() throws IOException {
+        if (this.file.exists()) {
             throw new FileAlreadyExistsException("File already exists");
         } else {
-            file.createNewFile();
+            this.file.createNewFile();
         }
     }
 
-    void delete(File file) throws IOException {
-        if (!file.exists()) {
+    void delete() throws IOException {
+        if (!this.file.exists()) {
             throw new FileNotFoundException("Can't delete file that doesn't exist");
         }
-        file.delete();
+        this.file.delete();
     }
 
-    boolean exists(File file) {
-        return file.exists();
+    boolean exists() {
+        return this.file.exists();
     }
 
-    boolean isEmpty(File file) throws IOException {
-        if (!file.exists()) {
-            throw new FileNotFoundException("Can't find the file");
+    boolean isEmpty() throws IOException {
+        if (!this.file.exists()) {
+            throw new FileNotFoundException("Can't verify the file content, haven't found the file");
         }
-        return (file.length() == 0);
+        return (this.file.length() == 0);
     }
 
-    void clear(File file) throws IOException {
-        this.delete(file);
-        this.create(file);
-    }
-
-    void writeLine(File file, String line) throws IOException {
-        if (!file.exists()) {
-            this.create(file);
+    void clear() throws IOException {
+        if (!this.file.exists()) {
+            throw new FileNotFoundException("Can't clear the file content, haven't found the file");
         }
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))) {
-            if (!this.isEmpty(file)) {
+        this.delete();
+        this.create();
+    }
+
+    void writeLine(String line) throws IOException {
+        if (!this.file.exists()) {
+            throw new FileNotFoundException("Can't write given line, haven't found the file");
+        }
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.file, true))) {
+            if (!this.isEmpty()) {
                 bufferedWriter.newLine();
             }
             bufferedWriter.write(line);
         }
     }
 
-    List<String> readLinesFromFile(File file) throws IOException {
-        if (!file.exists()) {
+    List<String> readLinesFromFile() throws IOException {
+        if (!this.file.exists()) {
             throw new FileNotFoundException("Can't read lines, haven't found the file");
         }
         List<String> fileLines;
-        try (Stream<String> lines = Files.lines(file.toPath())) {
+        try (Stream<String> lines = Files.lines(this.file.toPath())) {
             fileLines = lines.collect(Collectors.toList());
         }
         return fileLines;
     }
 
-    String readLastLine(File file) throws IOException {
-        if (!file.exists()) {
+    String readLastLine() throws IOException {
+        if (!this.file.exists()) {
             throw new FileNotFoundException("Can't read last line, haven't found the file");
         }
-        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(file)) {
+        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(this.file)) {
             return reader.readLine();
         }
     }
 
-    void removeLine(File file, int lineNumber) throws IOException {
-        if (!file.exists()) {
+    void removeLine(int lineNumber) throws IOException {
+        if (!this.file.exists()) {
             throw new FileNotFoundException("Can't delete line, haven't found the file");
         }
-        File newFile = new File((file.getParent() + "tmpFile.txt"));
-        transferFilteredContent(lineNumber, file, newFile);
-        replaceOriginFile(file, newFile);
+        File newFile = new File((this.file.getParent() + "tmpFile.txt"));
+        transferRemainingFileContent(lineNumber, newFile);
+        moveFile(newFile);
     }
 
-    private void transferFilteredContent(int lineNumber, File originFile, File newFile) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(originFile))) {
+    private void transferRemainingFileContent(int lineNumberToErase, File newFile) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(this.file))) {
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile, true))) {
                 String line;
                 int currentLineNumber = 0;
                 boolean firstLine = true;
                 while ((line = br.readLine()) != null) {
                     currentLineNumber++;
-                    if (currentLineNumber != lineNumber) {
+                    if (currentLineNumber != lineNumberToErase) {
                         if (!firstLine) {
                             bw.newLine();
                         }
@@ -109,8 +118,8 @@ class FileHelper {
         }
     }
 
-    private void replaceOriginFile(File originFile, File newFile) {
-        originFile.delete();
-        newFile.renameTo(originFile);
+    private void moveFile(File newFile) {
+        this.file.delete();
+        newFile.renameTo(this.file);
     }
 }
