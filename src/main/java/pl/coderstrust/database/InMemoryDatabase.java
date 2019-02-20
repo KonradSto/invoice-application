@@ -15,13 +15,16 @@ public class InMemoryDatabase implements Database {
     private Long nextId = 1L;
 
     public InMemoryDatabase(Map<Long, Invoice> invoiceStorage) {
+        if (invoiceStorage == null) {
+            throw new IllegalArgumentException("Invoice storage cannot be null");
+        }
         this.invoiceMap = invoiceStorage;
     }
 
     @Override
-    public Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
+    public synchronized Invoice saveInvoice(Invoice invoice) throws IllegalArgumentException, DatabaseOperationException {
         if (invoice == null) {
-            throw new DatabaseOperationException("Invoice cannot be null");
+            throw new IllegalArgumentException("Invoice cannot be null");
         }
         if (invoice.getId() == null) {
             return insertInvoice(invoice);
@@ -31,64 +34,62 @@ public class InMemoryDatabase implements Database {
 
     private Invoice insertInvoice(Invoice invoice) {
         final Long id = nextId++;
-        final String number = invoice.getNumber();
-        final LocalDate issuedDate = invoice.getIssuedDate();
-        final LocalDate dueDate = invoice.getDueDate();
-        final Company seller = invoice.getSeller();
-        final Company buyer = invoice.getBuyer();
-        final List<InvoiceEntry> entries = invoice.getEntries();
-        Invoice insertedInvoice = new Invoice(id, number, issuedDate, dueDate, seller, buyer, entries);
+        Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         invoiceMap.put(id, insertedInvoice);
         return insertedInvoice;
     }
 
     private Invoice updateInvoice(Invoice invoice) throws DatabaseOperationException {
         if (!invoiceMap.containsKey(invoice.getId())) {
-            throw new DatabaseOperationException("Invoice does not exist");
-        } else {
-            final Long id = invoice.getId();
-            final String number = invoice.getNumber();
-            final LocalDate issuedDate = invoice.getIssuedDate();
-            final LocalDate dueDate = invoice.getDueDate();
-            final Company seller = invoice.getSeller();
-            final Company buyer = invoice.getBuyer();
-            final List<InvoiceEntry> entries = invoice.getEntries();
-            Invoice updatedInvoice = new Invoice(id, number, issuedDate, dueDate, seller, buyer, entries);
-            invoiceMap.put(id, updatedInvoice);
-            return updatedInvoice;
+            throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
         }
+        Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+        invoiceMap.put(invoice.getId(), updatedInvoice);
+        return updatedInvoice;
     }
 
     @Override
-    public void deleteInvoice(Long id) {
+    public synchronized void deleteInvoice(Long id) throws IllegalArgumentException, DatabaseOperationException {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        if (!invoiceMap.containsKey(id)) {
+            throw new DatabaseOperationException(String.format("Delete invoice failed. Invoice with following id does not exist: %d", id));
+        }
         invoiceMap.remove(id);
     }
 
     @Override
-    public Invoice getInvoice(Long id) throws DatabaseOperationException {
+    public synchronized Invoice getInvoice(Long id) throws DatabaseOperationException {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         if (!invoiceMap.containsKey(id)) {
-            throw new DatabaseOperationException("Invoice of id: " + id + " does not exist");
+            throw new DatabaseOperationException(String.format("Get invoice failed. Invoice with following id does not exist: %d", id));
         }
         return invoiceMap.get(id);
     }
 
     @Override
-    public Collection<Invoice> getAllInvoices() {
+    public synchronized Collection<Invoice> getAllInvoices() {
         return invoiceMap.values();
     }
 
     @Override
-    public void deleteAllInvoices() {
+    public synchronized void deleteAllInvoices() {
         invoiceMap.clear();
     }
 
     @Override
-    public boolean invoiceExists(Long id) {
+    public synchronized boolean invoiceExists(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         return invoiceMap.containsKey(id);
     }
 
     @Override
-    public long countInvoices() {
+    public synchronized long countInvoices() {
         return invoiceMap.size();
     }
 }

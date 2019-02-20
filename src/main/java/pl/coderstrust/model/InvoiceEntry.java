@@ -14,13 +14,13 @@ public class InvoiceEntry {
     private final Vat vatRate;
 
     public InvoiceEntry(Long id,
-        String productName,
-        double quantity,
-        String unit,
-        BigDecimal price,
-        BigDecimal nettValue,
-        BigDecimal grossValue,
-        Vat vatRate) {
+                        String productName,
+                        double quantity,
+                        String unit,
+                        BigDecimal price,
+                        BigDecimal nettValue,
+                        BigDecimal grossValue,
+                        Vat vatRate) {
 
         this.id = id;
         this.productName = productName;
@@ -81,5 +81,19 @@ public class InvoiceEntry {
             && nettValue.equals(invoiceEntry.nettValue)
             && grossValue.equals(invoiceEntry.grossValue)
             && vatRate == invoiceEntry.vatRate;
+    }
+
+    @Override
+    public String toString() {
+        return "InvoiceEntry{" +
+            "id=" + id +
+            ", productName='" + productName + '\'' +
+            ", quantity=" + quantity +
+            ", unit='" + unit + '\'' +
+            ", price=" + price +
+            ", nettValue=" + nettValue +
+            ", grossValue=" + grossValue +
+            ", vatRate=" + vatRate +
+            '}';
     }
 }
