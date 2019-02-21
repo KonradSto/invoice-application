@@ -85,15 +85,15 @@ public class InvoiceEntry {
 
     @Override
     public String toString() {
-        return "InvoiceEntry{" +
-            "id=" + id +
-            ", productName='" + productName + '\'' +
-            ", quantity=" + quantity +
-            ", unit='" + unit + '\'' +
-            ", price=" + price +
-            ", nettValue=" + nettValue +
-            ", grossValue=" + grossValue +
-            ", vatRate=" + vatRate +
-            '}';
+        return "InvoiceEntry{"
+            + "id=" + id
+            + ", productName='" + productName + '\''
+            + ", quantity=" + quantity
+            + ", unit='" + unit + '\''
+            + ", price=" + price
+            + ", nettValue=" + nettValue
+            + ", grossValue=" + grossValue
+            + ", vatRate=" + vatRate
+            + '}';
     }
 }

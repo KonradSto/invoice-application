@@ -12,7 +12,7 @@ public enum Vat {
         this.rate = rate;
     }
 
-    float getValue() {
+    public float getValue() {
         return rate;
     }
 }

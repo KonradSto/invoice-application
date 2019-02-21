@@ -1,24 +1,20 @@
 package pl.coderstrust.database;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
-import pl.coderstrust.model.InvoiceEntry;
 
 public class InMemoryDatabase implements Database {
 
     private Map<Long, Invoice> invoiceMap;
     private Long nextId = 1L;
 
-    public InMemoryDatabase(Map<Long, Invoice> invoiceStorage) {
-        if (invoiceStorage == null) {
+    public InMemoryDatabase(Map<Long, Invoice> databaseStorage) {
+        if (databaseStorage == null) {
             throw new IllegalArgumentException("Invoice storage cannot be null");
         }
-        this.invoiceMap = invoiceStorage;
+        this.invoiceMap = databaseStorage;
     }
 
     @Override

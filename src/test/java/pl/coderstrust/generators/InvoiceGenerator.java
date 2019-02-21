@@ -9,19 +9,19 @@ import pl.coderstrust.model.InvoiceEntry;
 
 public class InvoiceGenerator {
 
-    private Long id = IdGenerator.getNextId();
-    private String number = InvoiceNumberGenerator.getNextInvoiceNumber();
-    private LocalDate issueDate = LocalDate.now();
-    private LocalDate dueDate = issueDate.plusDays(2);
-    private Company seller = new CompanyGenerator().getRandomCompany();
-    private Company buyer = new CompanyGenerator().getRandomCompany();
-    private List<InvoiceEntry> entry = null;
+    private static Long id = IdGenerator.getNextId();
+    private static String number = InvoiceNumberGenerator.getNextInvoiceNumber();
+    private static LocalDate issueDate = LocalDate.now();
+    private static LocalDate dueDate = issueDate.plusDays(2);
+    private static Company seller = CompanyGenerator.getRandomCompany();
+    private static Company buyer = CompanyGenerator.getRandomCompany();
+    private static List<InvoiceEntry> entry = InvoiceEntryGenerator.getListOfRandomEntries();
 
-    public Invoice getRandomInvoice() {
+    public static Invoice getRandomInvoice() {
         return new Invoice(id, number, issueDate, dueDate, seller, buyer, entry);
     }
 
-    public Invoice getRandomInvoiceWithoutId() {
+    public static Invoice getRandomInvoiceWithoutId() {
         return new Invoice(null, number, issueDate, dueDate, seller, buyer, entry);
     }
 }

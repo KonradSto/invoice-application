@@ -1,6 +1,11 @@
 package pl.coderstrust.database;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -26,7 +31,7 @@ class InMemoryDatabaseTest {
     @Test
     void shouldAddInvoice() throws DatabaseOperationException {
         //Given
-        Invoice invoice = new InvoiceGenerator().getRandomInvoiceWithoutId();
+        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
 
         //When
         Invoice addedInvoice = database.saveInvoice(invoice);
@@ -34,7 +39,12 @@ class InMemoryDatabaseTest {
         //Then
         assertNotNull(addedInvoice.getId());
         assertEquals(1, (long) addedInvoice.getId());
-        assertEquals(addedInvoice, databaseStorage.get(addedInvoice.getId())); //w środku asercji prywatna metoda do porównania invoiców (z wykluczeniem id)
+        assertTrue(compareInvoices(invoice, addedInvoice));
+    }
+
+    private boolean compareInvoices(Invoice invoiceToAdd, Invoice addedInvoice) {
+        return (invoiceToAdd.getBuyer() == addedInvoice.getBuyer());
+
     }
 
     @Test
@@ -45,7 +55,7 @@ class InMemoryDatabaseTest {
     @Test
     void shouldUpdateInvoice() throws DatabaseOperationException {
         //Given
-        Invoice invoice = new InvoiceGenerator().getRandomInvoiceWithoutId();
+        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         databaseStorage.put(invoice.getId(), invoice);
         Invoice invoiceToUpdate = new Invoice(invoice.getId(), "5/2019", LocalDate.now(), LocalDate.now(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
 
@@ -60,7 +70,7 @@ class InMemoryDatabaseTest {
     @Test
     void saveMethodShouldThrowExceptionDuringUpdatingNotExistingInvoice() {
         assertThrows(DatabaseOperationException.class, () -> {
-            Invoice invoiceToUpdate = new InvoiceGenerator().getRandomInvoice();
+            Invoice invoiceToUpdate = InvoiceGenerator.getRandomInvoice();
             database.saveInvoice(invoiceToUpdate);
         });
     }
@@ -68,7 +78,7 @@ class InMemoryDatabaseTest {
     @Test
     void shouldDeleteInvoice() throws DatabaseOperationException {
         //Given
-        Invoice invoice = new InvoiceGenerator().getRandomInvoice();
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice.getId(), invoice);
 
         //When
@@ -79,9 +89,19 @@ class InMemoryDatabaseTest {
     }
 
     @Test
+    void deleteMethodShouldThrowIllegalArgumentExceptionForNullId() {
+        assertThrows(IllegalArgumentException.class, () -> database.deleteInvoice(null));
+    }
+
+    @Test
+    void deleteMethodShouldThrowExceptionDuringDeletingNotExistingInvoice() {
+        assertThrows(DatabaseOperationException.class, () -> database.deleteInvoice(1L));
+    }
+
+    @Test
     void shouldReturnInvoice() throws DatabaseOperationException {
         //Given
-        Invoice invoice = new InvoiceGenerator().getRandomInvoice();
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice.getId(), invoice);
 
         //Then
@@ -89,15 +109,20 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void shouldThrowDatabaseOperationExceptionWhenGettingNonExistingInvoice() {
+    void getMethodShouldThrowIllegalArgumentExceptionForNullId() {
+        assertThrows(IllegalArgumentException.class, () -> database.getInvoice(null));
+    }
+
+    @Test
+    void getMethodShouldThrowExceptionDuringDeletingNotExistingInvoice() {
         assertThrows(DatabaseOperationException.class, () -> database.getInvoice(1L));
     }
 
     @Test
     void shouldReturnAllInvoices() throws DatabaseOperationException {
         //Given
-        Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
-        Invoice invoice2 = new InvoiceGenerator().getRandomInvoice();
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice1.getId(), invoice1);
         databaseStorage.put(invoice2.getId(), invoice2);
 
@@ -111,8 +136,8 @@ class InMemoryDatabaseTest {
     @Test
     void shouldDeleteAllInvoices() throws DatabaseOperationException {
         //Given
-        Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
-        Invoice invoice2 = new InvoiceGenerator().getRandomInvoice();
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice1.getId(), invoice1);
         databaseStorage.put(invoice2.getId(), invoice2);
 
@@ -126,7 +151,7 @@ class InMemoryDatabaseTest {
     @Test
     void shouldReturnTrueForExistingInvoice() throws DatabaseOperationException {
         //Given
-        Invoice invoice = new InvoiceGenerator().getRandomInvoice();
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice.getId(), invoice);
 
         //Then
@@ -136,7 +161,7 @@ class InMemoryDatabaseTest {
     @Test
     void shouldReturnFalseForNonExistingInvoice() throws DatabaseOperationException {
         //Given
-        Invoice invoice = new InvoiceGenerator().getRandomInvoice();
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice.getId(), invoice);
 
         //Then
@@ -144,10 +169,15 @@ class InMemoryDatabaseTest {
     }
 
     @Test
+    void existsMethodShouldThrowIllegalArgumentExceptionForNullId() {
+        assertThrows(IllegalArgumentException.class, () -> database.invoiceExists(null));
+    }
+
+    @Test
     void shouldReturnCorrectNumberOfInvoicesFromInMemoryDatabase() throws DatabaseOperationException {
         //Given
-        Invoice invoice1 = new InvoiceGenerator().getRandomInvoice();
-        Invoice invoice2 = new InvoiceGenerator().getRandomInvoice();
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice1.getId(), invoice1);
         databaseStorage.put(invoice2.getId(), invoice2);
 
