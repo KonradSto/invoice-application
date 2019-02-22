@@ -49,7 +49,6 @@ class InMemoryDatabaseTest {
 
     private boolean compareInvoices(Invoice invoiceToAdd, Invoice addedInvoice) {
         return (invoiceToAdd.getBuyer() == addedInvoice.getBuyer());
-
     }
 
     @Test
