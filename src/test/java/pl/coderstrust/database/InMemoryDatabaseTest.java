@@ -29,6 +29,11 @@ class InMemoryDatabaseTest {
     }
 
     @Test
+    void shouldThrowIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new InMemoryDatabase(null));
+    }
+
+    @Test
     void shouldAddInvoice() throws DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
@@ -55,7 +60,7 @@ class InMemoryDatabaseTest {
     @Test
     void shouldUpdateInvoice() throws DatabaseOperationException {
         //Given
-        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice.getId(), invoice);
         Invoice invoiceToUpdate = new Invoice(invoice.getId(), "5/2019", LocalDate.now(), LocalDate.now(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
 

@@ -12,5 +12,4 @@ public class NumberGenerator {
         }
         return number.toString();
     }
-
 }
