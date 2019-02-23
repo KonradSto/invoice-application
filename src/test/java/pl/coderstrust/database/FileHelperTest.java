@@ -163,9 +163,7 @@ class FileHelperTest {
         //Given
         assertTrue(resultFile.createNewFile());
         Files.write(Paths.get(resultFilePath), Arrays.asList("first test line", "second test line"));
-        List<String> expectedFileList = new ArrayList<>();
-        expectedFileList.add("first test line");
-        expectedFileList.add("second test line");
+        List<String> expectedFileList = Arrays.asList("first test line", "second test line");
 
         //When
         List<String> resultFileList = new FileHelper(resultFilePath).readLinesFromFile();
