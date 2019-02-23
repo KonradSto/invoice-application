@@ -18,34 +18,30 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class FileHelperTest {
 
     private static final String resultFilePath = "src/test/resources/resultFile.txt";
-    private static final String expectedFilePath = "src/test/resources/expectedFile.txt";
-    private File resultFile = new File(resultFilePath);
-    private File expectedFile = new File(expectedFilePath);
+    private File resultFile;
+
+    @BeforeEach
+    void initializeTestFile() {
+        resultFile = new File(resultFilePath);
+    }
 
     @AfterEach
     void deleteTestFile() {
         if (resultFile.exists()) {
-            resultFile.delete();
-        }
-        if (expectedFile.exists()) {
-            expectedFile.delete();
+            assertTrue(resultFile.delete());
         }
     }
 
     @Test
     void shouldCreateEmptyFile() throws IOException {
         //Given
-        expectedFile = new File(expectedFilePath);
-        expectedFile.createNewFile();
-        List<String> expectedFileLines;
-        try (Stream<String> lines = Files.lines(Paths.get(expectedFilePath))) {
-            expectedFileLines = lines.collect(Collectors.toList());
-        }
+        List<String> expectedFileLines = new ArrayList<>();
 
         //When
         new FileHelper(resultFilePath).create();
@@ -61,9 +57,8 @@ class FileHelperTest {
     @Test
     void shouldThrowExceptionForCreateMethod() throws IOException {
         File alreadyExistingFile = new File(resultFilePath);
-        alreadyExistingFile.createNewFile();
-        Exception ex = assertThrows(FileAlreadyExistsException.class, () -> new FileHelper(resultFilePath).create());
-        assertEquals("File already exists", ex.getMessage());
+        assertTrue(alreadyExistingFile.createNewFile());
+        assertThrows(FileAlreadyExistsException.class, () -> new FileHelper(resultFilePath).create());
         assertTrue(alreadyExistingFile.delete());
     }
 
@@ -81,28 +76,27 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionForDeleteMethod() {
-        Exception expected = assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).delete());
-        assertEquals("Can't delete file that doesn't exist", expected.getMessage());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).delete());
     }
 
     @Test
     void shouldReturnTrueWhenExists() throws IOException {
         //Given
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
 
         //Then
         assertTrue(new FileHelper(resultFilePath).exists());
     }
 
     @Test
-    void shouldReturnFalseWhenExists() {
+    void shouldReturnFalseWhenFileDoNotExists() {
         assertFalse(new FileHelper(resultFilePath).exists());
     }
 
     @Test
     void shouldReturnTrueWhenFileIsEmpty() throws IOException {
         //Given
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
 
         //Then
         assertTrue(new FileHelper(resultFilePath).isEmpty());
@@ -111,7 +105,7 @@ class FileHelperTest {
     @Test
     void shouldReturnFalseWhenFileIsNotEmpty() throws IOException {
         //Given
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
         Files.write(Paths.get(resultFilePath), "first test line".getBytes());
 
         //Then
@@ -120,19 +114,16 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionWhileCheckingIfNonExistingFileIsEmpty() {
-        Exception expected = assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).isEmpty());
-        assertEquals("Can't verify the file content, haven't found the file", expected.getMessage());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).isEmpty());
     }
 
     @Test
     void shouldClearWholeFile() throws IOException {
         //Given
-        expectedFile = new File(expectedFilePath);
-        expectedFile.createNewFile();
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
         Files.write(Paths.get(resultFilePath), "first test line".getBytes());
         List<String> resultFileLines;
-        List<String> expectedFileLines;
+        List<String> expectedFileLines = new ArrayList<>();
 
         //When
         new FileHelper(resultFilePath).clear();
@@ -141,20 +132,15 @@ class FileHelperTest {
         try (Stream<String> lines = Files.lines(Paths.get(resultFilePath))) {
             resultFileLines = lines.collect(Collectors.toList());
         }
-        try (Stream<String> lines = Files.lines(Paths.get(expectedFilePath))) {
-            expectedFileLines = lines.collect(Collectors.toList());
-        }
         assertEquals(resultFileLines, expectedFileLines);
     }
 
     @Test
     void shouldAddLineInNotEmptyFile() throws IOException {
         //Given
-        expectedFile.createNewFile();
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
         Files.write(Paths.get(resultFilePath), "first test line".getBytes());
-        Files.write(Paths.get(expectedFilePath), Arrays.asList("first test line", "second test line"));
-        List<String> expectedFileLines;
+        List<String> expectedFileLines = Arrays.asList("first test line", "second test line");
         List<String> resultFileLines;
 
         //When
@@ -164,22 +150,18 @@ class FileHelperTest {
         try (Stream<String> lines = Files.lines(Paths.get(resultFilePath))) {
             resultFileLines = lines.collect(Collectors.toList());
         }
-        try (Stream<String> lines = Files.lines(Paths.get(expectedFilePath))) {
-            expectedFileLines = lines.collect(Collectors.toList());
-        }
         assertEquals(expectedFileLines, resultFileLines);
     }
 
     @Test
     void shouldThrowExceptionWhileWritingToNonExistingFile() {
-        Exception expected = assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).writeLine("test line"));
-        assertEquals("Can't write given line, haven't found the file", expected.getMessage());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).writeLine("test line"));
     }
 
     @Test
     void shouldReadLinesFromFile() throws IOException {
         //Given
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
         Files.write(Paths.get(resultFilePath), Arrays.asList("first test line", "second test line"));
         List<String> expectedFileList = new ArrayList<>();
         expectedFileList.add("first test line");
@@ -194,14 +176,13 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionWhileReadingLinesForNotExistingFile() {
-        Exception expected = assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).readLinesFromFile());
-        assertEquals("Can't read lines, haven't found the file", expected.getMessage());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).readLinesFromFile());
     }
 
     @Test
     void shouldReadLeadLastLineFromFile() throws IOException {
         //Given
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
         Files.write(Paths.get(resultFilePath), Arrays.asList("first test line", "second test line", "third test line"));
 
         String expectedString = "third test line";
@@ -215,18 +196,15 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionForReadLastLineFromFile() {
-        Exception expected = assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).readLastLine());
-        assertEquals("Can't read last line, haven't found the file", expected.getMessage());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).readLastLine());
     }
 
     @Test
     void shouldRemoveLineFromFile() throws IOException {
         //Given
-        expectedFile.createNewFile();
-        resultFile.createNewFile();
+        assertTrue(resultFile.createNewFile());
         Files.write(Paths.get(resultFilePath), Arrays.asList("first test line", "second test line", "third test line", "fourth test line"));
-        Files.write(Paths.get(expectedFilePath), Arrays.asList("first test line", "second test line", "fourth test line"));
-        List<String> expectedFileLines;
+        List<String> expectedFileLines = Arrays.asList("first test line", "second test line", "fourth test line");
         List<String> resultFileLines;
 
         //When
@@ -236,15 +214,11 @@ class FileHelperTest {
         try (Stream<String> lines = Files.lines(Paths.get(resultFilePath))) {
             resultFileLines = lines.collect(Collectors.toList());
         }
-        try (Stream<String> lines = Files.lines(Paths.get(expectedFilePath))) {
-            expectedFileLines = lines.collect(Collectors.toList());
-        }
         assertEquals(expectedFileLines, resultFileLines);
     }
 
     @Test
     void shouldThrowExceptionForRemoveLineFromNonExistentFile() {
-        Exception expected = assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).removeLine(2));
-        assertEquals("Can't delete line, haven't found the file", expected.getMessage());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).removeLine(2));
     }
 }
