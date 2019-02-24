@@ -44,10 +44,10 @@ class InMemoryDatabaseTest {
         //Then
         assertNotNull(addedInvoice.getId());
         assertEquals(1, (long) addedInvoice.getId());
-        assertTrue(compareInvoices(invoice, addedInvoice));
+        assertTrue(invoicesAreSame(invoice, addedInvoice));
     }
 
-    private boolean compareInvoices(Invoice invoiceToAdd, Invoice addedInvoice) {
+    private boolean invoicesAreSame(Invoice invoiceToAdd, Invoice addedInvoice) {
         return (invoiceToAdd.getBuyer() == addedInvoice.getBuyer()
             && invoiceToAdd.getSeller() == addedInvoice.getSeller()
             && invoiceToAdd.getDueDate() == addedInvoice.getDueDate()
@@ -103,7 +103,7 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void deleteMethodShouldThrowExceptionDuringDeletingNotExistingInvoice() {
+    void deleteInvoiceMethodShouldThrowExceptionDuringDeletingNotExistingInvoice() {
         assertThrows(DatabaseOperationException.class, () -> database.deleteInvoice(1L));
     }
 
@@ -121,12 +121,12 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void getInvoiceMethodShouldThrowExceptionDuringGettingNotExistingInvoice() {
+    void getInvoiceMethodShouldThrowExceptionForNullId() {
         assertThrows(IllegalArgumentException.class, () -> database.getInvoice(null));
     }
 
     @Test
-    void getMethodShouldThrowExceptionDuringDeletingNotExistingInvoice() {
+    void getInvoiceMethodShouldThrowExceptionDuringGettingNotExistingInvoice() {
         assertThrows(DatabaseOperationException.class, () -> database.getInvoice(1L));
     }
 
