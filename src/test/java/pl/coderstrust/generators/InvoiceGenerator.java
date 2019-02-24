@@ -16,7 +16,7 @@ public class InvoiceGenerator {
         LocalDate dueDate = issueDate.plusDays(2);
         Company seller = CompanyGenerator.getRandomCompany();
         Company buyer = CompanyGenerator.getRandomCompany();
-        List<InvoiceEntry> entry = InvoiceEntryGenerator.getListOfRandomEntries();
+        List<InvoiceEntry> entry = InvoiceEntryGenerator.getRandomEntries(2);
         return new Invoice(id, number, issueDate, dueDate, seller, buyer, entry);
     }
 
@@ -26,7 +26,7 @@ public class InvoiceGenerator {
         LocalDate dueDate = issueDate.plusDays(2);
         Company seller = CompanyGenerator.getRandomCompany();
         Company buyer = CompanyGenerator.getRandomCompany();
-        List<InvoiceEntry> entry = InvoiceEntryGenerator.getListOfRandomEntries();
+        List<InvoiceEntry> entry = InvoiceEntryGenerator.getRandomEntries(2);
         return new Invoice(null, number, issueDate, dueDate, seller, buyer, entry);
     }
 }

@@ -48,11 +48,16 @@ class InMemoryDatabaseTest {
     }
 
     private boolean compareInvoices(Invoice invoiceToAdd, Invoice addedInvoice) {
-        return (invoiceToAdd.getBuyer() == addedInvoice.getBuyer());
+        return (invoiceToAdd.getBuyer() == addedInvoice.getBuyer()
+            && invoiceToAdd.getSeller() == addedInvoice.getSeller()
+            && invoiceToAdd.getDueDate() == addedInvoice.getDueDate()
+            && invoiceToAdd.getIssuedDate() == addedInvoice.getIssuedDate()
+            && invoiceToAdd.getNumber().equals(addedInvoice.getNumber())
+            && invoiceToAdd.getEntries().equals(addedInvoice.getEntries()));
     }
 
     @Test
-    void shouldThrowDatabaseOperationExceptionForNullInvoice() {
+    void saveInvoiceMethodShouldThrowExceptionForNullInvoice() {
         assertThrows(IllegalArgumentException.class, () -> database.saveInvoice(null));
     }
 
@@ -72,7 +77,7 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void saveMethodShouldThrowExceptionDuringUpdatingNotExistingInvoice() {
+    void saveInvoiceMethodShouldThrowExceptionDuringUpdatingNotExistingInvoice() {
         assertThrows(DatabaseOperationException.class, () -> {
             Invoice invoiceToUpdate = InvoiceGenerator.getRandomInvoice();
             database.saveInvoice(invoiceToUpdate);
@@ -93,7 +98,7 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void deleteMethodShouldThrowIllegalArgumentExceptionForNullId() {
+    void deleteInvoiceMethodShouldThrowExceptionForNullId() {
         assertThrows(IllegalArgumentException.class, () -> database.deleteInvoice(null));
     }
 
@@ -108,12 +113,15 @@ class InMemoryDatabaseTest {
         Invoice invoice = InvoiceGenerator.getRandomInvoice();
         databaseStorage.put(invoice.getId(), invoice);
 
+        //When
+        Invoice returnedInvoice = database.getInvoice(invoice.getId());
+
         //Then
-        assertEquals(invoice, database.getInvoice(invoice.getId()));
+        assertEquals(invoice, returnedInvoice);
     }
 
     @Test
-    void getMethodShouldThrowIllegalArgumentExceptionForNullId() {
+    void getInvoiceMethodShouldThrowExceptionDuringGettingNotExistingInvoice() {
         assertThrows(IllegalArgumentException.class, () -> database.getInvoice(null));
     }
 
@@ -173,12 +181,12 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void existsMethodShouldThrowIllegalArgumentExceptionForNullId() {
+    void invoiceExistsMethodShouldThrowExceptionForNullId() {
         assertThrows(IllegalArgumentException.class, () -> database.invoiceExists(null));
     }
 
     @Test
-    void shouldReturnCorrectNumberOfInvoicesFromInMemoryDatabase() throws DatabaseOperationException {
+    void shouldReturnNumberOfInvoices() throws DatabaseOperationException {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
         Invoice invoice2 = InvoiceGenerator.getRandomInvoice();

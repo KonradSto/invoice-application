@@ -10,11 +10,10 @@ import pl.coderstrust.model.Vat;
 
 public class InvoiceEntryGenerator {
 
-    private static Long id = 0L;
+    private static Random random = new Random();
 
     private static InvoiceEntry getRandomEntry() {
-        Random random = new Random();
-        Long id = entryCounter();
+        Long id = IdGenerator.getNextId();
         String productName = WordGenerator.getRandomWord();
         double quantity = random.nextInt(10);
         String unit = "szt.";
@@ -25,15 +24,11 @@ public class InvoiceEntryGenerator {
         return new InvoiceEntry(id, productName, quantity, unit, price, nettValue, grossValue, vatRate);
     }
 
-    private static Long entryCounter() {
-        return ++id;
-    }
-
-    public static List<InvoiceEntry> getListOfRandomEntries() {
+    public static List<InvoiceEntry> getRandomEntries(int count) {
         List<InvoiceEntry> invoiceEntryList = new ArrayList<>();
-        invoiceEntryList.add(getRandomEntry());
-        invoiceEntryList.add(getRandomEntry());
-        id = 0L;
+        for (int i = 0; i < count; i++) {
+            invoiceEntryList.add(getRandomEntry());
+        }
         return invoiceEntryList;
     }
 }
