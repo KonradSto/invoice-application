@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,16 +17,14 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 class FileHelper {
 
     private File file;
-    private String filePath;
 
     FileHelper(String filePath) {
         this.file = new File(filePath);
-        this.filePath = filePath;
     }
 
     void create() throws IOException {
         if (this.file.exists()) {
-            throw new FileAlreadyExistsException("Failed to create new file. File already exists." + filePath);
+            validateFileExistence("Failed to create new file");
         }
         Files.createFile(this.file.toPath());
     }
