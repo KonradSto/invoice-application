@@ -2,7 +2,7 @@ package pl.coderstrust.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import pl.coderstrust.database.Database;
@@ -18,18 +18,18 @@ public class InvoiceService {
         this.database = database;
     }
 
-    List<Invoice> getAllInvoices() throws DatabaseOperationException {
+    Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
         return new ArrayList<>(database.getAllInvoices());
     }
 
-    List getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
+    Collection<Invoice> getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
         return this.getAllInvoices()
             .stream()
             .filter(invoice -> (invoice.getIssuedDate().compareTo(fromDate) >= 0 && invoice.getIssuedDate().compareTo(toDate) <= 0))
             .collect(Collectors.toList());
     }
 
-    List getAllInvoices(Company company) throws DatabaseOperationException {
+    Collection<Invoice> getAllInvoices(Company company) throws DatabaseOperationException {
         return this.getAllInvoices()
             .stream()
             .filter(invoice -> (invoice.getSeller().equals(company) || invoice.getBuyer().equals(company)))
@@ -44,18 +44,11 @@ public class InvoiceService {
         return this.database.saveInvoice(invoice);
     }
 
-    Invoice updateInvoice(Long id) {
-        System.out.println("updateInvoice not yet implemented");
-        return null;
+    void deleteInvoice(Long id) throws DatabaseOperationException {
+        this.database.deleteInvoice(id);
     }
 
-    Invoice deleteInvoice(Long id) {
-        System.out.println("deleteInvoice not yet implemented");
-        return null;
-    }
-
-    Invoice deleteAllInvoices() {
-        System.out.println("deleteAllInvoices not yet implemented");
-        return null;
+    void deleteAllInvoices() throws DatabaseOperationException {
+        this.database.deleteAllInvoices();
     }
 }
