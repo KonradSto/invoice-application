@@ -25,7 +25,6 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
 
-    // TODO: 01/03/2019 what to do with exceptions?
     @GetMapping
     ResponseEntity<List<Invoice>> getAllInvoices() {
         List<Invoice> allInvoices;
@@ -43,10 +42,10 @@ public class InvoiceController {
         try {
             allInvoicesByCompany = invoiceService.getAllInvoices(company);
             return new ResponseEntity<>(allInvoicesByCompany, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (DatabaseOperationException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);          // FIXME: 05/03/2019 ldksgjakdg
         }
     }
 
