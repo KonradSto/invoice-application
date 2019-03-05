@@ -1,6 +1,7 @@
 package pl.coderstrust.controller;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import pl.coderstrust.database.DatabaseOperationException;
@@ -9,19 +10,57 @@ import pl.coderstrust.model.Invoice;
 
 public interface InvoiceService {
 
-    List<Invoice> getAllInvoices() throws DatabaseOperationException;
 
-    List getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException;
+    default List<Invoice> getAllInvoices() throws DatabaseOperationException {
+        return Collections.emptyList();
+    }
 
-    List getAllInvoices(Company company) throws DatabaseOperationException;
+    default List getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
+        return Collections.emptyList();
+    }
 
-    Invoice getInvoice(Long id) throws DatabaseOperationException;
+    default List getAllInvoices(Company company) throws DatabaseOperationException {
+        return Collections.emptyList();
+    }
 
-    Invoice addInvoice(Invoice invoice) throws DatabaseOperationException;
+    default Invoice getInvoice(Long id) throws DatabaseOperationException {
+        return new Invoice(null, null, null, null, null, null, null);
+    }
 
-    Invoice updateInvoice(Long id);
+    default Invoice addInvoice(Invoice invoice) throws DatabaseOperationException {
+        return new Invoice(null, null, null, null, null, null, null);
+    }
 
-    Invoice deleteInvoice(Long id);
+    default Invoice updateInvoice(Long id) {
+        return new Invoice(null, null, null, null, null, null, null);
+    }
 
-    Invoice deleteAllInvoices();
+    default Invoice deleteInvoice(Long id) {
+        return new Invoice(null, null, null, null, null, null, null);
+    }
+
+    default Invoice deleteAllInvoices() {
+        return new Invoice(null, null, null, null, null, null, null);
+    }
 }
+   /* @GetMapping("/{id}")
+    public ResponseEntity<?> getBazz(@PathVariable String id){
+        return new ResponseEntity<>(new Bazz(id, "Bazz"+id), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBazz(@PathVariable String id){
+        return new ResponseEntity<>(new Bazz(id), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> newBazz(@RequestParam("name") String name){
+        return new ResponseEntity<>(new Bazz("5", name), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateBazz(
+        @PathVariable String id,
+        @RequestParam("name") String name) {
+        return new ResponseEntity<>(new Bazz(id, name), HttpStatus.OK);
+    }*/
