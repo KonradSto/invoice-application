@@ -89,7 +89,7 @@ public class InvoiceController {
     }
 
     @PostMapping()
-    ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice invoice) throws DatabaseOperationException {
+    ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice invoice) {
         try {
             invoiceService.updateInvoice(invoice);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
