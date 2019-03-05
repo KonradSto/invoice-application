@@ -28,7 +28,7 @@ public class InvoiceController {
     // TODO: 01/03/2019 what to do with exceptions?
     @GetMapping("/invoice")
     ResponseEntity<List<Invoice>> allInvoices() {
-        List<Invoice> allInvoices = null;
+        List<Invoice> allInvoices;
         try {
             allInvoices = invoiceService.getAllInvoices();
             return new ResponseEntity<>(allInvoices, HttpStatus.OK);
