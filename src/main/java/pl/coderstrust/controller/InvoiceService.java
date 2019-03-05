@@ -15,11 +15,11 @@ public interface InvoiceService {
         return Collections.emptyList();
     }
 
-    default List getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
+    default List<Invoice> getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
         return Collections.emptyList();
     }
 
-    default List getAllInvoices(Company company) throws DatabaseOperationException {
+    default List<Invoice> getAllInvoices(Company company) throws DatabaseOperationException {
         return Collections.emptyList();
     }
 
@@ -31,7 +31,7 @@ public interface InvoiceService {
         return new Invoice(null, null, null, null, null, null, null);
     }
 
-    default Invoice updateInvoice(Long id) {
+    default Invoice updateInvoice(Invoice invoice) {
         return new Invoice(null, null, null, null, null, null, null);
     }
 

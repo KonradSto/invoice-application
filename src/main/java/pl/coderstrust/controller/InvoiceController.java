@@ -16,7 +16,7 @@ import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 
 @RestController
-@RequestMapping("/invoice")
+@RequestMapping("/invoices")
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -26,8 +26,8 @@ public class InvoiceController {
     }
 
     // TODO: 01/03/2019 what to do with exceptions?
-    @GetMapping("/invoice")
-    ResponseEntity<List<Invoice>> allInvoices() {
+    @GetMapping
+    ResponseEntity<List<Invoice>> getAllInvoices() {
         List<Invoice> allInvoices;
         try {
             allInvoices = invoiceService.getAllInvoices();
@@ -38,49 +38,63 @@ public class InvoiceController {
     }
 
     @GetMapping("/{company}")
-    List<Invoice> getInvoicesByDateRange(@PathVariable LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
-        return invoiceService.getAllInvoices(fromDate, toDate);
+    ResponseEntity<List<Invoice>> getInvoicesByCompany(@PathVariable Company company) {
+        List<Invoice> allInvoicesByCompany;
+        try {
+            allInvoicesByCompany = invoiceService.getAllInvoices(company);
+            return new ResponseEntity<>(allInvoicesByCompany, HttpStatus.OK);
+        } catch (DatabaseOperationException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);          // FIXME: 05/03/2019 ldksgjakdg
+        }
     }
 
-    @GetMapping("/{company}")
-    List<Invoice> getInvoicesByCompany(@PathVariable Company company) throws DatabaseOperationException {
-        return invoiceService.getAllInvoices(company);
+    @GetMapping("/{fromDate}/{toDate}")
+    ResponseEntity<List<Invoice>> getInvoicesByDateRange(@PathVariable LocalDate fromDate, @PathVariable LocalDate toDate) {
+        List<Invoice> allInvoicesByDates;
+        try {
+            allInvoicesByDates = invoiceService.getAllInvoices(fromDate, toDate);
+            return new ResponseEntity<>(allInvoicesByDates, HttpStatus.OK);
+        } catch (DatabaseOperationException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
-    Invoice getInvoiceById(@PathVariable Long id) throws DatabaseOperationException {
-        return invoiceService.getInvoice(id);
-    }
-
-    @PostMapping()
-    Invoice addInvoice(@RequestBody Invoice invoice) throws DatabaseOperationException {
-        return invoiceService.addInvoice(invoice);
-    }
-
-    @PostMapping()
-    Invoice updateInvoice(@RequestBody Invoice invoice) throws DatabaseOperationException {
-        return invoiceService.updateInvoice(invoice.getId());
-    }
-}
-
- /* @GetMapping("/{id}")
-    public ResponseEntity<?> getBazz(@PathVariable String id){
-        return new ResponseEntity<>(new Bazz(id, "Bazz"+id), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBazz(@PathVariable String id){
-        return new ResponseEntity<>(new Bazz(id), HttpStatus.OK);
+    ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
+        Invoice invoice;
+        try {
+            invoice = invoiceService.getInvoice(id);
+            return new ResponseEntity<>(invoice, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DatabaseOperationException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping
-    public ResponseEntity<?> newBazz(@RequestParam("name") String name){
-        return new ResponseEntity<>(new Bazz("5", name), HttpStatus.OK);
+    ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
+        try {
+            invoiceService.addInvoice(invoice);
+            return new ResponseEntity<>(invoice, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DatabaseOperationException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateBazz(
-        @PathVariable String id,
-        @RequestParam("name") String name) {
-        return new ResponseEntity<>(new Bazz(id, name), HttpStatus.OK);
-    }*/
+    @PostMapping()
+    ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice invoice) throws DatabaseOperationException {
+        try {
+            invoiceService.updateInvoice(invoice);
+            return new ResponseEntity<>(invoice, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
