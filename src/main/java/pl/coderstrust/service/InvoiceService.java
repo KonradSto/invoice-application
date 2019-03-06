@@ -10,11 +10,11 @@ import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 
-public class InvoiceService {
+class InvoiceService {
 
     private Database database;
 
-    public InvoiceService(Database database) {
+    InvoiceService(Database database) {
         this.database = database;
     }
 

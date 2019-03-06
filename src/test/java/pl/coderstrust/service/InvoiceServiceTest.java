@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -14,9 +15,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.generators.InvoiceGenerator;
@@ -27,8 +26,8 @@ class InvoiceServiceTest {
 
     private InvoiceService invoiceService;
     private Database database;
-    Invoice invoice1;
-    Invoice invoice2;
+    private Invoice invoice1;
+    private Invoice invoice2;
 
     @BeforeEach
     void setUp() {
@@ -41,15 +40,15 @@ class InvoiceServiceTest {
     @Test
     void shouldReturnAllInvoices() throws DatabaseOperationException {
         //Given
-        List<Invoice> invoiceList = Arrays.asList(invoice1, invoice2);
-        when(database.getAllInvoices()).thenReturn(invoiceList);
+        List<Invoice> expectedInvoiceList = Arrays.asList(invoice1, invoice2);
+        when(database.getAllInvoices()).thenReturn(expectedInvoiceList);
 
         //When
-        Collection<Invoice> allInvoices = invoiceService.getAllInvoices();
+        Collection<Invoice> resultInvoiceList = invoiceService.getAllInvoices();
 
         //Then
         verify(database).getAllInvoices();
-        assertEquals(invoiceList, allInvoices);
+        assertEquals(expectedInvoiceList, resultInvoiceList);
     }
 
     @Test
@@ -60,11 +59,11 @@ class InvoiceServiceTest {
         when(database.getAllInvoices()).thenReturn(invoiceList);
 
         //When
-        Collection<Invoice> allInvoices = invoiceService.getAllInvoices(invoice1.getSeller());
+        Collection<Invoice> resultInvoiceList = invoiceService.getAllInvoices(invoice1.getSeller());
 
         //Then
         verify(database).getAllInvoices();
-        assertEquals(expectedInvoiceList, allInvoices);
+        assertEquals(expectedInvoiceList, resultInvoiceList);
     }
 
     @Test
@@ -77,11 +76,11 @@ class InvoiceServiceTest {
         when(database.getAllInvoices()).thenReturn(invoiceList);
 
         //When
-        Collection<Invoice> allInvoices = invoiceService.getAllInvoices(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
+        Collection<Invoice> resultInvoiceList = invoiceService.getAllInvoices(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31));
 
         //Then
         verify(database).getAllInvoices();
-        assertEquals(expectedInvoiceList, allInvoices);
+        assertEquals(expectedInvoiceList, resultInvoiceList);
     }
 
     @Test
@@ -113,24 +112,41 @@ class InvoiceServiceTest {
     @Test
     void deleteInvoice() throws DatabaseOperationException {
         //Given
-        List<Invoice> invoiceList = Arrays.asList(invoice1, invoice2);
-        List<Invoice> expectedInvoiceList = Arrays.asList(invoice2);
+        List<Invoice> resultInvoiceList = new ArrayList<>();
+        resultInvoiceList.add(invoice1);
+        resultInvoiceList.add(invoice2);
 
-        //Then
-        doAnswer(new Answer() {
-            @Override
-            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-                invoiceList.remove(invoice1.getId());
-                return null;
-            }
+        //When
+        doAnswer(invocationOnMock -> {
+            resultInvoiceList.remove(invoice1);
+            return null;
         }).when(database).deleteInvoice(1L);
         invoiceService.deleteInvoice(1L);
-        verify(database).deleteInvoice(1L);
-        assertEquals(expectedInvoiceList, invoiceList);
 
+        //Then
+        List<Invoice> expectedInvoiceList = new ArrayList<>();
+        expectedInvoiceList.add(invoice2);
+        verify(database).deleteInvoice(1L);
+        assertEquals(expectedInvoiceList, resultInvoiceList);
     }
 
     @Test
-    void deleteAllInvoices() {
+    void deleteAllInvoices() throws DatabaseOperationException {
+        //Given
+        List<Invoice> resultInvoiceList = new ArrayList<>();
+        resultInvoiceList.add(invoice1);
+        resultInvoiceList.add(invoice2);
+
+        //When
+        doAnswer(invocationOnMock -> {
+            resultInvoiceList.clear();
+            return null;
+        }).when(database).deleteAllInvoices();
+        invoiceService.deleteAllInvoices();
+
+        //Then
+        List<Invoice> expectedInvoiceList = new ArrayList<>();
+        verify(database).deleteAllInvoices();
+        assertEquals(expectedInvoiceList, resultInvoiceList);
     }
 }
