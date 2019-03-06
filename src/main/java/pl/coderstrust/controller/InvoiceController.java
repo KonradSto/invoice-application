@@ -1,7 +1,8 @@
 package pl.coderstrust.controller;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.database.DatabaseOperationException;
+import pl.coderstrust.database.InvoiceServiceImpl;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 
@@ -19,17 +21,18 @@ import pl.coderstrust.model.Invoice;
 @RequestMapping("/invoices")
 public class InvoiceController {
 
-    private InvoiceService invoiceService;
+    private InvoiceServiceImpl invoiceServiceImpl;
 
-    public InvoiceController(InvoiceService invoiceService) {
-        this.invoiceService = invoiceService;
+    public InvoiceController(InvoiceServiceImpl invoiceServiceImpl) {
+        this.invoiceServiceImpl = invoiceServiceImpl;
     }
 
-    @GetMapping
-    ResponseEntity<List<Invoice>> getAllInvoices() {
-        List<Invoice> allInvoices;
+    @GetMapping("/all")
+    ResponseEntity<Collection<Invoice>> getAllInvoices() {
+        //  Collection<Invoice> allInvoices;
+        Collection<Invoice> allInvoices = Collections.emptyList();
         try {
-            allInvoices = invoiceService.getAllInvoices();
+            allInvoices = invoiceServiceImpl.getAllInvoices();
             return new ResponseEntity<>(allInvoices, HttpStatus.OK);
         } catch (DatabaseOperationException e) {                // TODO: 05/03/2019 at the current Application state this will not happen (maybe can happen when real DB implementation is injected
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -37,10 +40,10 @@ public class InvoiceController {
     }
 
     @GetMapping("/{company}")
-    ResponseEntity<List<Invoice>> getInvoicesByCompany(@PathVariable Company company) {
-        List<Invoice> allInvoicesByCompany;
+    ResponseEntity<Collection<Invoice>> getInvoicesByCompany(@PathVariable Company company) {
+        Collection<Invoice> allInvoicesByCompany;
         try {
-            allInvoicesByCompany = invoiceService.getAllInvoices(company);
+            allInvoicesByCompany = invoiceServiceImpl.getAllInvoices(company);
             return new ResponseEntity<>(allInvoicesByCompany, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -50,10 +53,10 @@ public class InvoiceController {
     }
 
     @GetMapping("/{fromDate}/{toDate}")
-    ResponseEntity<List<Invoice>> getInvoicesByDateRange(@PathVariable LocalDate fromDate, @PathVariable LocalDate toDate) {
-        List<Invoice> allInvoicesByDates;
+    ResponseEntity<Collection<Invoice>> getInvoicesByDateRange(@PathVariable LocalDate fromDate, @PathVariable LocalDate toDate) {
+        Collection<Invoice> allInvoicesByDates;
         try {
-            allInvoicesByDates = invoiceService.getAllInvoices(fromDate, toDate);
+            allInvoicesByDates = invoiceServiceImpl.getAllInvoices(fromDate, toDate);
             return new ResponseEntity<>(allInvoicesByDates, HttpStatus.OK);
         } catch (DatabaseOperationException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -66,7 +69,7 @@ public class InvoiceController {
     ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
         Invoice invoice;
         try {
-            invoice = invoiceService.getInvoice(id);
+            invoice = invoiceServiceImpl.getInvoice(id);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,10 +78,10 @@ public class InvoiceController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/addInvoice")
     ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
         try {
-            invoiceService.addInvoice(invoice);
+            invoiceServiceImpl.addInvoice(invoice);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,13 +90,15 @@ public class InvoiceController {
         }
     }
 
-    @PostMapping()
+    @PostMapping("/updateInvoice")
     ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice invoice) {
         try {
-            invoiceService.updateInvoice(invoice);
+            invoiceServiceImpl.updateInvoice(invoice);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DatabaseOperationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);   // FIXME: 05/03/2019 some other status code
         }
     }
 }
