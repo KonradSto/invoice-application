@@ -12,11 +12,11 @@ import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 
 @Component
-public class InvoiceServiceImpl implements pl.coderstrust.controller.InvoiceService {
+public class InvoiceService implements pl.coderstrust.controller.InvoiceService {
 
     Database database;
 
-    public InvoiceServiceImpl(Database database) {
+    public InvoiceService(Database database) {
         Map<Long, Invoice> invoiceMap = new HashMap<>();
         database = new InMemoryDatabase(invoiceMap);
     }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.database.DatabaseOperationException;
-import pl.coderstrust.database.InvoiceServiceImpl;
+import pl.coderstrust.database.InvoiceService;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 
@@ -21,10 +21,10 @@ import pl.coderstrust.model.Invoice;
 @RequestMapping("/invoices")
 public class InvoiceController {
 
-    private InvoiceServiceImpl invoiceServiceImpl;
+    private InvoiceService invoiceService;
 
-    public InvoiceController(InvoiceServiceImpl invoiceServiceImpl) {
-        this.invoiceServiceImpl = invoiceServiceImpl;
+    public InvoiceController(InvoiceService invoiceService) {
+        this.invoiceService = invoiceService;
     }
 
     @GetMapping("/all")
@@ -32,7 +32,7 @@ public class InvoiceController {
         //  Collection<Invoice> allInvoices;
         Collection<Invoice> allInvoices = Collections.emptyList();
         try {
-            allInvoices = invoiceServiceImpl.getAllInvoices();
+            allInvoices = invoiceService.getAllInvoices();
             return new ResponseEntity<>(allInvoices, HttpStatus.OK);
         } catch (DatabaseOperationException e) {                // TODO: 05/03/2019 at the current Application state this will not happen (maybe can happen when real DB implementation is injected
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -43,7 +43,7 @@ public class InvoiceController {
     ResponseEntity<Collection<Invoice>> getInvoicesByCompany(@PathVariable Company company) {
         Collection<Invoice> allInvoicesByCompany;
         try {
-            allInvoicesByCompany = invoiceServiceImpl.getAllInvoices(company);
+            allInvoicesByCompany = invoiceService.getAllInvoices(company);
             return new ResponseEntity<>(allInvoicesByCompany, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -56,7 +56,7 @@ public class InvoiceController {
     ResponseEntity<Collection<Invoice>> getInvoicesByDateRange(@PathVariable LocalDate fromDate, @PathVariable LocalDate toDate) {
         Collection<Invoice> allInvoicesByDates;
         try {
-            allInvoicesByDates = invoiceServiceImpl.getAllInvoices(fromDate, toDate);
+            allInvoicesByDates = invoiceService.getAllInvoices(fromDate, toDate);
             return new ResponseEntity<>(allInvoicesByDates, HttpStatus.OK);
         } catch (DatabaseOperationException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -69,7 +69,7 @@ public class InvoiceController {
     ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
         Invoice invoice;
         try {
-            invoice = invoiceServiceImpl.getInvoice(id);
+            invoice = invoiceService.getInvoice(id);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -81,7 +81,7 @@ public class InvoiceController {
     @PostMapping("/addInvoice")
     ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
         try {
-            invoiceServiceImpl.addInvoice(invoice);
+            invoiceService.addInvoice(invoice);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -93,7 +93,7 @@ public class InvoiceController {
     @PostMapping("/updateInvoice")
     ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice invoice) {
         try {
-            invoiceServiceImpl.updateInvoice(invoice);
+            invoiceService.updateInvoice(invoice);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

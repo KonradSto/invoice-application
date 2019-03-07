@@ -40,24 +40,3 @@ public interface InvoiceService {
     default void deleteAllInvoices() throws DatabaseOperationException {
     }
 }
-   /* @GetMapping("/{id}")
-    public ResponseEntity<?> getBazz(@PathVariable String id){
-        return new ResponseEntity<>(new Bazz(id, "Bazz"+id), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBazz(@PathVariable String id){
-        return new ResponseEntity<>(new Bazz(id), HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity<?> newBazz(@RequestParam("name") String name){
-        return new ResponseEntity<>(new Bazz("5", name), HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateBazz(
-        @PathVariable String id,
-        @RequestParam("name") String name) {
-        return new ResponseEntity<>(new Bazz(id, name), HttpStatus.OK);
-    }*/
