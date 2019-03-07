@@ -14,14 +14,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 class InvoiceServiceTest {
 
     private InvoiceService invoiceService;
@@ -70,7 +70,6 @@ class InvoiceServiceTest {
     void shouldReturnAllInvoicesFromGivenDate() throws DatabaseOperationException {
         //Given
         Invoice invoice3 = new Invoice(invoice1.getId(), invoice1.getNumber(), LocalDate.of(2016, 9, 13), invoice1.getDueDate(), invoice1.getSeller(), invoice1.getBuyer(), invoice1.getEntries());
-
         List<Invoice> invoiceList = Arrays.asList(invoice1, invoice3, invoice3);
         List<Invoice> expectedInvoiceList = Arrays.asList(invoice3, invoice3);
         when(database.getAllInvoices()).thenReturn(invoiceList);
