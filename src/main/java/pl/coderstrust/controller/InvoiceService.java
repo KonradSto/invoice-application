@@ -10,9 +10,7 @@ import pl.coderstrust.model.Invoice;
 
 public interface InvoiceService {
 
-    default Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
-        return Collections.emptyList();
-    }
+    Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
 
     default Collection<Invoice> getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
         return Collections.emptyList();

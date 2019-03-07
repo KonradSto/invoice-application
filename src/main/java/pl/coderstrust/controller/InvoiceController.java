@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.database.DatabaseOperationException;
-import pl.coderstrust.database.InvoiceService;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 
@@ -28,12 +27,13 @@ public class InvoiceController {
     }
 
     @GetMapping("/all")
-    ResponseEntity<Collection<Invoice>> getAllInvoices() {
-        //  Collection<Invoice> allInvoices;
+    ResponseEntity<Collection<Invoice>> getAllInvoicesC() {
+        //Collection<Invoice> allInvoices;
         Collection<Invoice> allInvoices = Collections.emptyList();
         try {
             allInvoices = invoiceService.getAllInvoices();
             return new ResponseEntity<>(allInvoices, HttpStatus.OK);
+            //return new ResponseEntity<>(allInvoices, HttpStatus.OK);
         } catch (DatabaseOperationException e) {                // TODO: 05/03/2019 at the current Application state this will not happen (maybe can happen when real DB implementation is injected
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
