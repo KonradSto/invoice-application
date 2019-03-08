@@ -2,7 +2,6 @@ package pl.coderstrust.controller;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 
 import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Company;
@@ -12,29 +11,17 @@ public interface InvoiceService {
 
     Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
 
-    default Collection<Invoice> getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
-        return Collections.emptyList();
-    }
+    Collection<Invoice> getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException;
 
-    default Collection<Invoice> getAllInvoices(Company company) throws DatabaseOperationException {
-        return Collections.emptyList();
-    }
+    Collection<Invoice> getAllInvoices(Company company) throws DatabaseOperationException;
 
-    default Invoice getInvoice(Long id) throws DatabaseOperationException {
-        return new Invoice(null, null, null, null, null, null, null);
-    }
+    Invoice getInvoice(Long id) throws DatabaseOperationException;
 
-    default Invoice addInvoice(Invoice invoice) throws DatabaseOperationException {
-        return new Invoice(null, null, null, null, null, null, null);
-    }
+    Invoice addInvoice(Invoice invoice) throws DatabaseOperationException;
 
-    default Invoice updateInvoice(Invoice invoice) throws DatabaseOperationException {
-        return new Invoice(null, null, null, null, null, null, null);
-    }
+    Invoice updateInvoice(Invoice invoice) throws DatabaseOperationException;
 
-    default void deleteInvoice(Long id) throws DatabaseOperationException {
-    }
+    void deleteInvoice(Long id) throws DatabaseOperationException;
 
-    default void deleteAllInvoices() throws DatabaseOperationException {
-    }
+    void deleteAllInvoices() throws DatabaseOperationException;
 }

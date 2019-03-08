@@ -2,7 +2,6 @@ package pl.coderstrust.controller;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +27,11 @@ public class InvoiceController {
 
     @GetMapping("/all")
     ResponseEntity<Collection<Invoice>> getAllInvoicesC() {
-        //Collection<Invoice> allInvoices;
-        Collection<Invoice> allInvoices = Collections.emptyList();
+        Collection<Invoice> allInvoices;
         try {
             allInvoices = invoiceService.getAllInvoices();
             return new ResponseEntity<>(allInvoices, HttpStatus.OK);
-            //return new ResponseEntity<>(allInvoices, HttpStatus.OK);
-        } catch (DatabaseOperationException e) {                // TODO: 05/03/2019 at the current Application state this will not happen (maybe can happen when real DB implementation is injected
+        } catch (DatabaseOperationException e) {                // TODO: 07/03/2019 cannot make exception to be thrown in case of InmemoryDatabase
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

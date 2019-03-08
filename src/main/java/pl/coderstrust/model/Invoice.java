@@ -15,12 +15,12 @@ public class Invoice {
     private final List<InvoiceEntry> entries;
 
     public Invoice(Long id,
-                   String number,
-                   LocalDate issuedDate,
-                   LocalDate dueDate,
-                   Company seller,
-                   Company buyer,
-                   List<InvoiceEntry> entries) {
+        String number,
+        LocalDate issuedDate,
+        LocalDate dueDate,
+        Company seller,
+        Company buyer,
+        List<InvoiceEntry> entries) {
 
         this.id = id;
         this.number = number;
