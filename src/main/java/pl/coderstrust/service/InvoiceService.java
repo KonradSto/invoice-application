@@ -1,7 +1,6 @@
 package pl.coderstrust.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -15,40 +14,86 @@ class InvoiceService {
     private Database database;
 
     InvoiceService(Database database) {
-        this.database = database;
+        if (database != null) {
+            this.database = database;
+        } else {
+            throw new IllegalArgumentException("Invalid database argument");
+        }
     }
 
-    Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
-        return new ArrayList<>(database.getAllInvoices());
+    Collection<Invoice> getAllInvoices() throws ServiceOperationException {
+        try {
+            return database.getAllInvoices();
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
     }
 
-    Collection<Invoice> getAllInvoices(LocalDate fromDate, LocalDate toDate) throws DatabaseOperationException {
-        return this.getAllInvoices()
-            .stream()
-            .filter(invoice -> (invoice.getIssuedDate().compareTo(fromDate) >= 0 && invoice.getIssuedDate().compareTo(toDate) <= 0))
-            .collect(Collectors.toList());
+    Collection<Invoice> getAllInvoicesByDate(LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
+        if (fromDate == null || toDate == null || fromDate.isAfter(toDate)) {
+            throw new IllegalArgumentException("Passed date arguments are invalid");
+        }
+        try {
+            return database.getAllInvoices()
+                .stream()
+                .filter(invoice -> (invoice.getIssuedDate().compareTo(fromDate) >= 0 && invoice.getIssuedDate().compareTo(toDate) <= 0))
+                .collect(Collectors.toList());
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
     }
 
-    Collection<Invoice> getAllInvoices(Company company) throws DatabaseOperationException {
-        return this.getAllInvoices()
-            .stream()
-            .filter(invoice -> (invoice.getSeller().equals(company) || invoice.getBuyer().equals(company)))
-            .collect(Collectors.toList());
+    Collection<Invoice> getAllInvoicesByBuyer(Company company) throws ServiceOperationException {
+        try {
+            return database.getAllInvoices()
+                .stream()
+                .filter(invoice -> (invoice.getBuyer().equals(company)))
+                .collect(Collectors.toList());
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
     }
 
-    Invoice getInvoice(Long id) throws DatabaseOperationException {
-        return this.database.getInvoice(id);
+    Collection<Invoice> getAllInvoicesBySeller(Company company) throws ServiceOperationException {
+        try {
+            return database.getAllInvoices()
+                .stream()
+                .filter(invoice -> (invoice.getSeller().equals(company)))
+                .collect(Collectors.toList());
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
     }
 
-    Invoice addInvoice(Invoice invoice) throws DatabaseOperationException {
-        return this.database.saveInvoice(invoice);
+    Invoice getInvoice(Long id) throws ServiceOperationException {
+        try {
+            return database.getInvoice(id);
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
     }
 
-    void deleteInvoice(Long id) throws DatabaseOperationException {
-        this.database.deleteInvoice(id);
+    Invoice saveInvoice(Invoice invoice) throws ServiceOperationException {
+        try {
+            return database.saveInvoice(invoice);
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
     }
 
-    void deleteAllInvoices() throws DatabaseOperationException {
-        this.database.deleteAllInvoices();
+    void deleteInvoice(Long id) throws ServiceOperationException {
+        try {
+            database.deleteInvoice(id);
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
+    }
+
+    void deleteAllInvoices() throws ServiceOperationException {
+        try {
+            database.deleteAllInvoices();
+        } catch (DatabaseOperationException e) {
+            throw new ServiceOperationException(e.getMessage());
+        }
     }
 }
