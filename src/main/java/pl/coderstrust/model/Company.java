@@ -1,5 +1,8 @@
 package pl.coderstrust.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Company {
 
     private final Long id;
@@ -10,13 +13,14 @@ public class Company {
     private final String phoneNumber;
     private final String email;
 
-    public Company(Long id,
-                   String name,
-                   String address,
-                   String taxId,
-                   String accountNumber,
-                   String phoneNumber,
-                   String email) {
+    @JsonCreator
+    public Company(@JsonProperty("id") Long id,
+        @JsonProperty("name") String name,
+        @JsonProperty("address") String address,
+        @JsonProperty("taxId") String taxId,
+        @JsonProperty("accountNumber") String accountNumber,
+        @JsonProperty("phoneNumber") String phoneNumber,
+        @JsonProperty("email") String email) {
 
         this.id = id;
         this.name = name;

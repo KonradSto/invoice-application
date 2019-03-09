@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Invoice {
 
     private final Long id;
@@ -14,13 +17,14 @@ public class Invoice {
     private final Company buyer;
     private final List<InvoiceEntry> entries;
 
-    public Invoice(Long id,
-        String number,
-        LocalDate issuedDate,
-        LocalDate dueDate,
-        Company seller,
-        Company buyer,
-        List<InvoiceEntry> entries) {
+    @JsonCreator
+    public Invoice(@JsonProperty("id") Long id,
+        @JsonProperty("number") String number,
+        @JsonProperty("issueDate") LocalDate issuedDate,
+        @JsonProperty("dueDate") LocalDate dueDate,
+        @JsonProperty("seller") Company seller,
+        @JsonProperty("buyer") Company buyer,
+        @JsonProperty("entries") List<InvoiceEntry> entries) {
 
         this.id = id;
         this.number = number;

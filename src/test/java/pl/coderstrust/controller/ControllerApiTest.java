@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +21,9 @@ import pl.coderstrust.model.Invoice;
 @WebMvcTest(InvoiceController.class)
 public class ControllerApiTest {
 
+    @MockBean
+    InvoiceService invoiceService;
+
     @Autowired
     private MockMvc mvc;
 
@@ -30,9 +34,16 @@ public class ControllerApiTest {
         Invoice invoice3 = InvoiceGenerator.getRandomInvoice();
     }
 
-
     @Test
-    public void getAllInvoices() throws Exception {
+    public void shouldGetInvoiceNo1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+            .get("/invoices/{1}")
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.employees").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.employees[*].employeeId").isNotEmpty());
+
         mvc.perform(MockMvcRequestBuilders
             .get("/employees")
             .accept(MediaType.APPLICATION_JSON))
@@ -41,5 +52,4 @@ public class ControllerApiTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.employees").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.employees[*].employeeId").isNotEmpty());
     }
-
 }
