@@ -2,6 +2,7 @@ package pl.coderstrust.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +39,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullDatabaseArgument() {
+    void shouldThrowExceptionForNullAsDatabase() {
         assertThrows(IllegalArgumentException.class, () -> new InvoiceService(null));
     }
 
@@ -57,7 +58,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowServiceOperationExceptionWhileGetAllInvoices() throws DatabaseOperationException {
+    void shouldThrowServiceOperationExceptionWhileGettingAllInvoices() throws DatabaseOperationException {
         //When
         when(database.getAllInvoices()).thenThrow(DatabaseOperationException.class);
 
@@ -73,7 +74,7 @@ class InvoiceServiceTest {
         when(database.getAllInvoices()).thenReturn(invoiceList);
 
         //When
-        Collection<Invoice> resultInvoiceList = invoiceService.getAllInvoicesByBuyer(invoice1.getBuyer());
+        Collection<Invoice> resultInvoiceList = invoiceService.getAllInvoicesByBuyer(invoice1.getBuyer().getId());
 
         //Then
         assertEquals(expectedInvoiceList, resultInvoiceList);
@@ -86,7 +87,7 @@ class InvoiceServiceTest {
         when(database.getAllInvoices()).thenThrow(DatabaseOperationException.class);
 
         //Then
-        assertThrows(ServiceOperationException.class, () -> invoiceService.getAllInvoicesByBuyer(invoice1.getBuyer()));
+        assertThrows(ServiceOperationException.class, () -> invoiceService.getAllInvoicesByBuyer(invoice1.getBuyer().getId()));
     }
 
     @Test
@@ -97,7 +98,7 @@ class InvoiceServiceTest {
         when(database.getAllInvoices()).thenReturn(invoiceList);
 
         //When
-        Collection<Invoice> resultInvoiceList = invoiceService.getAllInvoicesBySeller(invoice1.getSeller());
+        Collection<Invoice> resultInvoiceList = invoiceService.getAllInvoicesBySeller(invoice1.getSeller().getId());
 
         //Then
         assertEquals(expectedInvoiceList, resultInvoiceList);
@@ -110,7 +111,7 @@ class InvoiceServiceTest {
         when(database.getAllInvoices()).thenThrow(DatabaseOperationException.class);
 
         //Then
-        assertThrows(ServiceOperationException.class, () -> invoiceService.getAllInvoicesBySeller(invoice1.getSeller()));
+        assertThrows(ServiceOperationException.class, () -> invoiceService.getAllInvoicesBySeller(invoice1.getSeller().getId()));
     }
 
     @Test
@@ -131,13 +132,27 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullIDate() {
-        assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesByDate(null, null));
+    void shouldThrowExceptionForNullIFromDate() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesByDate(null, LocalDate.of(2018, 4, 11)));
     }
 
     @Test
-    void shouldThrowExceptionWhenFromDateIsAfterThanToDate() {
+    void shouldThrowExceptionForNullIToDate() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesByDate(LocalDate.of(2016, 4, 21), null));
+    }
+
+    @Test
+    void shouldThrowExceptionForInvalidDates() {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesByDate(LocalDate.of(2017, 1, 20), LocalDate.of(2016, 6, 13)));
+    }
+
+    @Test
+    void shouldThrowServiceOperationExceptionWhileGettingAllInvoiceFromGivenDataRange() throws DatabaseOperationException {
+        //When
+        when(database.getAllInvoices()).thenThrow(DatabaseOperationException.class);
+
+        //Then
+        assertThrows(ServiceOperationException.class, () -> invoiceService.getAllInvoicesByDate(LocalDate.of(2016, 4, 21), LocalDate.of(2017, 1, 20)));
     }
 
     @Test
@@ -154,7 +169,12 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowServiceOperationExceptionWhileGetInvoiceMethod() throws DatabaseOperationException {
+    void shouldThrowExceptionForNullIdWhileGettingInvoice() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.getInvoice(null));
+    }
+
+    @Test
+    void shouldThrowServiceOperationExceptionWhileGettingInvoice() throws DatabaseOperationException {
         //When
         when(database.getInvoice(2L)).thenThrow(DatabaseOperationException.class);
 
@@ -176,7 +196,12 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowServiceOperationExceptionWhileSaveInvoiceMethod() throws DatabaseOperationException {
+    void shouldThrowExceptionForNullInvoiceWhileSavingNullInvoice() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.saveInvoice(null));
+    }
+
+    @Test
+    void shouldThrowServiceOperationExceptionWhileSavingInvoice() throws DatabaseOperationException {
         //When
         when(database.saveInvoice(invoice1)).thenThrow(DatabaseOperationException.class);
 
@@ -194,11 +219,38 @@ class InvoiceServiceTest {
     }
 
     @Test
+    void shouldThrowExceptionForNullIdWhileDeletingInvoice() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.deleteInvoice(null));
+    }
+
+    @Test
+    void shouldThrowServiceOperationExceptionWhileDeletingInvoice() throws DatabaseOperationException {
+        //When
+        doThrow(DatabaseOperationException.class)
+            .when(database)
+            .deleteInvoice(1L);
+
+        //Then
+        assertThrows(ServiceOperationException.class, () -> invoiceService.deleteInvoice(1L));
+    }
+
+    @Test
     void shouldDeleteAllInvoices() throws ServiceOperationException, DatabaseOperationException {
         //When
         invoiceService.deleteAllInvoices();
 
         //Then
         verify(database).deleteAllInvoices();
+    }
+
+    @Test
+    void shouldThrowServiceOperationExceptionWhileDeletingAllInvoices() throws DatabaseOperationException {
+        //When
+        doThrow(DatabaseOperationException.class)
+            .when(database)
+            .deleteAllInvoices();
+
+        //Then
+        assertThrows(ServiceOperationException.class, () -> invoiceService.deleteAllInvoices());
     }
 }
