@@ -158,7 +158,6 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            //get("/invoices/byDate?fromDate=2018-01-01&toDate=2018-01-31").accept(MediaType.APPLICATION_JSON_UTF8))
             get("/invoices/byDate?fromDate=2018-01-01&toDate=2018-01-31").accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
