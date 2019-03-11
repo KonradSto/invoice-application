@@ -49,9 +49,24 @@ public class InvoiceController {
         }
     }
 
+    @GetMapping("/byDate")
+        // TODO: 11/03/2019  //invoices/byData?fromdate=123&todate=123
+    ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+        if (fromDate == null || toDate == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        Collection<Invoice> allInvoicesByDates;
+        try {
+            allInvoicesByDates = invoiceService.getAllInvoicesByDate(fromDate, toDate);
+            return ResponseEntity.status(HttpStatus.OK).body(allInvoicesByDates);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     // TODO: 10/03/2019  Karolina chyba powinna dodac do naglowka IllegalArgumentException
     // FIXME: 11/03/2019  to gowno mi wszystko zepsulo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  /*  @GetMapping("/{company}")
+    @GetMapping("company/{id}")
     ResponseEntity<Collection<Invoice>> getAllInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -63,7 +78,7 @@ public class InvoiceController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }*/
+    }
 // FIXME: 11/03/2019  below causing all tests to fail
  /*   @GetMapping("/{company}")
     ResponseEntity<Collection<Invoice>> getAllInvoicesBySeller(@RequestParam Long id) {
@@ -79,22 +94,7 @@ public class InvoiceController {
         }
     }*/
 
-    @GetMapping("/byDate")
-        // TODO: 11/03/2019  //invoices/byData?fromdate=123&todate=123
-    ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
-        if (fromDate == null || toDate == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        Collection<Invoice> allInvoicesByDates;
-        try {
-            allInvoicesByDates = invoiceService.getAllInvoicesByDate(fromDate, toDate);
-            return ResponseEntity.status(HttpStatus.OK).body(allInvoicesByDates);
-        } catch (ServiceOperationException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
+
 
    /* @RestController
     @RequestMapping("/api/datetime/")
