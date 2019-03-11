@@ -5,6 +5,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -45,19 +50,120 @@ class InvoiceControllerTest {
 
     @Test
     void shouldReturnInvoice() throws Exception {
+        //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoice();
         when(invoiceService.getInvoice(1L)).thenReturn(invoice);
 
+        //When
         MvcResult result = mockMvc.perform(
             get("/invoices/{id}", 1L).accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
-
         int actualHttpStatus = result.getResponse().getStatus();
         Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
-
-        //Assert
+        //Then
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
         assertEquals(invoice, actualInvoice);
         verify(invoiceService).getInvoice(1L);
+    }
+
+    @Test
+//    get("/invoices/{id}", null).accept(MediaType.APPLICATION_JSON_UTF8))
+    void shouldReturnHttpNotFoundStatusWhenNullReturnedFromInvoiceServiceMethod() throws Exception {
+        //Given
+        Long nonExistentId = 10L;
+        when(invoiceService.getInvoice(nonExistentId)).thenReturn(null);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/{id}", nonExistentId).accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.NOT_FOUND.value(), actualHttpStatus);
+        verify(invoiceService).getInvoice(nonExistentId);
+    }
+
+    @Test
+        // FIXME: 10/03/2019 shoulsreturninternalserver error during getting invoice when sth wetn wrong on server
+    void shouldReturnHttpInternalServerErrorWhenExceptionThrownByInvoiceServiceMethod() throws Exception {
+        //Given
+        // TODO: 10/03/2019 should I procure ecxeption like below or in some other way
+        Long id = 10L;
+        when(invoiceService.getInvoice(id)).thenThrow(ServiceOperationException.class);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/{id}", id).accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
+        verify(invoiceService).getInvoice(id);
+    }
+
+    @Test
+    void shouldReturnAllInvoices() throws Exception {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoice();
+        Collection<Invoice> invoices = Arrays.asList(invoice1, invoice2);
+
+        when(invoiceService.getAllInvoices()).thenReturn(invoices);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        //  Collection<Invoice> actualBody = result.
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        verify(invoiceService).getAllInvoices();
+        List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
+        });
+        assertEquals(invoices, actualInvoices);
+
+        // TODO: 10/03/2019  how to verify response - Collection of invoice returned is as expected here
+        //  List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
+        //   });
+    }
+
+    @Test
+        // TODO: 10/03/2019  how to name tests like below
+        // TODO: 10/03/2019  when Bad request when  internalserver error   ( illegalArgumentEx vs serviceOperationEx ?? )
+    void shouldReturnInternalServerErrorForGetAllInvoices() throws Exception {
+        //Given
+        when(invoiceService.getAllInvoices()).thenThrow(ServiceOperationException.class);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
+        verify(invoiceService).getAllInvoices();
+    }
+
+    @Test
+    void shouldReturnInvoicesIssuedWithinGivenDates() throws Exception {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoice();
+        Collection<Invoice> allInvoices = Arrays.asList(invoice1, invoice2);
+        when(invoiceService.getAllInvoices()).thenReturn(allInvoices);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/byDate?fromDate=").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        //  Collection<Invoice> actualBody = result.
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        verify(invoiceService).getAllInvoices();
     }
 }
