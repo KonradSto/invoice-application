@@ -153,8 +153,8 @@ class InvoiceControllerTest {
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 15));
         Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 31));
         Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 2, 1));
-        Collection<Invoice> allInvoices = Arrays.asList(invoice1, invoice2, invoice3, invoice4);
-        when(invoiceService.getAllInvoicesByDate(fromDate, toDate)).thenReturn(Arrays.asList(invoice1, invoice2, invoice3));
+        List<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
+        when(invoiceService.getAllInvoicesByDate(fromDate, toDate)).thenReturn(expected);
 
         //When
         MvcResult result = mockMvc.perform(
@@ -162,10 +162,12 @@ class InvoiceControllerTest {
             get("/invoices/byDate?fromDate=2018-01-01&toDate=2018-01-31").accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
-        //Collection<Invoice> actualBody = result.
-        //Then
+        List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
+        });
 
+        //Then
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
-        //verify(invoiceService).getAllInvoices();
+        assertEquals(expected, actualInvoices);
+        verify(invoiceService).getAllInvoicesByDate(fromDate, toDate);
     }
 }
