@@ -20,6 +20,27 @@ public class InvoiceGenerator {
         return new Invoice(id, number, issueDate, dueDate, seller, buyer, entry);
     }
 
+    public static Invoice getRandomInvoiceWithSpecificBuyerId(Long id) {
+        Long invoiceId = IdGenerator.getNextId();
+        String number = InvoiceNumberGenerator.getNextInvoiceNumber();
+        LocalDate issueDate = LocalDate.now();
+        LocalDate dueDate = issueDate.plusDays(2);
+        Company seller = CompanyGenerator.getRandomCompany();
+        Company buyer = CompanyGenerator.getRandomCompanyWithSpecificId(id);
+        List<InvoiceEntry> entry = InvoiceEntryGenerator.getRandomEntries(2);
+        return new Invoice(invoiceId, number, issueDate, dueDate, seller, buyer, entry);
+    }
+
+    public static Invoice getRandomInvoiceWithSpecificSellerId(Long id) {
+        Long invoiceId = IdGenerator.getNextId();
+        String number = InvoiceNumberGenerator.getNextInvoiceNumber();
+        LocalDate issueDate = LocalDate.now();
+        LocalDate dueDate = issueDate.plusDays(2);
+        Company seller = CompanyGenerator.getRandomCompanyWithSpecificId(id);
+        Company buyer = CompanyGenerator.getRandomCompany();
+        List<InvoiceEntry> entry = InvoiceEntryGenerator.getRandomEntries(2);
+        return new Invoice(invoiceId, number, issueDate, dueDate, seller, buyer, entry);
+    }
 
     public static Invoice getRandomInvoiceWithoutId() {
         String number = InvoiceNumberGenerator.getNextInvoiceNumber();
