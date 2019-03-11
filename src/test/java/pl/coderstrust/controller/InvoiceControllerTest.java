@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -109,7 +110,6 @@ class InvoiceControllerTest {
         Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
         Invoice invoice2 = InvoiceGenerator.getRandomInvoice();
         Collection<Invoice> invoices = Arrays.asList(invoice1, invoice2);
-
         when(invoiceService.getAllInvoices()).thenReturn(invoices);
 
         //When
@@ -124,10 +124,6 @@ class InvoiceControllerTest {
         List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
         });
         assertEquals(invoices, actualInvoices);
-
-        // TODO: 10/03/2019  how to verify response - Collection of invoice returned is as expected here
-        //  List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
-        //   });
     }
 
     @Test
@@ -151,19 +147,25 @@ class InvoiceControllerTest {
     @Test
     void shouldReturnInvoicesIssuedWithinGivenDates() throws Exception {
         //Given
-        Invoice invoice1 = InvoiceGenerator.getRandomInvoice();
-        Invoice invoice2 = InvoiceGenerator.getRandomInvoice();
-        Collection<Invoice> allInvoices = Arrays.asList(invoice1, invoice2);
-        when(invoiceService.getAllInvoices()).thenReturn(allInvoices);
+        LocalDate fromDate = LocalDate.of(2018, 1, 1);
+        LocalDate toDate = LocalDate.of(2018, 1, 31);
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 1));
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 15));
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 31));
+        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 2, 1));
+        Collection<Invoice> allInvoices = Arrays.asList(invoice1, invoice2, invoice3, invoice4);
+        when(invoiceService.getAllInvoicesByDate(fromDate, toDate)).thenReturn(Arrays.asList(invoice1, invoice2, invoice3));
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/byDate?fromDate=").accept(MediaType.APPLICATION_JSON_UTF8))
+            //get("/invoices/byDate?fromDate=2018-01-01&toDate=2018-01-31").accept(MediaType.APPLICATION_JSON_UTF8))
+            get("/invoices/byDate?fromDate=2018-01-01&toDate=2018-01-31").accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
-        //  Collection<Invoice> actualBody = result.
+        //Collection<Invoice> actualBody = result.
         //Then
+
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
-        verify(invoiceService).getAllInvoices();
+        //verify(invoiceService).getAllInvoices();
     }
 }
