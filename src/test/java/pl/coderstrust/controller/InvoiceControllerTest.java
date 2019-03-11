@@ -213,7 +213,7 @@ class InvoiceControllerTest {
 
     @Test
     void shouldReturnInternalServerErrorWhenWhenExceptionThrownByGetAllInvoicesByBuyerId() throws Exception {
-        //When
+        //Given
         when(invoiceService.getAllInvoicesByBuyer(1L)).thenThrow(ServiceOperationException.class);
 
         //When
