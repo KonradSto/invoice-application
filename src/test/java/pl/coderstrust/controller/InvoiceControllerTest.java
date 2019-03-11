@@ -188,4 +188,26 @@ class InvoiceControllerTest {
         verify(invoiceService).getAllInvoicesByDate(fromDate, toDate);
     }
 
+    @Test
+    void shouldReturnInvoicesByGivenBuyerId() throws Exception {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(1L);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(1L);
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(2L);
+        List<Invoice> expected = Arrays.asList(invoice1, invoice2);
+        when(invoiceService.getAllInvoicesByBuyer(1L)).thenReturn(expected);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/buyer?id=1").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
+        });
+
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(expected, actualInvoices);
+        verify(invoiceService).getAllInvoicesByBuyer(1L);
+    }
 }
