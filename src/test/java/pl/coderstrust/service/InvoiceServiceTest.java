@@ -67,7 +67,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldReturnAllInvoicesFromGivenBuyer() throws DatabaseOperationException, ServiceOperationException {
+    void shouldReturnAllInvoicesForGivenBuyer() throws DatabaseOperationException, ServiceOperationException {
         //Given
         List<Invoice> invoiceList = Arrays.asList(invoice1, invoice2, invoice1);
         List<Invoice> expectedInvoiceList = Arrays.asList(invoice1, invoice1);
@@ -82,7 +82,12 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowServiceOperationExceptionWhileGetAllInvoicesByBuyer() throws DatabaseOperationException {
+    void shouldThrowExceptionForNullAsIdWhileGettingInvoicesByBuyer() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesByBuyer(null));
+    }
+
+    @Test
+    void shouldThrowServiceOperationExceptionWhileGettingAllInvoicesByBuyer() throws DatabaseOperationException {
         //When
         when(database.getAllInvoices()).thenThrow(DatabaseOperationException.class);
 
@@ -91,7 +96,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldReturnAllInvoicesFromGivenSeller() throws DatabaseOperationException, ServiceOperationException {
+    void shouldReturnAllInvoicesForGivenSeller() throws DatabaseOperationException, ServiceOperationException {
         //Given
         List<Invoice> invoiceList = Arrays.asList(invoice1, invoice2, invoice1);
         List<Invoice> expectedInvoiceList = Arrays.asList(invoice1, invoice1);
@@ -106,7 +111,12 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowServiceOperationExceptionWhileGetAllInvoicesBySeller() throws DatabaseOperationException {
+    void shouldThrowExceptionForNullAsIdWhileGettingInvoicesBySeller() {
+        assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesBySeller(null));
+    }
+
+    @Test
+    void shouldThrowServiceOperationExceptionWhileGettingAllInvoicesBySeller() throws DatabaseOperationException {
         //When
         when(database.getAllInvoices()).thenThrow(DatabaseOperationException.class);
 
@@ -132,12 +142,12 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullIFromDate() {
+    void shouldThrowExceptionForNullAsFromDate() {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesByDate(null, LocalDate.of(2018, 4, 11)));
     }
 
     @Test
-    void shouldThrowExceptionForNullIToDate() {
+    void shouldThrowExceptionForNullAsToDate() {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.getAllInvoicesByDate(LocalDate.of(2016, 4, 21), null));
     }
 
@@ -169,7 +179,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullIdWhileGettingInvoice() {
+    void shouldThrowExceptionForNullAsIdWhileGettingInvoice() {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.getInvoice(null));
     }
 
@@ -196,7 +206,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullInvoiceWhileSavingNullInvoice() {
+    void shouldThrowExceptionForNullAsInvoiceWhileSavingNullInvoice() {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.saveInvoice(null));
     }
 
@@ -219,7 +229,7 @@ class InvoiceServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullIdWhileDeletingInvoice() {
+    void shouldThrowExceptionForNullAsIdWhileDeletingInvoice() {
         assertThrows(IllegalArgumentException.class, () -> invoiceService.deleteInvoice(null));
     }
 

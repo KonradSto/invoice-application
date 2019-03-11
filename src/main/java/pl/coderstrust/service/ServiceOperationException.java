@@ -2,11 +2,11 @@ package pl.coderstrust.service;
 
 public class ServiceOperationException extends Exception {
 
-    public ServiceOperationException(String message) {
-        super(message);
+    public ServiceOperationException() {
     }
 
-    public ServiceOperationException() {
+    public ServiceOperationException(String message) {
+        super(message);
     }
 
     public ServiceOperationException(Throwable cause) {
