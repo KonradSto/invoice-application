@@ -172,9 +172,9 @@ class InvoiceControllerTest {
 
     @Test
     void shouldReturnInternalServerErrorWhenWhenExceptionThrownByGetAllInvoicesByDate() throws Exception {
+        //Given
         LocalDate fromDate = LocalDate.of(2018, 1, 1);
         LocalDate toDate = LocalDate.of(2018, 1, 31);
-        //When
         when(invoiceService.getAllInvoicesByDate(fromDate, toDate)).thenThrow(ServiceOperationException.class);
 
         //When
@@ -210,4 +210,21 @@ class InvoiceControllerTest {
         assertEquals(expected, actualInvoices);
         verify(invoiceService).getAllInvoicesByBuyer(1L);
     }
+
+    @Test
+    void shouldReturnInternalServerErrorWhenWhenExceptionThrownByGetAllInvoicesByBuyerId() throws Exception {
+        //When
+        when(invoiceService.getAllInvoicesByBuyer(1L)).thenThrow(ServiceOperationException.class);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/buyer?id=1").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
+        verify(invoiceService).getAllInvoicesByBuyer(1L);
+    }
+
 }
