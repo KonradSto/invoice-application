@@ -40,7 +40,6 @@ class InvoiceControllerTest {
 
     @MockBean
     private InvoiceService invoiceService;
-
     private ObjectMapper mapper;
 
     @BeforeEach
@@ -69,8 +68,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-//    get("/invoices/{id}", null).accept(MediaType.APPLICATION_JSON_UTF8))
-    void shouldReturnHttpNotFoundStatusWhenNullReturnedFromInvoiceServiceMethod() throws Exception {
+    void shouldReturnNotFoundStatusWhenNullReturnedFromInvoiceServiceMethod() throws Exception {
         //Given
         Long nonExistentId = 10L;
         when(invoiceService.getInvoice(nonExistentId)).thenReturn(null);
@@ -87,10 +85,8 @@ class InvoiceControllerTest {
     }
 
     @Test
-        // FIXME: 10/03/2019 shoulsreturninternalserver error during getting invoice when sth wetn wrong on server
-    void shouldReturnHttpInternalServerErrorWhenExceptionThrownByInvoiceServiceMethod() throws Exception {
+    void shouldReturnInternalServerErrorDuringGettingInvoiceWhenSomethingWentWrongOnServer() throws Exception {
         //Given
-        // TODO: 10/03/2019 should I procure ecxeption like below or in some other way
         Long id = 10L;
         when(invoiceService.getInvoice(id)).thenThrow(ServiceOperationException.class);
 
@@ -128,9 +124,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-        // TODO: 10/03/2019  how to name tests like below
-        // TODO: 10/03/2019  when Bad request when  internalserver error   ( illegalArgumentEx vs serviceOperationEx ?? )
-    void shouldReturnInternalServerErrorForGetAllInvoices() throws Exception {
+    void shouldReturnInternalServerErrorDuringGettingAllInvoicesWhenSomethingWentWrongOnServer() throws Exception {
         //Given
         when(invoiceService.getAllInvoices()).thenThrow(ServiceOperationException.class);
 
@@ -146,14 +140,13 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnInvoicesIssuedWithinGivenDates() throws Exception {
+    void shouldReturnAllInvoicesIssuedWithinGivenDates() throws Exception {
         //Given
         String fromDate = "2018-01-01";
         String toDate = "2018-01-31";
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(fromDate));
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-01-15"));
         Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(toDate));
-        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-02-01"));
         List<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
         when(invoiceService.getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate))).thenReturn(expected);
 
@@ -175,7 +168,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnInternalServerErrorWhenWhenExceptionThrownByGetAllInvoicesByDate() throws Exception {
+    void shouldReturnInternalServerErrorWhenExceptionThrownByInvoiceServiceDuringGettingAllInvoicesByDate() throws Exception {
         //Given
         String fromDate = "2018-01-01";
         String toDate = "2018-01-31";
@@ -196,7 +189,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestWhenFromDateParsedValueIsNull() throws Exception {
+    void shouldReturnBadRequestWhenFromDateParsedValueIsNullDuringGettingAllInvoicesByDate() throws Exception {
         //Given
         String fromDate = "2018-01-01";
         String toDate = "2018-01-31";
@@ -216,7 +209,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestWhenToDateParsedValueIsNull() throws Exception {
+    void shouldReturnBadRequestWhenToDateParsedValueIsNullDuringGettingAllInvoicesByDate() throws Exception {
         //Given
         String fromDate = "2018-01-01";
         String toDate = "2018-01-31";
@@ -260,7 +253,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnInternalServerErrorWhenExceptionThrownByGetAllInvoicesByBuyerId() throws Exception {
+    void shouldReturnInternalServerErrorWhenExceptionThrownByInvoiceServiceDuringGettingAllInvoicesByBuyerId() throws Exception {
         //Given
         when(invoiceService.getAllInvoicesByBuyer(1L)).thenThrow(ServiceOperationException.class);
 
@@ -301,8 +294,9 @@ class InvoiceControllerTest {
         verify(invoiceService).getAllInvoicesBySeller(1L);
     }
 
+    // shouldReturnBadRequestWhenToDateParsedValueIsNullDuringGettingAllInvoicesByDate
     @Test
-    void shouldReturnInternalServerErrorWhenExceptionThrownByGetAllInvoicesBySellerId() throws Exception {
+    void shouldReturnInternalServerErrorWhenExceptionThrownByInvoiceServiceDuringGettingAllInvoicesBySellerId() throws Exception {
         //Given
         when(invoiceService.getAllInvoicesBySeller(1L)).thenThrow(ServiceOperationException.class);
 
@@ -315,10 +309,10 @@ class InvoiceControllerTest {
         int actualHttpStatus = result.getResponse().getStatus();
 
         //Then
-        //verify(invoiceService, never()).getAllInvoicesByDate("", null);
         verify(invoiceService, never()).getAllInvoicesByBuyer(1L);
         verify(invoiceService).getAllInvoicesBySeller(1L);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
     }
+
 
 }
