@@ -1,11 +1,13 @@
 package pl.coderstrust.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -347,19 +349,97 @@ class InvoiceControllerTest {
 
     @Test
     void shouldDeleteInvoice() throws Exception {
-        //Given
-        Invoice invoice = InvoiceGenerator.getRandomInvoice();
-        //  (invocation(1L);
-
         //When
         MvcResult result = mockMvc.perform(
             delete("/invoices/{id}", 1L).accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        verify(invoiceService).deleteInvoice(1L);
+    }
+
+    @Test
+    void shouldReturnInternalServerErrorDuringDeletingInvoiceWhenSomethingWentWrongOnServer() throws Exception {
+        //Given
+        Long id = 10L;
+        doThrow(ServiceOperationException.class)
+            .when(invoiceService)
+            .deleteInvoice(id);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            delete("/invoices/{id}", id).accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
+        verify(invoiceService).deleteInvoice(id);
+    }
+
+    @Test
+    void shouldDeleteAllInvoices() throws Exception {
+        //When
+        MvcResult result = mockMvc.perform(
+            delete("/invoices").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        verify(invoiceService).deleteAllInvoices();
+    }
+
+    //shouldReturnInternalServerErrorDuringGettingAllInvoicesWhenSomethingWentWrongOnServer
+    @Test
+    void shouldReturnInternalServerErrorDuringDeletingAllInvoicesWhenSomethingWentWrongOnServer() throws Exception {
+        //Given
+        doThrow(ServiceOperationException.class)
+            .when(invoiceService)
+            .deleteAllInvoices();
+
+        //When
+        MvcResult result = mockMvc.perform(
+            delete("/invoices").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
+        verify(invoiceService).deleteAllInvoices();
+    }
+
+    @Test
+    void shouldSaveInvoice() throws Exception {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
+        when(invoiceService.saveInvoice(invoice)).thenReturn(invoice);
+        ObjectMapper invoiceAsJson = mapper.writeValueAsString(invoice);
+        //When
+        MvcResult result = mockMvc.perform(
+            put(String.format("/invoices/%d", invoice.getId()))
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .content(invoiceAsJson))
+            //.content(mapper.writeValueAsString(invoice)))
+            .andReturn();
+
+        int actualHttpStatus = result.getResponse().getStatus();
         Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
         //Then
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        verify(invoiceService).saveInvoice(invoice);
         assertEquals(invoice, actualInvoice);
-        verify(invoiceService).getInvoice(1L);
     }
+/*
+
+  mockMvc.perform(put("/api/todo/{id}", 1L)
+                .contentType(IntegrationTestUtil.APPLICATION_JSON_UTF8)
+                .body(IntegrationTestUtil.convertObjectToJsonBytes(updated))
+        )
+        .andExpect(status().isBadRequest())
+        .andExpect(content().mimeType(IntegrationTestUtil.APPLICATION_JSON_UTF8))
+        .andExpect(content().string("{\"fieldErrors\":[{\"path\":\"title\",\"message\":\"The title cannot be empty.\"}]}"));
+*/
+
 }

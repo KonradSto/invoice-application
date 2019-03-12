@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -107,6 +109,7 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
+        // TODO: 12/03/2019  how to test it???? maybe this check is unneccesary
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -118,26 +121,28 @@ public class InvoiceController {
         }
     }
 
-    // TODO: 11/03/2019  what id deleteInvoice called with null id - make sure it will not fallout here to delete all invoices
-   /* @DeleteMapping()
-    ResponseEntity<?> deleteAllInvoices() {
+    @DeleteMapping
+    ResponseEntity<?> deleteAllInvoice() {
         try {
             invoiceService.deleteAllInvoices();
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }*/
+    }
+
+    // TODO: 11/03/2019  what id deleteInvoice called with null id - make sure it will not fallout here to delete all invoices
+
     // TODO: 10/03/2019 not sure if that method should be implemented  (see updateInvoice)
 
-    /*
-    @PostMapping("/saveInvoice")
-    ResponseEntity<Invoice> saveInvoice(@RequestBody Invoice invoice) {
+    @PutMapping("/{id}")
+    ResponseEntity<Invoice> saveInvoice(@PathVariable Long id, @RequestBody Invoice invoice) {
+        // ResponseEntity<Invoice> saveInvoice(@PathVariable Long id, @RequestParam Invoice invoice) {
         try {
             invoiceService.saveInvoice(invoice);
-            return new ResponseEntity<>(invoice, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(invoice);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-    }*/
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
