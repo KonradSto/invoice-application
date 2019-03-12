@@ -7,15 +7,14 @@ import java.util.stream.Collectors;
 import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.utils.ArgumentValidator;
 
 class InvoiceService {
 
     private Database database;
 
     InvoiceService(Database database) {
-        if (database == null) {
-            throw new IllegalArgumentException("Database cannot be null.");
-        }
+        ArgumentValidator.ensureNotNull(database, "database");
         this.database = database;
     }
 
@@ -28,12 +27,8 @@ class InvoiceService {
     }
 
     Collection<Invoice> getAllInvoicesByDate(LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
-        if (fromDate == null) {
-            throw new IllegalArgumentException("From date cannot be null.");
-        }
-        if (toDate == null) {
-            throw new IllegalArgumentException("To date cannot be null.");
-        }
+        ArgumentValidator.ensureNotNull(fromDate, "fromDate");
+        ArgumentValidator.ensureNotNull(toDate, "toDate");
         if (fromDate.isAfter(toDate)) {
             throw new IllegalArgumentException("From date cannot be after to date.");
         }
@@ -48,7 +43,7 @@ class InvoiceService {
     }
 
     Collection<Invoice> getAllInvoicesByBuyer(Long id) throws ServiceOperationException {
-        validateIdArgumentForNull(id);
+        ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getAllInvoices()
                 .stream()
@@ -60,7 +55,7 @@ class InvoiceService {
     }
 
     Collection<Invoice> getAllInvoicesBySeller(Long id) throws ServiceOperationException {
-        validateIdArgumentForNull(id);
+        ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getAllInvoices()
                 .stream()
@@ -72,7 +67,7 @@ class InvoiceService {
     }
 
     Invoice getInvoice(Long id) throws ServiceOperationException {
-        validateIdArgumentForNull(id);
+        ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getInvoice(id);
         } catch (DatabaseOperationException e) {
@@ -81,9 +76,7 @@ class InvoiceService {
     }
 
     Invoice saveInvoice(Invoice invoice) throws ServiceOperationException {
-        if (invoice == null) {
-            throw new IllegalArgumentException("Invoice cannot be null");
-        }
+        ArgumentValidator.ensureNotNull(invoice, "invoice");
         try {
             return database.saveInvoice(invoice);
         } catch (DatabaseOperationException e) {
@@ -92,7 +85,7 @@ class InvoiceService {
     }
 
     void deleteInvoice(Long id) throws ServiceOperationException {
-        validateIdArgumentForNull(id);
+        ArgumentValidator.ensureNotNull(id, "id");
         try {
             database.deleteInvoice(id);
         } catch (DatabaseOperationException e) {
@@ -105,12 +98,6 @@ class InvoiceService {
             database.deleteAllInvoices();
         } catch (DatabaseOperationException e) {
             throw new ServiceOperationException("An error occurred during deleting all invoices", e);
-        }
-    }
-
-    private void validateIdArgumentForNull(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
         }
     }
 }
