@@ -1,9 +1,9 @@
 package pl.coderstrust.model;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.math.BigDecimal;
 
 public class InvoiceEntry {
 
@@ -18,13 +18,13 @@ public class InvoiceEntry {
 
     @JsonCreator
     public InvoiceEntry(@JsonProperty("id") Long id,
-        @JsonProperty("productName") String productName,
-        @JsonProperty("quantity") double quantity,
-        @JsonProperty("unit") String unit,
-        @JsonProperty("price") BigDecimal price,
-        @JsonProperty("nettValue") BigDecimal nettValue,
-        @JsonProperty("grossValue") BigDecimal grossValue,
-        @JsonProperty("vatRate") Vat vatRate) {
+                        @JsonProperty("productName") String productName,
+                        @JsonProperty("quantity") double quantity,
+                        @JsonProperty("unit") String unit,
+                        @JsonProperty("price") BigDecimal price,
+                        @JsonProperty("nettValue") BigDecimal nettValue,
+                        @JsonProperty("grossValue") BigDecimal grossValue,
+                        @JsonProperty("vatRate") Vat vatRate) {
 
         this.id = id;
         this.productName = productName;

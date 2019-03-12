@@ -1,11 +1,11 @@
 package pl.coderstrust.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Invoice {
 
@@ -19,12 +19,12 @@ public class Invoice {
 
     @JsonCreator
     public Invoice(@JsonProperty("id") Long id,
-        @JsonProperty("number") String number,
-        @JsonProperty("issuedDate") LocalDate issuedDate,
-        @JsonProperty("dueDate") LocalDate dueDate,
-        @JsonProperty("seller") Company seller,
-        @JsonProperty("buyer") Company buyer,
-        @JsonProperty("entries") List<InvoiceEntry> entries) {
+                   @JsonProperty("number") String number,
+                   @JsonProperty("issuedDate") LocalDate issuedDate,
+                   @JsonProperty("dueDate") LocalDate dueDate,
+                   @JsonProperty("seller") Company seller,
+                   @JsonProperty("buyer") Company buyer,
+                   @JsonProperty("entries") List<InvoiceEntry> entries) {
 
         this.id = id;
         this.number = number;
