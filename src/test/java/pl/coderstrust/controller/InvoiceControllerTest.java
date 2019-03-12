@@ -390,7 +390,6 @@ class InvoiceControllerTest {
         verify(invoiceService).deleteAllInvoices();
     }
 
-    //shouldReturnInternalServerErrorDuringGettingAllInvoicesWhenSomethingWentWrongOnServer
     @Test
     void shouldReturnInternalServerErrorDuringDeletingAllInvoicesWhenSomethingWentWrongOnServer() throws Exception {
         //Given
@@ -416,11 +415,30 @@ class InvoiceControllerTest {
         when(invoiceService.saveInvoice(invoice)).thenReturn(invoice);
         String invoiceAsJson = mapper.writeValueAsString(invoice);
 
-        System.out.println("=========================================================================================================");
-        System.out.println("=========================================================================================================");
-        System.out.println("=========================================================================================================");
-        System.out.println(invoiceAsJson);
-        System.out.println("issuedDate  " + invoice.getIssuedDate());
+        //When
+        MvcResult result = mockMvc.perform(
+            put(String.format("/invoices/%d", invoice.getId()))
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .content(invoiceAsJson))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
+
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(invoice, actualInvoice);
+        verify(invoiceService).saveInvoice(invoice);
+    }
+
+    @Test
+    void shouldReturnInternalServerErrorDuringSavingInvoiceWhenSomethingWentWrongOnServer() throws Exception {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
+        String invoiceAsJson = mapper.writeValueAsString(invoice);
+        doThrow(ServiceOperationException.class)
+            .when(invoiceService)
+            .saveInvoice(invoice);
 
         //When
         MvcResult result = mockMvc.perform(
@@ -428,25 +446,11 @@ class InvoiceControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .content(invoiceAsJson))
-            //.content(mapper.writeValueAsString(invoice)))
             .andReturn();
-
         int actualHttpStatus = result.getResponse().getStatus();
-        Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
+
         //Then
-        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
         verify(invoiceService).saveInvoice(invoice);
-        assertEquals(invoice, actualInvoice);
     }
-/*
-
-  mockMvc.perform(put("/api/todo/{id}", 1L)
-                .contentType(IntegrationTestUtil.APPLICATION_JSON_UTF8)
-                .body(IntegrationTestUtil.convertObjectToJsonBytes(updated))
-        )
-        .andExpect(status().isBadRequest())
-        .andExpect(content().mimeType(IntegrationTestUtil.APPLICATION_JSON_UTF8))
-        .andExpect(content().string("{\"fieldErrors\":[{\"path\":\"title\",\"message\":\"The title cannot be empty.\"}]}"));
-*/
-
 }

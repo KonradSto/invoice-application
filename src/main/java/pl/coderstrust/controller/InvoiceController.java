@@ -92,21 +92,6 @@ public class InvoiceController {
         }
     }
 
-    // TODO: 10/03/2019 not sure if that method should be implemented
-    // TODO: 11/03/2019  PUT or POST?
-   /* @PutMapping()
-    ResponseEntity<?> updateInvoice(@RequestBody Invoice invoice) {
-        if (invoice == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        try {
-            invoiceService.saveInvoice(invoice);
-            return ResponseEntity.status(HttpStatus.OK).body(invoice);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }*/
-
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         // TODO: 12/03/2019  how to test it???? maybe this check is unneccesary
@@ -131,13 +116,9 @@ public class InvoiceController {
         }
     }
 
-    // TODO: 11/03/2019  what id deleteInvoice called with null id - make sure it will not fallout here to delete all invoices
-
-    // TODO: 10/03/2019 not sure if that method should be implemented  (see updateInvoice)
-
     @PutMapping("/{id}")
     ResponseEntity<Invoice> saveInvoice(@PathVariable Long id, @RequestBody Invoice invoice) {
-        // ResponseEntity<Invoice> saveInvoice(@PathVariable Long id, @RequestParam Invoice invoice) {
+        // TODO: 12/03/2019  validate params
         try {
             invoiceService.saveInvoice(invoice);
             return ResponseEntity.status(HttpStatus.OK).body(invoice);
