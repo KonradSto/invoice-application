@@ -1,6 +1,7 @@
 package pl.coderstrust.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -117,13 +118,13 @@ class InvoiceControllerTest {
             get("/invoices").accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
-        //  Collection<Invoice> actualBody = result.
-        //Then
-        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
-        verify(invoiceService).getAllInvoices();
         List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
         });
+
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
         assertEquals(invoices, actualInvoices);
+        verify(invoiceService).getAllInvoices();
     }
 
     @Test
@@ -147,18 +148,21 @@ class InvoiceControllerTest {
     @Test
     void shouldReturnInvoicesIssuedWithinGivenDates() throws Exception {
         //Given
-        LocalDate fromDate = LocalDate.of(2018, 1, 1);
-        LocalDate toDate = LocalDate.of(2018, 1, 31);
-        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 1));
-        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 15));
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 1, 31));
-        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.of(2018, 2, 1));
+        String fromDate = "2018-01-01";
+        String toDate = "2018-01-31";
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(fromDate));
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-01-15"));
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(toDate));
+        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-02-01"));
         List<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
-        when(invoiceService.getAllInvoicesByDate(fromDate, toDate)).thenReturn(expected);
+        when(invoiceService.getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate))).thenReturn(expected);
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/byDate?fromDate=2018-01-01&toDate=2018-01-31").accept(MediaType.APPLICATION_JSON_UTF8))
+            get("/invoices/byDate")
+                .param("fromDate", fromDate)
+                .param("toDate", toDate)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
         List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
@@ -167,25 +171,68 @@ class InvoiceControllerTest {
         //Then
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
         assertEquals(expected, actualInvoices);
-        verify(invoiceService).getAllInvoicesByDate(fromDate, toDate);
+        verify(invoiceService).getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate));
     }
 
     @Test
     void shouldReturnInternalServerErrorWhenWhenExceptionThrownByGetAllInvoicesByDate() throws Exception {
         //Given
-        LocalDate fromDate = LocalDate.of(2018, 1, 1);
-        LocalDate toDate = LocalDate.of(2018, 1, 31);
-        when(invoiceService.getAllInvoicesByDate(fromDate, toDate)).thenThrow(ServiceOperationException.class);
+        String fromDate = "2018-01-01";
+        String toDate = "2018-01-31";
+        when(invoiceService.getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate))).thenThrow(ServiceOperationException.class);
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/byDate?fromDate=2018-01-01&toDate=2018-01-31").accept(MediaType.APPLICATION_JSON_UTF8))
+            get("/invoices/byDate")
+                .param("fromDate", fromDate)
+                .param("toDate", toDate)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
 
         //Then
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
-        verify(invoiceService).getAllInvoicesByDate(fromDate, toDate);
+        verify(invoiceService).getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenFromDateParsedValueIsNull() throws Exception {
+        //Given
+        String fromDate = "2018-01-01";
+        String toDate = "2018-01-31";
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/byDate")
+                .param("fromDate", "")
+                .param("toDate", toDate)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.BAD_REQUEST.value(), actualHttpStatus);
+        verify(invoiceService, never()).getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenToDateParsedValueIsNull() throws Exception {
+        //Given
+        String fromDate = "2018-01-01";
+        String toDate = "2018-01-31";
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/byDate")
+                .param("fromDate", fromDate)
+                .param("toDate", "")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.BAD_REQUEST.value(), actualHttpStatus);
+        verify(invoiceService, never()).getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate));
     }
 
     @Test
@@ -193,13 +240,14 @@ class InvoiceControllerTest {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(1L);
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(1L);
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(2L);
         List<Invoice> expected = Arrays.asList(invoice1, invoice2);
         when(invoiceService.getAllInvoicesByBuyer(1L)).thenReturn(expected);
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/buyer?id=1").accept(MediaType.APPLICATION_JSON_UTF8))
+            get("/invoices/byBuyer")
+                .param("id", "1")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
         List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
@@ -212,19 +260,65 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnInternalServerErrorWhenWhenExceptionThrownByGetAllInvoicesByBuyerId() throws Exception {
+    void shouldReturnInternalServerErrorWhenExceptionThrownByGetAllInvoicesByBuyerId() throws Exception {
         //Given
         when(invoiceService.getAllInvoicesByBuyer(1L)).thenThrow(ServiceOperationException.class);
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/buyer?id=1").accept(MediaType.APPLICATION_JSON_UTF8))
+            get("/invoices/byBuyer")
+                .param("id", "1")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
 
         //Then
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
         verify(invoiceService).getAllInvoicesByBuyer(1L);
+    }
+
+    @Test
+    void shouldReturnInvoicesByGivenSellerId() throws Exception {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificSellerId(1L);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificSellerId(1L);
+        List<Invoice> expected = Arrays.asList(invoice1, invoice2);
+        when(invoiceService.getAllInvoicesBySeller(1L)).thenReturn(expected);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/bySeller")
+                .param("id", "1")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        List<Invoice> actualInvoices = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Invoice>>() {
+        });
+
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(expected, actualInvoices);
+        verify(invoiceService).getAllInvoicesBySeller(1L);
+    }
+
+    @Test
+    void shouldReturnInternalServerErrorWhenExceptionThrownByGetAllInvoicesBySellerId() throws Exception {
+        //Given
+        when(invoiceService.getAllInvoicesBySeller(1L)).thenThrow(ServiceOperationException.class);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/bySeller")
+                .param("id", "1")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        //verify(invoiceService, never()).getAllInvoicesByDate("", null);
+        verify(invoiceService, never()).getAllInvoicesByBuyer(1L);
+        verify(invoiceService).getAllInvoicesBySeller(1L);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
     }
 
 }

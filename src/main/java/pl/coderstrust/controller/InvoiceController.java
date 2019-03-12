@@ -66,15 +66,23 @@ public class InvoiceController {
 
     // TODO: 10/03/2019  Karolina chyba powinna dodac do naglowka IllegalArgumentException
     // FIXME: 11/03/2019  to mi wszystko zepsulo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    @GetMapping("/buyer")
+    @GetMapping("/byBuyer")
     ResponseEntity<Collection<Invoice>> getAllInvoicesByBuyer(@RequestParam Long id) {
-        if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
         Collection<Invoice> allInvoicesByBuyerId;
         try {
             allInvoicesByBuyerId = invoiceService.getAllInvoicesByBuyer(id);
             return ResponseEntity.status(HttpStatus.OK).body(allInvoicesByBuyerId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/bySeller")
+    ResponseEntity<Collection<Invoice>> getAllInvoicesBySeller(@RequestParam Long id) {
+        Collection<Invoice> allInvoicesBySellerId;
+        try {
+            allInvoicesBySellerId = invoiceService.getAllInvoicesBySeller(id);
+            return ResponseEntity.status(HttpStatus.OK).body(allInvoicesBySellerId);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
