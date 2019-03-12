@@ -20,7 +20,7 @@ public class Invoice {
     @JsonCreator
     public Invoice(@JsonProperty("id") Long id,
         @JsonProperty("number") String number,
-        @JsonProperty("issueDate") LocalDate issuedDate,
+        @JsonProperty("issuedDate") LocalDate issuedDate,
         @JsonProperty("dueDate") LocalDate dueDate,
         @JsonProperty("seller") Company seller,
         @JsonProperty("buyer") Company buyer,

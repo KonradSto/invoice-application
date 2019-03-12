@@ -414,7 +414,14 @@ class InvoiceControllerTest {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoice();
         when(invoiceService.saveInvoice(invoice)).thenReturn(invoice);
-        ObjectMapper invoiceAsJson = mapper.writeValueAsString(invoice);
+        String invoiceAsJson = mapper.writeValueAsString(invoice);
+
+        System.out.println("=========================================================================================================");
+        System.out.println("=========================================================================================================");
+        System.out.println("=========================================================================================================");
+        System.out.println(invoiceAsJson);
+        System.out.println("issuedDate  " + invoice.getIssuedDate());
+
         //When
         MvcResult result = mockMvc.perform(
             put(String.format("/invoices/%d", invoice.getId()))
