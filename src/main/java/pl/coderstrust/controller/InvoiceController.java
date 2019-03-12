@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,6 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
-        // TODO: 10/03/2019  no point of nullcheck here as when no id passed causes getAllInvoices being called    not
         try {
             Invoice invoice = invoiceService.getInvoice(id);
             if (invoice == null) {
@@ -37,20 +37,18 @@ public class InvoiceController {
         }
     }
 
-    // TODO: 10/03/2019 should I catch (Exception )as above or catch(Ex1|Ex2)?
     @GetMapping()
     ResponseEntity<?> getAllInvoices() {
         Collection<Invoice> allInvoices;
         try {
             allInvoices = invoiceService.getAllInvoices();
             return ResponseEntity.status(HttpStatus.OK).body(allInvoices);
-        } catch (Exception e) {                // TODO: 07/03/2019 cannot make exception to be thrown in case of InmemoryDatabase  zostawic
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/byDate")
-        // TODO: 11/03/2019  //invoices/byData?fromdate=123&todate=123
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         if (fromDate == null || toDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -64,10 +62,11 @@ public class InvoiceController {
         }
     }
 
-    // TODO: 10/03/2019  Karolina chyba powinna dodac do naglowka IllegalArgumentException
-    // FIXME: 11/03/2019  to mi wszystko zepsulo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @GetMapping("/byBuyer")
     ResponseEntity<Collection<Invoice>> getAllInvoicesByBuyer(@RequestParam Long id) {
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         Collection<Invoice> allInvoicesByBuyerId;
         try {
             allInvoicesByBuyerId = invoiceService.getAllInvoicesByBuyer(id);
@@ -79,6 +78,9 @@ public class InvoiceController {
 
     @GetMapping("/bySeller")
     ResponseEntity<Collection<Invoice>> getAllInvoicesBySeller(@RequestParam Long id) {
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         Collection<Invoice> allInvoicesBySellerId;
         try {
             allInvoicesBySellerId = invoiceService.getAllInvoicesBySeller(id);
@@ -87,31 +89,6 @@ public class InvoiceController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-// FIXME: 11/03/2019  below causing all tests to fail
- /*   @GetMapping("/{company}")
-    ResponseEntity<Collection<Invoice>> getAllInvoicesBySeller(@RequestParam Long id) {
-        if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        Collection<Invoice> allInvoicesBySeller;
-        try {
-            allInvoicesBySeller = invoiceService.getAllInvoicesByBuyer(id);
-            return ResponseEntity.status(HttpStatus.OK).body(allInvoicesBySeller);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }*/
-
-
-
-   /* @RestController
-    @RequestMapping("/api/datetime/")
-    final class DateTimeController {
-
-        @RequestMapping(value = "date", method = RequestMethod.POST)
-        public void processDate(@RequestParam("date")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-            //Do stuff*/
 
     // TODO: 10/03/2019 not sure if that method should be implemented
     // TODO: 11/03/2019  PUT or POST?
@@ -128,7 +105,7 @@ public class InvoiceController {
         }
     }*/
 
-   /* @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -139,7 +116,7 @@ public class InvoiceController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }*/
+    }
 
     // TODO: 11/03/2019  what id deleteInvoice called with null id - make sure it will not fallout here to delete all invoices
    /* @DeleteMapping()

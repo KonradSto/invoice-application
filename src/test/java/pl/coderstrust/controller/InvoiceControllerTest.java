@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.time.LocalDate;
@@ -271,6 +272,21 @@ class InvoiceControllerTest {
     }
 
     @Test
+    void shouldReturnBadRequestWhenParsedIdValueIsNullDuringGettingAllInvoicesByBuyerId() throws Exception {
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/byBuyer")
+                .param("id", "")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.BAD_REQUEST.value(), actualHttpStatus);
+        verify(invoiceService, never()).getAllInvoicesByBuyer(null);
+    }
+
+    @Test
     void shouldReturnInvoicesByGivenSellerId() throws Exception {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificSellerId(1L);
@@ -314,5 +330,36 @@ class InvoiceControllerTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
     }
 
+    @Test
+    void shouldReturnBadRequestWhenParsedIdValueIsNullDuringGettingAllInvoicesBySellerId() throws Exception {
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/bySeller")
+                .param("id", "")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
 
+        //Then
+        assertEquals(HttpStatus.BAD_REQUEST.value(), actualHttpStatus);
+        verify(invoiceService, never()).getAllInvoicesBySeller(null);
+    }
+
+    @Test
+    void shouldDeleteInvoice() throws Exception {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
+        //  (invocation(1L);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            delete("/invoices/{id}", 1L).accept(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(invoice, actualInvoice);
+        verify(invoiceService).getInvoice(1L);
+    }
 }
