@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.service.InvoiceService;
 
 @RestController
 
@@ -97,7 +98,6 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
-        // TODO: 12/03/2019  how to test it???? maybe this check is unneccesary
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -121,7 +121,9 @@ public class InvoiceController {
 
     @PutMapping("/{id}")
     ResponseEntity<?> saveInvoice(@PathVariable Long id, @RequestBody Invoice invoice) {
-        // TODO: 12/03/2019  validate params
+        if (id == null || invoice == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             invoiceService.saveInvoice(invoice);
             return ResponseEntity.status(HttpStatus.OK).body(invoice);

@@ -1,7 +1,8 @@
-package pl.coderstrust.controller;
+package pl.coderstrust.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+
 import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Invoice;
 
@@ -40,11 +41,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void deleteInvoice(Long id) throws ServiceOperationException {
-
     }
 
     @Override
     public void deleteAllInvoices() throws ServiceOperationException {
-
     }
 }
