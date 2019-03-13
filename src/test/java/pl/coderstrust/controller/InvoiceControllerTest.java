@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -311,7 +312,6 @@ class InvoiceControllerTest {
         verify(invoiceService).getAllInvoicesBySeller(1L);
     }
 
-    // shouldReturnBadRequestWhenToDateParsedValueIsNullDuringGettingAllInvoicesByDate
     @Test
     void shouldReturnInternalServerErrorWhenExceptionThrownByInvoiceServiceDuringGettingAllInvoicesBySellerId() throws Exception {
         //Given

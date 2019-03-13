@@ -2,6 +2,7 @@ package pl.coderstrust.controller;
 
 import java.time.LocalDate;
 import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -67,7 +68,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/byBuyer")
-    ResponseEntity<Collection<Invoice>> getAllInvoicesByBuyer(@RequestParam Long id) {
+    ResponseEntity<?> getAllInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -81,7 +82,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/bySeller")
-    ResponseEntity<Collection<Invoice>> getAllInvoicesBySeller(@RequestParam Long id) {
+    ResponseEntity<?> getAllInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -119,7 +120,7 @@ public class InvoiceController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Invoice> saveInvoice(@PathVariable Long id, @RequestBody Invoice invoice) {
+    ResponseEntity<?> saveInvoice(@PathVariable Long id, @RequestBody Invoice invoice) {
         // TODO: 12/03/2019  validate params
         try {
             invoiceService.saveInvoice(invoice);
