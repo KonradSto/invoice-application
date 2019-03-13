@@ -1,10 +1,9 @@
 package pl.coderstrust.controller;
 
-import org.springframework.stereotype.Service;
-import pl.coderstrust.model.Invoice;
-
 import java.time.LocalDate;
 import java.util.Collection;
+import org.springframework.stereotype.Service;
+import pl.coderstrust.model.Invoice;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
