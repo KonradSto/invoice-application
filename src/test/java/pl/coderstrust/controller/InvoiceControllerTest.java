@@ -25,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,7 +37,9 @@ import pl.coderstrust.service.ServiceOperationException;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(InvoiceController.class)
 @AutoConfigureMockMvc
+@WithMockUser(username = "admin", password = "admin", roles = "USER")
 class InvoiceControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -452,6 +455,7 @@ class InvoiceControllerTest {
         verify(invoiceService).deleteAllInvoices();
     }
 
+    @WithMockUser(username = "admin", password = "admin", roles = "USER")
     @Test
     void shouldSaveInvoice() throws Exception {
         //Given
