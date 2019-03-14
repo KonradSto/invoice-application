@@ -17,7 +17,7 @@ public class InMemoryDatabase implements Database {
     private Map<Long, Invoice> invoiceMap;
     private Long nextId = 1L;
 
-    public InMemoryDatabase(Map<Long, Invoice> databaseStorage) {
+    InMemoryDatabase(Map<Long, Invoice> databaseStorage) {
         if (databaseStorage == null) {
             throw new IllegalArgumentException("Invoice storage cannot be null");
         }
