@@ -31,6 +31,7 @@ public class InMemoryDatabase implements Database {
         return updateInvoice(invoice);
     }
 
+
     private Invoice insertInvoice(Invoice invoice) {
         Long id = nextId++;
         Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
