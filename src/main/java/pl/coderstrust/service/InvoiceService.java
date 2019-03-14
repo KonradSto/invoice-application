@@ -2,15 +2,16 @@ package pl.coderstrust.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
 import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.utils.ArgumentValidator;
 
-class InvoiceService {
+@Service
+public class InvoiceService {
 
     private Database database;
 
@@ -19,7 +20,7 @@ class InvoiceService {
         this.database = database;
     }
 
-    Collection<Invoice> getAllInvoices() throws ServiceOperationException {
+    public Collection<Invoice> getAllInvoices() throws ServiceOperationException {
         try {
             return database.getAllInvoices();
         } catch (DatabaseOperationException e) {
@@ -27,7 +28,7 @@ class InvoiceService {
         }
     }
 
-    Collection<Invoice> getAllInvoicesByDate(LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
+    public Collection<Invoice> getAllInvoicesByDate(LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(fromDate, "fromDate");
         ArgumentValidator.ensureNotNull(toDate, "toDate");
         if (fromDate.isAfter(toDate)) {
@@ -43,7 +44,7 @@ class InvoiceService {
         }
     }
 
-    Collection<Invoice> getAllInvoicesByBuyer(Long id) throws ServiceOperationException {
+    public Collection<Invoice> getAllInvoicesByBuyer(Long id) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getAllInvoices()
@@ -55,7 +56,7 @@ class InvoiceService {
         }
     }
 
-    Collection<Invoice> getAllInvoicesBySeller(Long id) throws ServiceOperationException {
+    public Collection<Invoice> getAllInvoicesBySeller(Long id) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getAllInvoices()
@@ -67,7 +68,7 @@ class InvoiceService {
         }
     }
 
-    Optional<Invoice> getInvoice(Long id) throws ServiceOperationException {
+    public Invoice getInvoice(Long id) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getInvoice(id);
@@ -76,7 +77,7 @@ class InvoiceService {
         }
     }
 
-    Invoice saveInvoice(Invoice invoice) throws ServiceOperationException {
+    public Invoice saveInvoice(Invoice invoice) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(invoice, "invoice");
         try {
             return database.saveInvoice(invoice);
@@ -85,7 +86,7 @@ class InvoiceService {
         }
     }
 
-    void deleteInvoice(Long id) throws ServiceOperationException {
+    public void deleteInvoice(Long id) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             database.deleteInvoice(id);
@@ -94,7 +95,7 @@ class InvoiceService {
         }
     }
 
-    void deleteAllInvoices() throws ServiceOperationException {
+    public void deleteAllInvoices() throws ServiceOperationException {
         try {
             database.deleteAllInvoices();
         } catch (DatabaseOperationException e) {

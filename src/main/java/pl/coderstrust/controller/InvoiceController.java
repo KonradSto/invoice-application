@@ -19,7 +19,6 @@ import pl.coderstrust.model.Invoice;
 import pl.coderstrust.service.InvoiceService;
 
 @RestController
-
 @RequestMapping("/invoices")
 public class InvoiceController {
 
