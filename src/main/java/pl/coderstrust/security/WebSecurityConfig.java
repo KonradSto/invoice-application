@@ -17,16 +17,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-            //.antMatchers("/invoices", "/invoices/").permitAll()
-            //.antMatchers("/invoices", "/invoices/1").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .formLogin()
-            .loginPage("/login")
-            .permitAll()
-            .and()
-            .logout()
-            .permitAll();
+            .antMatchers("/invoices/1").permitAll();
+        // .antMatchers("/*", "/invoices/*").permitAll()
+        // .anyRequest().authenticated()
+        //.and()
+        //.formLogin()
+        //.loginPage("/login")
+        //.permitAll()
+        //.and()
+        //.logout()
+        //.permitAll();
     }
 
     @Bean
