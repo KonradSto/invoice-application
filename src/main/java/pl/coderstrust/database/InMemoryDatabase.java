@@ -57,7 +57,7 @@ public class InMemoryDatabase implements Database {
     }
 
     @Override
-    public synchronized Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
+    public synchronized Optional<Invoice> getInvoice(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
