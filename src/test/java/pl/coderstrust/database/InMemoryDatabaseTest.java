@@ -118,7 +118,6 @@ class InMemoryDatabaseTest {
         Optional<Invoice> returnedInvoice = database.getInvoice(invoice.getId());
 
         //Then
-        // FIXME: 15/03/2019 czy tak moze byc ???
         assertEquals(invoice, returnedInvoice.orElse(null));
     }
 
