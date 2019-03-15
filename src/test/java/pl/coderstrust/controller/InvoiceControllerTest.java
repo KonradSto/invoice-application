@@ -472,7 +472,7 @@ class InvoiceControllerTest {
         Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
 
         //Then
-        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(HttpStatus.CREATED.value(), actualHttpStatus);
         assertEquals(invoice, actualInvoice);
         verify(invoiceService).saveInvoice(invoice);
     }
