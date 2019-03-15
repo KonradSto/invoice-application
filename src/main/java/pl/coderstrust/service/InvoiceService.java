@@ -2,6 +2,7 @@ package pl.coderstrust.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import pl.coderstrust.database.Database;
@@ -66,7 +67,7 @@ class InvoiceService {
         }
     }
 
-    Invoice getInvoice(Long id) throws ServiceOperationException {
+    Optional<Invoice> getInvoice(Long id) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getInvoice(id);

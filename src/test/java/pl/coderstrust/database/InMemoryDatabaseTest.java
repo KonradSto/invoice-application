@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,10 +115,11 @@ class InMemoryDatabaseTest {
         databaseStorage.put(invoice.getId(), invoice);
 
         //When
-        Invoice returnedInvoice = database.getInvoice(invoice.getId());
+        Optional<Invoice> returnedInvoice = database.getInvoice(invoice.getId());
 
         //Then
-        assertEquals(invoice, returnedInvoice);
+        // FIXME: 15/03/2019 czy tak moze byc ???
+        assertEquals(invoice, returnedInvoice.orElse(null));
     }
 
     @Test
@@ -126,8 +128,12 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void getInvoiceMethodShouldThrowExceptionDuringGettingNotExistingInvoice() {
-        assertThrows(DatabaseOperationException.class, () -> database.getInvoice(1L));
+    void getInvoiceMethodShouldReturnOptionalEmptyDuringGettingNotExistingInvoice() throws DatabaseOperationException {
+        //When
+        Optional<Invoice> invoice = database.getInvoice(1L);
+
+        //Then
+        assertEquals(Optional.empty(), invoice);
     }
 
     @Test

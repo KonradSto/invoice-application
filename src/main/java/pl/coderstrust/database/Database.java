@@ -1,6 +1,7 @@
 package pl.coderstrust.database;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import pl.coderstrust.model.Invoice;
 
@@ -10,7 +11,7 @@ public interface Database {
 
     void deleteInvoice(Long id) throws DatabaseOperationException;
 
-    Invoice getInvoice(Long id) throws DatabaseOperationException;
+    Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException;
 
     Collection<Invoice> getAllInvoices() throws DatabaseOperationException;
 

@@ -2,6 +2,7 @@ package pl.coderstrust.database;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import pl.coderstrust.model.Invoice;
 
@@ -14,7 +15,7 @@ public class InMemoryDatabase implements Database {
         if (databaseStorage == null) {
             throw new IllegalArgumentException("Invoice storage cannot be null");
         }
-        this.invoiceMap = databaseStorage;
+        invoiceMap = databaseStorage;
     }
 
     @Override
@@ -29,7 +30,7 @@ public class InMemoryDatabase implements Database {
     }
 
     private Invoice insertInvoice(Invoice invoice) {
-        final Long id = nextId++;
+        Long id = nextId++;
         Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         invoiceMap.put(id, insertedInvoice);
         return insertedInvoice;
@@ -56,14 +57,14 @@ public class InMemoryDatabase implements Database {
     }
 
     @Override
-    public synchronized Invoice getInvoice(Long id) throws DatabaseOperationException {
+    public synchronized Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
         if (!invoiceMap.containsKey(id)) {
-            throw new DatabaseOperationException(String.format("Get invoice failed. Invoice with following id does not exist: %d", id));
+            return Optional.empty();
         }
-        return invoiceMap.get(id);
+        return Optional.of(invoiceMap.get(id));
     }
 
     @Override

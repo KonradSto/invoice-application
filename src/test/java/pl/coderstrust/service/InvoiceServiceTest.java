@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -168,13 +169,13 @@ class InvoiceServiceTest {
     @Test
     void shouldReturnInvoice() throws DatabaseOperationException, ServiceOperationException {
         //Given
-        when(database.getInvoice(1L)).thenReturn(invoice1);
+        when(database.getInvoice(1L)).thenReturn(Optional.ofNullable(invoice1));
 
         //When
-        Invoice resultInvoice = invoiceService.getInvoice(1L);
+        Optional<Invoice> resultInvoice = invoiceService.getInvoice(1L);
 
         //Then
-        assertEquals(invoice1, resultInvoice);
+        assertEquals(Optional.of(invoice1), resultInvoice);
         verify(database).getInvoice(1L);
     }
 
