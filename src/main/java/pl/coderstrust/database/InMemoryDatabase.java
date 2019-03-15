@@ -64,7 +64,7 @@ public class InMemoryDatabase implements Database {
         if (!invoiceMap.containsKey(id)) {
             return Optional.empty();
         }
-        return Optional.of(invoiceMap.get(id));
+        return Optional.ofNullable(invoiceMap.get(id));
     }
 
     @Override

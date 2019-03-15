@@ -2,6 +2,7 @@ package pl.coderstrust.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -175,8 +176,8 @@ class InvoiceServiceTest {
         Optional<Invoice> resultInvoice = invoiceService.getInvoice(1L);
 
         //Then
-        assertEquals(Optional.of(invoice1), resultInvoice);
-        verify(database).getInvoice(1L);
+        assertTrue(resultInvoice.isPresent());
+        assertEquals(invoice1, resultInvoice.get());
     }
 
     @Test

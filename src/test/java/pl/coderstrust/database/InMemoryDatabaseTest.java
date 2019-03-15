@@ -118,7 +118,8 @@ class InMemoryDatabaseTest {
         Optional<Invoice> returnedInvoice = database.getInvoice(invoice.getId());
 
         //Then
-        assertEquals(invoice, returnedInvoice.orElse(null));
+        assertTrue(returnedInvoice.isPresent());
+        assertEquals(invoice,returnedInvoice.get());
     }
 
     @Test
@@ -127,7 +128,7 @@ class InMemoryDatabaseTest {
     }
 
     @Test
-    void getInvoiceMethodShouldReturnOptionalEmptyDuringGettingNotExistingInvoice() throws DatabaseOperationException {
+    void shouldReturnEmptyOptionalWhenInvoiceDoesNotExist() throws DatabaseOperationException {
         //When
         Optional<Invoice> invoice = database.getInvoice(1L);
 
