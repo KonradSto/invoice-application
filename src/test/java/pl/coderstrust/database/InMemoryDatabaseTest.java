@@ -122,6 +122,12 @@ class InMemoryDatabaseTest {
         assertEquals(invoice, returnedInvoice.get());
     }
 
+
+    @Test
+    void getInvoiceMethodShouldThrowExceptionForNullId() {
+        assertThrows(IllegalArgumentException.class, () -> database.getInvoice(null));
+    }
+
     @Test
     void shouldReturnEmptyOptionalWhenInvoiceDoesNotExist() throws DatabaseOperationException {
         //When
