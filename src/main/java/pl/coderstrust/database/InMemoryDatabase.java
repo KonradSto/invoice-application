@@ -58,8 +58,8 @@ public class InMemoryDatabase implements Database {
 
     @Override
     public synchronized Optional<Invoice> getInvoice(Long id) {
-        if (!invoiceMap.containsKey(id)) {
-            return Optional.empty();
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
         }
         return Optional.ofNullable(invoiceMap.get(id));
     }

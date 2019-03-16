@@ -119,7 +119,7 @@ class InMemoryDatabaseTest {
 
         //Then
         assertTrue(returnedInvoice.isPresent());
-        assertEquals(invoice, returnedInvoice.get());
+        assertEquals(invoice,returnedInvoice.get());
     }
 
 
