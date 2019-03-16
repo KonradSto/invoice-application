@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ class InvoiceControllerTest {
     void shouldReturnInvoice() throws Exception {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoice();
-        when(invoiceService.getInvoice(1L)).thenReturn(invoice);
+        when(invoiceService.getInvoice(1L)).thenReturn(Optional.ofNullable(invoice));
 
         //When
         MvcResult result = mockMvc.perform(

@@ -2,6 +2,7 @@ package pl.coderstrust.controller;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +33,7 @@ public class InvoiceController {
     @GetMapping("/{id}")
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
         try {
-            Invoice invoice = invoiceService.getInvoice(id);
+            Optional<Invoice> invoice = invoiceService.getInvoice(id);
             if (invoice == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }

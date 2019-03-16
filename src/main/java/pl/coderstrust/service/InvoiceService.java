@@ -2,6 +2,7 @@ package pl.coderstrust.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class InvoiceService {
         }
     }
 
-    public Invoice getInvoice(Long id) throws ServiceOperationException {
+    public Optional<Invoice> getInvoice(Long id) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             return database.getInvoice(id);
