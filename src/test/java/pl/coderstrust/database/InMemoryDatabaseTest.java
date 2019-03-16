@@ -119,12 +119,7 @@ class InMemoryDatabaseTest {
 
         //Then
         assertTrue(returnedInvoice.isPresent());
-        assertEquals(invoice,returnedInvoice.get());
-    }
-
-    @Test
-    void getInvoiceMethodShouldThrowExceptionForNullId() {
-        assertThrows(IllegalArgumentException.class, () -> database.getInvoice(null));
+        assertEquals(invoice, returnedInvoice.get());
     }
 
     @Test
@@ -133,7 +128,7 @@ class InMemoryDatabaseTest {
         Optional<Invoice> invoice = database.getInvoice(1L);
 
         //Then
-        assertEquals(Optional.empty(), invoice);
+        assertFalse(invoice.isPresent());
     }
 
     @Test
