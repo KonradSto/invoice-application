@@ -57,10 +57,10 @@ public class InvoiceController {
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         // TODO: 15/03/2019 body method with explanation ?
         if (fromDate == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" null fromDate parameter");
         }
         if (toDate == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("null toDate parameter");
         }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(fromDate, toDate);
