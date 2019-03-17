@@ -24,7 +24,7 @@ public class InvoiceEndpoint {
     @ResponsePayload
     public GetInvoicesResponse getInvoice(@RequestPayload GetInvoicesRequest request) {
         GetInvoicesResponse response = new GetInvoicesResponse();
-        response.setInvoice(invoiceRepository.findInvoice(request.getName()));
+        response.setInvoice(invoiceRepository.findInvoice(request.getId()));
 
         return response;
     }
