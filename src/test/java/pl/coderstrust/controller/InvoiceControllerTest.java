@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,10 +73,10 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnNotFoundStatusWhenNullReturnedFromInvoiceServiceMethod() throws Exception {
+    void shouldReturnNotFoundStatusWhenEmptyOptionalReturnedFromInvoiceServiceMethod() throws Exception {
         //Given
         Long nonExistentId = 10L;
-        when(invoiceService.getInvoice(nonExistentId)).thenReturn(null);
+        when(invoiceService.getInvoice(nonExistentId)).thenReturn(Optional.empty());
 
         //When
         MvcResult result = mockMvc.perform(
@@ -243,8 +243,7 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/byBuyer")
-                .param("id", "1")
+            get(String.format("/invoices/byBuyer/%d", 1L))
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
@@ -264,8 +263,7 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/byBuyer")
-                .param("id", "1")
+            get(String.format("/invoices/byBuyer/%d", 1L))
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
@@ -300,8 +298,7 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/bySeller")
-                .param("id", "1")
+            get(String.format("/invoices/bySeller/%d", 1L))
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
@@ -321,8 +318,7 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get("/invoices/bySeller")
-                .param("id", "1")
+            get(String.format("/invoices/bySeller/%d", 1L))
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
@@ -356,7 +352,7 @@ class InvoiceControllerTest {
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
         //Then
-        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(HttpStatus.NO_CONTENT.value(), actualHttpStatus);
         verify(invoiceService).deleteInvoice(1L);
     }
 
@@ -387,7 +383,7 @@ class InvoiceControllerTest {
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
         //Then
-        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(HttpStatus.NO_CONTENT.value(), actualHttpStatus);
         verify(invoiceService).deleteAllInvoices();
     }
 
@@ -418,7 +414,7 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            put(String.format("/invoices/%d", invoice.getId()))
+            post("/invoices")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .content(invoiceAsJson))
@@ -443,7 +439,7 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            put(String.format("/invoices/%d", invoice.getId()))
+            post("/invoices")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .content(invoiceAsJson))

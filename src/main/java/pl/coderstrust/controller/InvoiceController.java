@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +34,7 @@ public class InvoiceController {
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
-            if (invoice == null) {
+            if (!invoice.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             return ResponseEntity.ok().body(invoice);
@@ -45,10 +45,9 @@ public class InvoiceController {
 
     @GetMapping()
     ResponseEntity<?> getAllInvoices() {
-        Collection<Invoice> allInvoices;
         try {
-            allInvoices = invoiceService.getAllInvoices();
-            return ResponseEntity.status(HttpStatus.OK).body(allInvoices);
+            Collection<Invoice> invoices = invoiceService.getAllInvoices();
+            return ResponseEntity.status(HttpStatus.OK).body(invoices);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -56,41 +55,36 @@ public class InvoiceController {
 
     @GetMapping("/byDate")
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
-        if (fromDate == null || toDate == null) {
+        // TODO: 15/03/2019 body method with explanation ?
+        if (fromDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        Collection<Invoice> allInvoicesByDates;
+        if (toDate == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
-            allInvoicesByDates = invoiceService.getAllInvoicesByDate(fromDate, toDate);
-            return ResponseEntity.status(HttpStatus.OK).body(allInvoicesByDates);
+            Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(fromDate, toDate);
+            return ResponseEntity.status(HttpStatus.OK).body(invoices);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/byBuyer")
-    ResponseEntity<?> getAllInvoicesByBuyer(@RequestParam Long id) {
-        if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        Collection<Invoice> allInvoicesByBuyerId;
+    @GetMapping("/byBuyer/{id}")
+    ResponseEntity<?> getAllInvoicesByBuyer(@PathVariable Long id) {
         try {
-            allInvoicesByBuyerId = invoiceService.getAllInvoicesByBuyer(id);
-            return ResponseEntity.status(HttpStatus.OK).body(allInvoicesByBuyerId);
+            Collection<Invoice> invoices = invoiceService.getAllInvoicesByBuyer(id);
+            return ResponseEntity.status(HttpStatus.OK).body(invoices);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/bySeller")
-    ResponseEntity<?> getAllInvoicesBySeller(@RequestParam Long id) {
-        if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        Collection<Invoice> allInvoicesBySellerId;
+    @GetMapping("/bySeller/{id}")
+    ResponseEntity<?> getAllInvoicesBySeller(@PathVariable Long id) {
         try {
-            allInvoicesBySellerId = invoiceService.getAllInvoicesBySeller(id);
-            return ResponseEntity.status(HttpStatus.OK).body(allInvoicesBySellerId);
+            Collection<Invoice> invoices = invoiceService.getAllInvoicesBySeller(id);
+            return ResponseEntity.status(HttpStatus.OK).body(invoices);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -98,35 +92,33 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
-        if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
         try {
             invoiceService.deleteInvoice(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @DeleteMapping
-    ResponseEntity<?> deleteAllInvoice() {
+    ResponseEntity<?> deleteAllInvoices() {
         try {
             invoiceService.deleteAllInvoices();
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<?> saveInvoice(@PathVariable Long id, @RequestBody Invoice invoice) {
-        if (id == null || invoice == null) {
+    @PostMapping
+    ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
+        if (invoice == null) {
+            // TODO: 15/03/2019 use body method with explanation
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {
-            invoiceService.saveInvoice(invoice);
-            return ResponseEntity.status(HttpStatus.OK).body(invoice);
+            Invoice savedInvoice = invoiceService.saveInvoice(invoice);
+            return ResponseEntity.status(HttpStatus.OK).body(savedInvoice);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
