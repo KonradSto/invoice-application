@@ -10,10 +10,10 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import io.spring.guides.gs_producing_web_service.Company;
-import io.spring.guides.gs_producing_web_service.Currency;
 import io.spring.guides.gs_producing_web_service.Invoice;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
 
 @Component
 public class InvoiceRepository {
@@ -25,24 +25,24 @@ public class InvoiceRepository {
 
     @PostConstruct
     public void initData() throws DatatypeConfigurationException {
-        Invoice spain = new Invoice();
+        Invoice invoice1 = new Invoice();
         XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar();
         GregorianCalendar now = new GregorianCalendar();
         xgc.setYear(now.get(Calendar.YEAR));
         xgc.setMonth(now.get(Calendar.MONTH) + 1);
         xgc.setDay(now.get(Calendar.DAY_OF_MONTH));
-        spain.setId(1);
-        spain.setNumber("111");
-        spain.setIssuedDate(xgc);
-        spain.setLocalDate(xgc);
+        invoice1.setId(1);
+        invoice1.setNumber("111");
+        invoice1.setIssuedDate(xgc);
+        invoice1.setLocalDate(xgc);
         Company company1 = new Company();
-        spain.setSeller(company1);
-        spain.setBuyer(company1);
-        spain.setCapital("Madrid");
-        spain.setCurrency(Currency.EUR);
-        spain.setPopulation(46704314);
-
-        invoices.put(spain.getId(), spain);
+        invoice1.setSeller(company1);
+        invoice1.setBuyer(company1);
+//        List<InvoiceEntry> invoices1
+//        InvoiceEntry invoiceEntry1 = new InvoiceEntry();
+//        invoiceEntry1.setProductName("sth");
+//
+        invoices.put(invoice1.getId(), invoice1);
 
         Invoice poland = new Invoice();
         poland.setId(2);
@@ -51,9 +51,6 @@ public class InvoiceRepository {
         poland.setLocalDate(xgc);
         poland.setSeller(company1);
         poland.setBuyer(company1);
-        poland.setCapital("Warsaw");
-        poland.setCurrency(Currency.PLN);
-        poland.setPopulation(38186860);
 
         invoices.put(poland.getId(), poland);
 
@@ -64,15 +61,12 @@ public class InvoiceRepository {
         uk.setLocalDate(xgc);
         uk.setSeller(company1);
         uk.setBuyer(company1);
-        uk.setCapital("London");
-        uk.setCurrency(Currency.GBP);
-        uk.setPopulation(63705000);
 
         invoices.put(uk.getId(), uk);
     }
 
     public Invoice findInvoice(Long id) {
-        Assert.notNull(id, "The invoice's name must not be null");
+        Assert.notNull(id, "The invoice's id must not be null");
         return invoices.get(id);
     }
 }
