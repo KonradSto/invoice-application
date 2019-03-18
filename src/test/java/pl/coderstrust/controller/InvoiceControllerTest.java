@@ -44,7 +44,8 @@ class InvoiceControllerTest {
     private InvoiceService invoiceService;
     @Autowired
     private ObjectMapper mapper;
-/*
+    // FIXME: 18/03/2019  remove comment below
+    /*
     @BeforeEach
     void init() {
         ObjectMapper mapper;
