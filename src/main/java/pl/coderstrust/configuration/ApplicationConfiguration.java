@@ -6,13 +6,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class ApplicationConfiguration {
 
-    // TODO: 17/03/2019 this seems to be unneccesary
+    @Primary
     @Bean
-    ObjectMapper mapperSetup() {
+    public ObjectMapper getObjectMapper() {
         ObjectMapper mapper;
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());

@@ -42,17 +42,9 @@ class InvoiceControllerTest {
 
     @MockBean
     private InvoiceService invoiceService;
+
     @Autowired
     private ObjectMapper mapper;
-    // FIXME: 18/03/2019  remove comment below
-    /*
-    @BeforeEach
-    void init() {
-        ObjectMapper mapper;
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    }*/
 
     @Test
     void shouldReturnInvoice() throws Exception {
