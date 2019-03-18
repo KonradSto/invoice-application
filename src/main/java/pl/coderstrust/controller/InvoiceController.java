@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 
 @RestController
 @RequestMapping("/invoices")
+@Api(tags ="Faktury",description = "Operacje na fakturach")
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -33,6 +36,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Zapisz pojedynczą fakturę",notes = "Pobiera  fakturę poprzez identyfikator")
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -46,6 +50,7 @@ public class InvoiceController {
     }
 
     @GetMapping()
+    @ApiOperation(value = "Zapisz wszystkie faktury",notes = "Pobiera wszystkie dostępne faktury")
     ResponseEntity<?> getAllInvoices() {
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
