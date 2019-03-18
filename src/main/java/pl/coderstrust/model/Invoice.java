@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Invoice {
@@ -21,11 +23,11 @@ public class Invoice {
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
-    @Transient
+    @OneToOne(cascade = CascadeType.PERSIST)
     private final Company seller;
-    @Transient
+    @OneToOne(cascade = CascadeType.PERSIST)
     private final Company buyer;
-    @Transient
+    @OneToMany(cascade = CascadeType.PERSIST)
     private final List<InvoiceEntry> entries;
 
     @JsonCreator

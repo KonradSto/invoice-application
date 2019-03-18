@@ -4,9 +4,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class InvoiceEntry {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private final Long id;
     private final String productName;
     private final double quantity;

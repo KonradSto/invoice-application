@@ -1,10 +1,18 @@
 package pl.coderstrust.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Company {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private final Long id;
     private final String name;
     private final String address;
