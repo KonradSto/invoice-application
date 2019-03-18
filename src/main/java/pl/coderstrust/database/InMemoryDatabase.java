@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import pl.coderstrust.model.Invoice;
 
-@Component
+@Repository
 public class InMemoryDatabase implements Database {
 
     private Map<Long, Invoice> invoiceMap;

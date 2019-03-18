@@ -55,12 +55,11 @@ public class InvoiceController {
 
     @GetMapping("/byDate")
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
-        // TODO: 15/03/2019 body method with explanation ?
         if (fromDate == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" null fromDate parameter");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fromDate parameter cannot be null!");
         }
         if (toDate == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("null toDate parameter");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" toDate parameter cannot be null!");
         }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(fromDate, toDate);
@@ -113,12 +112,11 @@ public class InvoiceController {
     @PostMapping
     ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
         if (invoice == null) {
-            // TODO: 15/03/2019 use body method with explanation
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invoice cannot be null!");
         }
         try {
             Invoice savedInvoice = invoiceService.saveInvoice(invoice);
-            return ResponseEntity.status(HttpStatus.OK).body(savedInvoice);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedInvoice);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

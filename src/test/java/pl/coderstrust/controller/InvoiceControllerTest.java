@@ -11,15 +11,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +42,16 @@ class InvoiceControllerTest {
 
     @MockBean
     private InvoiceService invoiceService;
+    @Autowired
     private ObjectMapper mapper;
-
+/*
     @BeforeEach
-    void setup() {
+    void init() {
+        ObjectMapper mapper;
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    }
+    }*/
 
     @Test
     void shouldReturnInvoice() throws Exception {
@@ -66,6 +65,7 @@ class InvoiceControllerTest {
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
         Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
+
         //Then
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
         assertEquals(invoice, actualInvoice);
@@ -73,7 +73,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnNotFoundStatusWhenEmptyOptionalReturnedFromInvoiceServiceMethod() throws Exception {
+    void shouldReturnNotFoundDuringGettingInvoiceWhenInvoiceDoesNotExist() throws Exception {
         //Given
         Long nonExistentId = 10L;
         when(invoiceService.getInvoice(nonExistentId)).thenReturn(Optional.empty());
@@ -149,10 +149,14 @@ class InvoiceControllerTest {
         //Given
         String fromDate = "2018-01-01";
         String toDate = "2018-01-31";
-        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(fromDate));
-        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-01-15"));
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(toDate));
-        List<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2017-04-19"));
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2017-12-31"));
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(fromDate));
+        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-01-15"));
+        Invoice invoice5 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(toDate));
+        Invoice invoice6 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-02-01"));
+        Invoice invoice7 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-04-24"));
+        List<Invoice> expected = Arrays.asList(invoice3, invoice4, invoice5);
         when(invoiceService.getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate))).thenReturn(expected);
 
         //When
@@ -173,7 +177,7 @@ class InvoiceControllerTest {
     }
 
     @Test
-    void shouldReturnInternalServerErrorWhenExceptionThrownByInvoiceServiceDuringGettingAllInvoicesByDate() throws Exception {
+    void shouldReturnInternalServerErrorDuringGettingAllInvoicesByDateWhenSomethingWentWrongOnServer() throws Exception {
         //Given
         String fromDate = "2018-01-01";
         String toDate = "2018-01-31";
@@ -423,7 +427,7 @@ class InvoiceControllerTest {
         Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
 
         //Then
-        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(HttpStatus.CREATED.value(), actualHttpStatus);
         assertEquals(invoice, actualInvoice);
         verify(invoiceService).saveInvoice(invoice);
     }
