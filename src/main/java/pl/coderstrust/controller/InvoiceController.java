@@ -69,8 +69,11 @@ public class InvoiceController {
         }
     }
 
-    @GetMapping("/byBuyer/{id}")
-    ResponseEntity<?> getAllInvoicesByBuyer(@PathVariable Long id) {
+    @GetMapping("/byBuyer")
+    ResponseEntity<?> getAllInvoicesByBuyer(@RequestParam Long id) {
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByBuyer(id);
             return ResponseEntity.status(HttpStatus.OK).body(invoices);
@@ -79,8 +82,11 @@ public class InvoiceController {
         }
     }
 
-    @GetMapping("/bySeller/{id}")
-    ResponseEntity<?> getAllInvoicesBySeller(@PathVariable Long id) {
+    @GetMapping("/bySeller")
+    ResponseEntity<?> getAllInvoicesBySeller(@RequestParam Long id) {
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesBySeller(id);
             return ResponseEntity.status(HttpStatus.OK).body(invoices);

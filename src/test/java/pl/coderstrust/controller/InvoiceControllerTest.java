@@ -240,7 +240,8 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get(String.format("/invoices/byBuyer/%d", 1L))
+            get("/invoices/byBuyer")
+                .param("id", "1")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
@@ -260,7 +261,8 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get(String.format("/invoices/byBuyer/%d", 1L))
+            get("/invoices/byBuyer")
+                .param("id", "1")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
@@ -295,7 +297,8 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get(String.format("/invoices/bySeller/%d", 1L))
+            get("/invoices/bySeller")
+                .param("id", "1")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
@@ -315,7 +318,8 @@ class InvoiceControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(
-            get(String.format("/invoices/bySeller/%d", 1L))
+            get("/invoices/bySeller")
+                .param("id", "1")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
