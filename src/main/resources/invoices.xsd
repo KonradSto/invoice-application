@@ -51,7 +51,23 @@
       <xs:element name="price" type="xs:decimal"/>
       <xs:element name="nettValue" type="xs:decimal"/>
       <xs:element name="grossValue" type="xs:decimal"/>
-      <xs:element name="vatRate" type="xs:string"/>
+      <xs:element name="vatRate" type="tns:vat"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="vat">
+    <xs:restriction base="xs:float">
+      <xs:enumeration value="0"/>
+      <xs:enumeration value="0.05"/>
+      <xs:enumeration value="0.08"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--<xs:simpleType name="currency">-->
+    <!--<xs:restriction base="xs:string">-->
+      <!--<xs:enumeration value="GBP"/>-->
+      <!--<xs:enumeration value="EUR"/>-->
+      <!--<xs:enumeration value="PLN"/>-->
+    <!--</xs:restriction>-->
+  <!--</xs:simpleType>-->
 </xs:schema>
