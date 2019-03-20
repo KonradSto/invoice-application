@@ -56,10 +56,13 @@ public class InvoiceController {
     @GetMapping("/byDate")
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         if (fromDate == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fromDate parameter cannot be null!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fromDate parameter cannot be null.");
         }
         if (toDate == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" toDate parameter cannot be null!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("toDate parameter cannot be null.");
+        }
+        if (fromDate.isAfter(toDate)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fromDate cannot be after toDate.");
         }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(fromDate, toDate);
@@ -70,9 +73,9 @@ public class InvoiceController {
     }
 
     @GetMapping("/byBuyer")
-    ResponseEntity<?> getAllInvoicesByBuyer(@RequestParam Long id) {
+    ResponseEntity<?> getInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null");
         }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByBuyer(id);
@@ -83,9 +86,9 @@ public class InvoiceController {
     }
 
     @GetMapping("/bySeller")
-    ResponseEntity<?> getAllInvoicesBySeller(@RequestParam Long id) {
+    ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null");
         }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesBySeller(id);
@@ -98,6 +101,10 @@ public class InvoiceController {
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         try {
+            Optional<Invoice> invoice = invoiceService.getInvoice(id);
+            if (!invoice.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
             invoiceService.deleteInvoice(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
@@ -118,11 +125,11 @@ public class InvoiceController {
     @PostMapping
     ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
         if (invoice == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invoice cannot be null!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invoice cannot be null.");
         }
         try {
             Invoice savedInvoice = invoiceService.saveInvoice(invoice);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedInvoice);
+            return ResponseEntity.status(HttpStatus.OK).body(savedInvoice);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

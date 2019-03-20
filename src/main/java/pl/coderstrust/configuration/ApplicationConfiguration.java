@@ -14,8 +14,7 @@ public class ApplicationConfiguration {
     @Primary
     @Bean
     public ObjectMapper getObjectMapper() {
-        ObjectMapper mapper;
-        mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return mapper;
