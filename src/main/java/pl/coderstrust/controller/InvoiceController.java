@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.service.InvoiceService;
+import pl.coderstrust.utils.ArgumentValidator;
 
 @RestController
 @RequestMapping("/invoices")
@@ -27,6 +28,7 @@ public class InvoiceController {
 
     @Autowired
     public InvoiceController(InvoiceService invoiceService) {
+        ArgumentValidator.ensureNotNull(invoiceService, "invoiceService");
         this.invoiceService = invoiceService;
     }
 
@@ -75,7 +77,7 @@ public class InvoiceController {
     @GetMapping("/byBuyer")
     ResponseEntity<?> getInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
         }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByBuyer(id);
@@ -88,7 +90,7 @@ public class InvoiceController {
     @GetMapping("/bySeller")
     ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
         }
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesBySeller(id);
@@ -106,7 +108,7 @@ public class InvoiceController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             invoiceService.deleteInvoice(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.OK).body(invoice);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -123,7 +125,7 @@ public class InvoiceController {
     }
 
     @PostMapping
-    ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
+    ResponseEntity<?> saveInvoice(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invoice cannot be null.");
         }

@@ -143,14 +143,10 @@ class InvoiceControllerTest {
         //Given
         String fromDate = "2018-01-01";
         String toDate = "2018-01-31";
-        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2017-04-19"));
-        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2017-12-31"));
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(fromDate));
-        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-01-15"));
-        Invoice invoice5 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(toDate));
-        Invoice invoice6 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-02-01"));
-        Invoice invoice7 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-04-24"));
-        List<Invoice> expected = Arrays.asList(invoice3, invoice4, invoice5);
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(fromDate));
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse("2018-01-15"));
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificIssueDate(LocalDate.parse(toDate));
+        List<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
         when(invoiceService.getAllInvoicesByDate(LocalDate.parse(fromDate), LocalDate.parse(toDate))).thenReturn(expected);
 
         //When
@@ -256,8 +252,6 @@ class InvoiceControllerTest {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(1L);
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(1L);
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(3L);
-        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificBuyerId(6L);
         List<Invoice> expected = Arrays.asList(invoice1, invoice2);
         when(invoiceService.getAllInvoicesByBuyer(1L)).thenReturn(expected);
 
@@ -315,8 +309,6 @@ class InvoiceControllerTest {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificSellerId(1L);
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificSellerId(1L);
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificSellerId(2L);
-        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificSellerId(4L);
         List<Invoice> expected = Arrays.asList(invoice1, invoice2);
         when(invoiceService.getAllInvoicesBySeller(1L)).thenReturn(expected);
 
@@ -381,8 +373,9 @@ class InvoiceControllerTest {
             delete("/invoices/{id}", 1L).accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
+
         //Then
-        assertEquals(HttpStatus.NO_CONTENT.value(), actualHttpStatus);
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
         verify(invoiceService).deleteInvoice(1L);
     }
 
@@ -478,6 +471,26 @@ class InvoiceControllerTest {
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
         assertEquals(invoice, actualInvoice);
         verify(invoiceService).saveInvoice(invoice);
+    }
+
+    @Test
+    void shouldReturnBadRequestDuringSavingNullInvoice() throws Exception {
+        //Given
+        Invoice invoice = null;
+        String invoiceAsJson = mapper.writeValueAsString(invoice);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            post("/invoices")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .content(invoiceAsJson))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.BAD_REQUEST.value(), actualHttpStatus);
+        verify(invoiceService, never()).saveInvoice(invoice);
     }
 
     @Test
