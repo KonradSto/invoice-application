@@ -6,8 +6,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import io.spring.guides.gs_producing_web_service.GetInvoicesRequest;
-import io.spring.guides.gs_producing_web_service.GetInvoicesResponse;
+import io.spring.guides.gs_producing_web_service.GetInvoiceRequest;
+import io.spring.guides.gs_producing_web_service.GetInvoiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -33,8 +33,8 @@ public class InvoiceEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getInvoicesRequest")
     @ResponsePayload
-    public GetInvoicesResponse getInvoice(@RequestPayload GetInvoicesRequest request) {
-        GetInvoicesResponse response = new GetInvoicesResponse();
+    public GetInvoiceResponse getInvoice(@RequestPayload GetInvoiceRequest request) {
+        GetInvoiceResponse response = new GetInvoiceResponse();
         try {
             Invoice invoice = invoiceService.getInvoice(request.getId()).get();
             io.spring.guides.gs_producing_web_service.Invoice responseInvoice = mapOriginalInvoiceToResponseInvoice(invoice);
