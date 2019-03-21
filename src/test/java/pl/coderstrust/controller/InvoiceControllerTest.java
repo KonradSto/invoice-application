@@ -373,9 +373,11 @@ class InvoiceControllerTest {
             delete("/invoices/{id}", 1L).accept(MediaType.APPLICATION_JSON_UTF8))
             .andReturn();
         int actualHttpStatus = result.getResponse().getStatus();
+        Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
 
         //Then
         assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertEquals(invoice, actualInvoice);
         verify(invoiceService).deleteInvoice(1L);
     }
 

@@ -39,7 +39,7 @@ public class InvoiceController {
             if (!invoice.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-            return ResponseEntity.ok().body(invoice);
+            return ResponseEntity.ok().body(invoice.get());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -108,7 +108,7 @@ public class InvoiceController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             invoiceService.deleteInvoice(id);
-            return ResponseEntity.status(HttpStatus.OK).body(invoice);
+            return ResponseEntity.status(HttpStatus.OK).body(invoice.get());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
