@@ -1,7 +1,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://spring.io/guides/gs-producing-web-service"
   targetNamespace="http://spring.io/guides/gs-producing-web-service" elementFormDefault="qualified">
 
-  <xs:element name="getInvoicesRequest">
+  <xs:element name="getInvoiceRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="id" type="xs:long"/>
@@ -9,10 +9,25 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="getInvoicesResponse">
+  <xs:element name="getInvoiceResponse">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="invoice" type="tns:invoice"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getAllInvoicesRequest">
+    <xs:complexType>
+      <xs:sequence>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getAllInvoicesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="invoices" type="tns:invoice" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -25,8 +40,7 @@
       <xs:element name="localDate" type="xs:date"/>
       <xs:element name="seller" type="tns:company"/>
       <xs:element name="buyer" type="tns:company"/>
-      <xs:element name="entries" type="tns:invoiceEntry" minOccurs="0"
-        maxOccurs="unbounded"/>
+      <xs:element name="entries" type="tns:invoiceEntry" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -56,10 +70,11 @@
   </xs:complexType>
 
   <xs:simpleType name="vat">
-    <xs:restriction base="xs:float">
-      <xs:enumeration value="0"/>
-      <xs:enumeration value="0.05"/>
-      <xs:enumeration value="0.08"/>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VAT_0"/>
+      <xs:enumeration value="VAT_5"/>
+      <xs:enumeration value="VAT_8"/>
+      <xs:enumeration value="VAT_23"/>
     </xs:restriction>
   </xs:simpleType>
 

@@ -1,7 +1,6 @@
 package pl.coderstrust.soap;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -17,7 +16,6 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.model.InvoiceEntry;
-import pl.coderstrust.model.Vat;
 import pl.coderstrust.service.InvoiceService;
 import pl.coderstrust.service.ServiceOperationException;
 
@@ -39,37 +37,43 @@ public class InvoiceEndpoint {
         GetInvoicesResponse response = new GetInvoicesResponse();
         try {
             Invoice invoice = invoiceService.getInvoice(request.getId()).get();
-            io.spring.guides.gs_producing_web_service.Invoice responseInvoice = new io.spring.guides.gs_producing_web_service.Invoice();
-            responseInvoice.setId(invoice.getId());
-            responseInvoice.setNumber(invoice.getNumber());
-            responseInvoice.setIssuedDate(convertLocalDateToXMLGregorianCalendar((invoice.getIssuedDate())));
-            responseInvoice.setLocalDate(convertLocalDateToXMLGregorianCalendar(invoice.getIssuedDate()));
-            responseInvoice.setSeller(mapOriginalSellerToSOAPSeller(invoice.getSeller()));
-            responseInvoice.setBuyer(mapOriginalBuerToSOAPBuyer(invoice.getBuyer()));
-        List<InvoiceEntry> entries = invoice.getEntries();
-          List  <io.spring.guides.gs_producing_web_service.InvoiceEntry> responseentries = new ArrayList<>();
+            io.spring.guides.gs_producing_web_service.Invoice responseInvoice = mapOriginalInvoiceToResponseInvoice(invoice);
             response.setInvoice(responseInvoice);
-            invoice.get().getId();
-            //zmapować invoice do soap
-            response.setInvoice(invoiceRepository.findInvoice(request.getId()));
-            InvoiceEntry entry=entries.get(0);
-            io.spring.guides.gs_producing_web_service.InvoiceEntry responseentry = new io.spring.guides.gs_producing_web_service.InvoiceEntry();
-            responseentry.setId(entry.getId());
-            responseentry.setProductName(entry.getProductName());
-            responseentry.setQuantity(entry.getQuantity());
-            responseentry.setUnit(entry.getUnit());
-            responseentry.setPrice(entry.getPrice());
-            responseentry.setNettValue(entry.getNettValue());
-            responseentry.setGrossValue(entry.getGrossValue());
-            responseentry.setVatRate(entry.getVatRate());
-            Vat vat=entry.getVatRate();
-            io.spring.guides.gs_producing_web_service.Vat responseVat = new io.spring.guides.gs_producing_web_service.Vat();
+            return response;
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
 //            e.printStackTrace();
             //ustawiamy status na fail + message
         }
 
         return response;
+    }
+
+    static io.spring.guides.gs_producing_web_service.Invoice mapOriginalInvoiceToResponseInvoice(Invoice invoice) throws DatatypeConfigurationException {
+        io.spring.guides.gs_producing_web_service.Invoice responseInvoice = new io.spring.guides.gs_producing_web_service.Invoice();
+        responseInvoice.setId(invoice.getId());
+        responseInvoice.setNumber(invoice.getNumber());
+        responseInvoice.setIssuedDate(convertLocalDateToXMLGregorianCalendar((invoice.getIssuedDate())));
+        responseInvoice.setLocalDate(convertLocalDateToXMLGregorianCalendar(invoice.getIssuedDate()));
+        responseInvoice.setSeller(mapOriginalSellerToSOAPSeller(invoice.getSeller()));
+        responseInvoice.setBuyer(mapOriginalBuyerToSOAPBuyer(invoice.getBuyer()));
+        List<InvoiceEntry> entries = invoice.getEntries();
+        for (InvoiceEntry entry : entries) {
+            responseInvoice.getEntries().add(mapOriginalEntryToResponseEntry(entry));
+        }
+        return responseInvoice;
+    }
+
+    static io.spring.guides.gs_producing_web_service.InvoiceEntry mapOriginalEntryToResponseEntry(InvoiceEntry entry) {
+        io.spring.guides.gs_producing_web_service.InvoiceEntry responseEntry = new io.spring.guides.gs_producing_web_service.InvoiceEntry();
+        responseEntry.setId(entry.getId());
+        responseEntry.setProductName(entry.getProductName());
+        responseEntry.setQuantity(entry.getQuantity());
+        responseEntry.setUnit(entry.getUnit());
+        responseEntry.setPrice(entry.getPrice());
+        responseEntry.setNettValue(entry.getNettValue());
+        responseEntry.setGrossValue(entry.getGrossValue());
+        responseEntry.setVatRate(io.spring.guides.gs_producing_web_service.Vat.valueOf(entry.getVatRate().toString()));
+        return responseEntry;
     }
 
     static io.spring.guides.gs_producing_web_service.Company mapOriginalSellerToSOAPSeller(Company seller) {
@@ -84,7 +88,7 @@ public class InvoiceEndpoint {
         return responseSeller;
     }
 
-    static io.spring.guides.gs_producing_web_service.Company mapOriginalBuerToSOAPBuyer(Company buyer) {
+    static io.spring.guides.gs_producing_web_service.Company mapOriginalBuyerToSOAPBuyer(Company buyer) {
         io.spring.guides.gs_producing_web_service.Company responseBuyer = new io.spring.guides.gs_producing_web_service.Company();
         responseBuyer.setId(buyer.getId());
         responseBuyer.setName(buyer.getName());
