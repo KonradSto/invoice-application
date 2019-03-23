@@ -1,11 +1,11 @@
 package pl.coderstrust.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 
 @RestController
 @RequestMapping("/invoices")
-@Api(tags ="Faktury",description = "Operacje na fakturach")
+@Api(tags = "Faktury", description = "Operacje na fakturach")
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -36,7 +36,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "Zapisz pojedynczą fakturę",notes = "Pobiera  fakturę poprzez identyfikator")
+    @ApiOperation(value = "Get a single invoice", notes = "Gets an invoice by id")
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -50,7 +50,7 @@ public class InvoiceController {
     }
 
     @GetMapping()
-    @ApiOperation(value = "Zapisz wszystkie faktury",notes = "Pobiera wszystkie dostępne faktury")
+    @ApiOperation(value = "Get all invoices", notes = "Gets all available invoices from database")
     ResponseEntity<?> getAllInvoices() {
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
@@ -61,6 +61,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/byDate")
+    @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate")
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         if (fromDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fromDate parameter cannot be null.");
@@ -80,6 +81,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/byBuyer")
+    @ApiOperation(value = "Get all invoices by buyer", notes = "Gets all invoices issued to specified buyer")
     ResponseEntity<?> getInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
@@ -93,6 +95,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/bySeller")
+    @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller")
     ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
@@ -106,6 +109,7 @@ public class InvoiceController {
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Delete invoice by id", notes = "Deletes invoice by specified id from database")
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -120,6 +124,7 @@ public class InvoiceController {
     }
 
     @DeleteMapping
+    @ApiOperation(value = "Delete ALL invoices", notes = "WARNING!!! This operation deletes ALL available invoices from database")
     ResponseEntity<?> deleteAllInvoices() {
         try {
             invoiceService.deleteAllInvoices();
@@ -130,6 +135,7 @@ public class InvoiceController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Save or update an invoice", notes = "When id field left blank - saves an invoice to database. When id field filled with number - then application updates the existing invoice with form data")
     ResponseEntity<?> saveInvoice(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invoice cannot be null.");
