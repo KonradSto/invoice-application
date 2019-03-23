@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import pl.coderstrust.model.Invoice;
 
+@ConditionalOnProperty(name = "database", havingValue = "inMemory")
 @Repository
 public class InMemoryDatabase implements Database {
 

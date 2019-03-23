@@ -3,9 +3,11 @@ package pl.coderstrust.database;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import pl.coderstrust.model.Invoice;
 
+@ConditionalOnProperty(name = "database", havingValue = "hibernate")
 @Repository
 public class HibernateDatabase implements Database {
 

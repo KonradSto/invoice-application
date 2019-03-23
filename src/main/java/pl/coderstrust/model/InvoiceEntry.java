@@ -13,7 +13,7 @@ import javax.persistence.Id;
 public class InvoiceEntry {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
     private final String productName;
     private final double quantity;
