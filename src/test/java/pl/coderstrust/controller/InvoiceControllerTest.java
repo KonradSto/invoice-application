@@ -39,7 +39,6 @@ import pl.coderstrust.service.ServiceOperationException;
 @AutoConfigureMockMvc
 @WithMockUser(username = "admin", password = "admin", roles = "USER")
 class InvoiceControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -455,7 +454,6 @@ class InvoiceControllerTest {
         verify(invoiceService).deleteAllInvoices();
     }
 
-    @WithMockUser(username = "admin", password = "admin", roles = "USER")
     @Test
     void shouldSaveInvoice() throws Exception {
         //Given
