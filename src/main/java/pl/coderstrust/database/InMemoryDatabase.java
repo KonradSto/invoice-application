@@ -17,7 +17,7 @@ public class InMemoryDatabase implements Database {
         if (databaseStorage == null) {
             throw new IllegalArgumentException("Invoice storage cannot be null");
         }
-        this.invoiceMap = databaseStorage;
+        invoiceMap = databaseStorage;
     }
 
     @Override
