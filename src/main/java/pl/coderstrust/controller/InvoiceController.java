@@ -24,7 +24,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 
 @RestController
 @RequestMapping("/invoices")
-@Api(tags = "Faktury", description = "Operacje na fakturach")
+@Api(tags = "Invoices", description = "Operations")
 public class InvoiceController {
 
     private InvoiceService invoiceService;

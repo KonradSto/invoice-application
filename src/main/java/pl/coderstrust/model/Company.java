@@ -9,6 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+@ApiModel(value = "Company", description = "Companyyyyyy")
 public class Company {
 
     @Id
@@ -39,30 +42,37 @@ public class Company {
         this.email = email;
     }
 
+    @ApiModelProperty(value = "Company id",example = "123-34-123")
     public Long getId() {
         return id;
     }
 
+    @ApiModelProperty(value = "Invoice issuer",example = "InvoiceSoft Ltd.")
     public String getName() {
         return name;
     }
 
+    @ApiModelProperty(value = "Invoice issuer address",example = "Clock Street, 12-345, Invoicetown, Co. Wexford, Ireland")
     public String getAddress() {
         return address;
     }
 
+    @ApiModelProperty(value = "Tax id",example = "342-456-345")
     public String getTaxId() {
         return taxId;
     }
 
+    @ApiModelProperty(value = "Account number",example = "45-56-5676")
     public String getAccountNumber() {
         return accountNumber;
     }
 
+    @ApiModelProperty(value = "Phone number",example = "(12)345-456-887")
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    @ApiModelProperty(value = "Email address",example = "jsmith@mail.com")
     public String getEmail() {
         return email;
     }
