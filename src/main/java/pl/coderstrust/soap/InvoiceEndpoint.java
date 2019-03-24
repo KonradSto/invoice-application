@@ -1,5 +1,8 @@
 package pl.coderstrust.soap;
 
+import static io.spring.guides.gs_producing_web_service.ResponseStatus.FAILURE;
+import static io.spring.guides.gs_producing_web_service.ResponseStatus.SUCCESS;
+
 import java.time.LocalDate;
 import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -8,6 +11,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import io.spring.guides.gs_producing_web_service.GetInvoiceRequest;
 import io.spring.guides.gs_producing_web_service.GetInvoiceResponse;
+import io.spring.guides.gs_producing_web_service.InvoiceResponse;
+import io.spring.guides.gs_producing_web_service.ResponseBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -35,16 +40,20 @@ public class InvoiceEndpoint {
     @ResponsePayload
     public GetInvoiceResponse getInvoice(@RequestPayload GetInvoiceRequest request) {
         GetInvoiceResponse response = new GetInvoiceResponse();
+        ResponseBase responseBase;
         try {
             Invoice invoice = invoiceService.getInvoice(request.getId()).get();
             io.spring.guides.gs_producing_web_service.Invoice responseInvoice = mapOriginalInvoiceToResponseInvoice(invoice);
-            response.setInvoice(responseInvoice);
+            responseBase = new InvoiceResponse();
+            responseBase.setStatus(SUCCESS);
+            ((InvoiceResponse) responseBase).setInvoice(responseInvoice);
+            response.setResponse(responseBase);
             return response;
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-//            e.printStackTrace();
-            //ustawiamy status na fail + message
+            responseBase = new ResponseBase();
+            responseBase.setStatus(FAILURE);
+            responseBase.setMessage("An error occurred during getting invoice");
         }
-
         return response;
     }
 

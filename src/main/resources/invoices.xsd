@@ -12,7 +12,7 @@
   <xs:element name="getInvoiceResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="invoice" type="tns:invoice"/>
+        <xs:element name="response" type="tns:responseBase"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -43,6 +43,40 @@
       <xs:element name="entries" type="tns:invoiceEntry" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:complexType name="responseBase">
+    <xs:sequence>
+      <xs:element name="status" type="tns:responseStatus"/>
+      <xs:element name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="invoiceResponse">
+    <xs:complexContent>
+      <xs:extension base="tns:responseBase">
+        <xs:sequence>
+          <xs:element name="invoice" type="tns:invoice"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="invoicesResponse">
+    <xs:complexContent>
+      <xs:extension base="tns:responseBase">
+        <xs:sequence>
+          <xs:element name="invoices" type="tns:invoice" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="responseStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SUCCESS"/>
+      <xs:enumeration value="FAILURE"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="company">
     <xs:sequence>
@@ -79,10 +113,10 @@
   </xs:simpleType>
 
   <!--<xs:simpleType name="currency">-->
-    <!--<xs:restriction base="xs:string">-->
-      <!--<xs:enumeration value="GBP"/>-->
-      <!--<xs:enumeration value="EUR"/>-->
-      <!--<xs:enumeration value="PLN"/>-->
-    <!--</xs:restriction>-->
+  <!--<xs:restriction base="xs:string">-->
+  <!--<xs:enumeration value="GBP"/>-->
+  <!--<xs:enumeration value="EUR"/>-->
+  <!--<xs:enumeration value="PLN"/>-->
+  <!--</xs:restriction>-->
   <!--</xs:simpleType>-->
 </xs:schema>
