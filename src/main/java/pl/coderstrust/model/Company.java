@@ -1,14 +1,14 @@
 package pl.coderstrust.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Company {
 
     @Id
@@ -23,12 +23,12 @@ public class Company {
 
     @JsonCreator
     public Company(@JsonProperty("id") Long id,
-        @JsonProperty("name") String name,
-        @JsonProperty("address") String address,
-        @JsonProperty("taxId") String taxId,
-        @JsonProperty("accountNumber") String accountNumber,
-        @JsonProperty("phoneNumber") String phoneNumber,
-        @JsonProperty("email") String email) {
+                   @JsonProperty("name") String name,
+                   @JsonProperty("address") String address,
+                   @JsonProperty("taxId") String taxId,
+                   @JsonProperty("accountNumber") String accountNumber,
+                   @JsonProperty("phoneNumber") String phoneNumber,
+                   @JsonProperty("email") String email) {
 
         this.id = id;
         this.name = name;
