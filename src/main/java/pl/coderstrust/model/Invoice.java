@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+@ApiModel(value = "Invoice")
 @Entity
 public class Invoice {
 

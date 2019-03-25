@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Company", description = "Companyyyyyy")
+@ApiModel(value = "Company")
 public class Company {
 
     @Id

@@ -3,12 +3,14 @@ package pl.coderstrust.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@ApiModel(value = "Invoice entry")
 @ApiModel(value = "Invoiceee entry", description = "Invoice entryyyyy")
 @Entity
 public class InvoiceEntry {
@@ -44,34 +46,42 @@ public class InvoiceEntry {
         this.vatRate = vatRate;
     }
 
+    @ApiModelProperty(value = "invoice entry id", example = "1")
     public Long getId() {
         return id;
     }
 
+    @ApiModelProperty(value = "product name", example = "soap")
     public String getProductName() {
         return productName;
     }
 
+    @ApiModelProperty(value = "product quantity", example = "2")
     public double getQuantity() {
         return quantity;
     }
 
+    @ApiModelProperty(value = "unit of quantity ie. kg, pc", example = "1")
     public String getUnit() {
         return unit;
     }
 
+    @ApiModelProperty(value = "product nett price per unit", example = "19.99")
     public BigDecimal getPrice() {
         return price;
     }
 
+    @ApiModelProperty(value = "total nett value = (nett price per unit)*quantity ", example = "29.99")
     public BigDecimal getNettValue() {
         return nettValue;
     }
 
+    @ApiModelProperty(value = "total gross value (total nett value after appropriate VAT rate applied)", example = "34.99")
     public BigDecimal getGrossValue() {
         return grossValue;
     }
 
+    @ApiModelProperty(value = "VAT rate to be applied to nett value ie. 0.23 means 23% VAT", example = "0.23")
     public Vat getVatRate() {
         return vatRate;
     }

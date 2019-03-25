@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.service.InvoiceService;
@@ -27,15 +28,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 @RestController
 @RequestMapping("/invoices")
 @Api(tags = "Invoices", description = "Operations")
-/*
 @ApiResponses( {
-    @ApiResponse(code = 200, message = "Success"),
-    @ApiResponse(code = 400, message = "There was an error in submitted form"),
-    @ApiResponse(code = 401, message = "You are not authorized to perform that operation"),
-    @ApiResponse(code = 403, message = "Forbidden"),
-    @ApiResponse(code = 500, message = "Something went wrong on the server")})
-*/
-@ApiResponses({
     @ApiResponse(code = 500, message = "Something went wrong on the server")})
 
 public class InvoiceController {
@@ -50,7 +43,7 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get a single invoice", notes = "Gets an invoice by id")
-    @ApiResponses({@ApiResponse(code = 404, message = "Invoice with given id does not exist in database")})
+    @ApiResponses( {@ApiResponse(code = 404, message = "Invoice with given id does not exist in database")})
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -76,7 +69,7 @@ public class InvoiceController {
 
     @GetMapping("/byDate")
     @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate")
-    @ApiResponses({@ApiResponse(code = 400, message = "Please make sure that fromDate  and toDate parameters are present and in the correct format ie. YYYY.MM.DD. Make sure toDate parameter is after toDate parameter.")})
+    @ApiResponses( {@ApiResponse(code = 400, message = "Please make sure that fromDate  and toDate parameters are present and in the correct format ie. YYYY.MM.DD. Make sure toDate parameter is after toDate parameter.")})
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         if (fromDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fromDate parameter cannot be null.");
@@ -97,7 +90,7 @@ public class InvoiceController {
 
     @GetMapping("/byBuyer")
     @ApiOperation(value = "Get all invoices by buyer", notes = "Gets all invoices issued to specified buyer")
-    @ApiResponses({@ApiResponse(code = 400, message = "Please provide buyerId parameter.")})
+    @ApiResponses( {@ApiResponse(code = 400, message = "Please provide buyerId parameter.")})
     ResponseEntity<?> getInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
@@ -112,7 +105,7 @@ public class InvoiceController {
 
     @GetMapping("/bySeller")
     @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller")
-    @ApiResponses({@ApiResponse(code = 400, message = "Please provide sellerId parameter.")})
+    @ApiResponses( {@ApiResponse(code = 400, message = "Please provide sellerId parameter.")})
     ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
@@ -127,7 +120,7 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete invoice by id", notes = "Deletes invoice by specified id from database")
-    @ApiResponses({@ApiResponse(code = 404, message = "Invoice with given id does not exist in database")})
+    @ApiResponses( {@ApiResponse(code = 404, message = "Invoice with given id does not exist in database")})
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -141,9 +134,11 @@ public class InvoiceController {
         }
     }
 
+
     @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Delete ALL invoices", notes = "WARNING!!! This operation deletes ALL available invoices from database")
-    @ApiResponses({@ApiResponse(code = 204, message = "All invoices deleted.")})
+    @ApiResponses( {@ApiResponse(code = 204, message = "All invoices deleted.")})
     ResponseEntity<?> deleteAllInvoices() {
         try {
             invoiceService.deleteAllInvoices();
@@ -155,7 +150,7 @@ public class InvoiceController {
 
     @PostMapping
     @ApiOperation(value = "Save or update an invoice", notes = "When id field left blank - saves an invoice to database. When id field filled with number - then application updates the existing invoice with form data")
-    @ApiResponses({@ApiResponse(code = 400, message = "Please provide invoice to be saved in database.")})
+    @ApiResponses( {@ApiResponse(code = 400, message = "Please provide invoice to be saved in database.")})
     ResponseEntity<?> saveInvoice(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invoice cannot be null.");
