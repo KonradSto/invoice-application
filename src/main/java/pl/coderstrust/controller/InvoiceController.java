@@ -143,8 +143,7 @@ public class InvoiceController {
 
     @DeleteMapping
     @ApiOperation(value = "Delete ALL invoices", notes = "WARNING!!! This operation deletes ALL available invoices from database")
-    @ApiResponses( {@ApiResponse(code = 204, message = "All invoices deleted."),
-        @ApiResponse(code = 404, message = "Could not deleted all invoices, because could not find them in database")})
+    @ApiResponses( {@ApiResponse(code = 204, message = "All invoices deleted.")})
     ResponseEntity<?> deleteAllInvoices() {
         try {
             invoiceService.deleteAllInvoices();
