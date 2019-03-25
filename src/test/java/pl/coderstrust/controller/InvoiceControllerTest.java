@@ -37,7 +37,7 @@ import pl.coderstrust.service.ServiceOperationException;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(InvoiceController.class)
 @AutoConfigureMockMvc
-@WithMockUser(username = "admin", password = "admin", roles = "USER")
+@WithMockUser(roles = "USER")
 class InvoiceControllerTest {
     @Autowired
     private MockMvc mockMvc;
