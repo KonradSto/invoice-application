@@ -15,7 +15,7 @@ import pl.coderstrust.model.Vat;
 
 public class Mapper {
 
-    static Collection<pl.coderstrust.soap.bindingClasses.Invoice> mapOriginalInvoicesToSOAPInvoices(List<Invoice> invoices) throws DatatypeConfigurationException {
+    static Collection<pl.coderstrust.soap.bindingClasses.Invoice> mapOriginalInvoicesToSOAPInvoices(Collection<Invoice> invoices) throws DatatypeConfigurationException {
         Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = new ArrayList<>();
         for (Invoice invoice : invoices) {
             responseInvoices.add(mapOriginalInvoiceToSOAPInvoice(invoice));

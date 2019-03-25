@@ -9,6 +9,7 @@ import static pl.coderstrust.soap.bindingClasses.ResponseStatus.SUCCESS;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ import pl.coderstrust.soap.bindingClasses.ResponseBase;
 @Endpoint
 public class InvoiceEndpoint {
 
-    private static final String NAMESPACE_URI = "http://project-9-karolina-konrad-lukasz-piot";
+    private static final String NAMESPACE_URI = "http://project-9-karolina-konrad-lukasz-piotr";
 
     private InvoiceService invoiceService;
 
@@ -46,6 +47,10 @@ public class InvoiceEndpoint {
         GetInvoiceResponse response = new GetInvoiceResponse();
         ResponseBase responseBase;
         try {
+            Optional<Invoice> optionalInvoice = invoiceService.getInvoice(request.getId());
+            if(optionalInvoice.isPresent()){
+
+            }
             Invoice invoice = invoiceService.getInvoice(request.getId()).get();
             pl.coderstrust.soap.bindingClasses.Invoice responseInvoice = mapOriginalInvoiceToSOAPInvoice(invoice);
             responseBase = new pl.coderstrust.soap.bindingClasses.InvoiceResponse();
@@ -66,19 +71,20 @@ public class InvoiceEndpoint {
     @ResponsePayload
     public pl.coderstrust.soap.bindingClasses.GetAllInvoicesResponse getAllInvoices(@RequestPayload GetAllInvoicesRequest request) {
         pl.coderstrust.soap.bindingClasses.GetAllInvoicesResponse response = new pl.coderstrust.soap.bindingClasses.GetAllInvoicesResponse();
-        ResponseBase responseBase;
+
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
-            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSOAPInvoices((List<Invoice>) invoices);
-            responseBase = new pl.coderstrust.soap.bindingClasses.InvoicesResponse();
+            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSOAPInvoices(invoices);
+            pl.coderstrust.soap.bindingClasses.InvoicesResponse responseBase = new pl.coderstrust.soap.bindingClasses.InvoicesResponse();
             responseBase.setStatus(SUCCESS);
+            responseBase.getInvoices();
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
-                ((pl.coderstrust.soap.bindingClasses.InvoicesResponse) responseBase).getInvoices().add(invoice);
+                responseBase.getInvoices().add(invoice);
             }
             response.setResponse(responseBase);
             return response;
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase = new ResponseBase();
+            ResponseBase responseBase = new ResponseBase();
             responseBase.setStatus(FAILURE);
             responseBase.setMessage("An error occurred during getting all invoices");
             response.setResponse(responseBase);
