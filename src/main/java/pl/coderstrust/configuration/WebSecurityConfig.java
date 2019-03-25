@@ -14,11 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${spring.security.user.name}")
-    private String user;
+    @Value("${spring.security.username}")
+    private String userName;
 
-    @Value("${spring.security.user.password}")
-    private String password;
+    @Value("${spring.security.userpassword}")
+    private String userPassword;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -39,9 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-            .withUser(user)
+            .withUser(userName)
             .password(passwordEncoder()
-                .encode(password))
+                .encode(userPassword))
             .roles("USER");
     }
 
