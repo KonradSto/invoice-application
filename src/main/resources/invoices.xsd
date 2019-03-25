@@ -1,5 +1,5 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://spring.io/guides/gs-producing-web-service"
-  targetNamespace="http://spring.io/guides/gs-producing-web-service" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://project-9-karolina-konrad-lukasz-piotr"
+  targetNamespace="http://project-9-karolina-konrad-lukasz-piotr" elementFormDefault="qualified">
 
   <xs:element name="getInvoiceRequest">
     <xs:complexType>
@@ -27,22 +27,104 @@
   <xs:element name="getAllInvoicesResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="invoices" type="tns:invoice" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="response" type="tns:responseBase"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
-  <xs:complexType name="invoice">
-    <xs:sequence>
-      <xs:element name="id" type="xs:long"/>
-      <xs:element name="number" type="xs:string"/>
-      <xs:element name="issuedDate" type="xs:date"/>
-      <xs:element name="localDate" type="xs:date"/>
-      <xs:element name="seller" type="tns:company"/>
-      <xs:element name="buyer" type="tns:company"/>
-      <xs:element name="entries" type="tns:invoiceEntry" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
+  <xs:element name="getInvoicesByDateRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="fromDate" type="xs:date"/>
+        <xs:element name="toDate" type="xs:date"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getInvoicesByDateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:responseBase"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getInvoicesByBuyerRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="buyerId" type="xs:long"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getInvoicesByBuyerResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:responseBase"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getInvoicesBySellerRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="sellerId" type="xs:long"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getInvoicesBySellerResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:responseBase"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="deleteInvoiceRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="xs:long"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="deleteInvoiceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:responseBase"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="deleteAllInvoicesRequest">
+    <xs:complexType>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="deleteAllInvoicesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:responseBase"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="saveInvoiceRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="invoice" type="tns:invoice"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="saveInvoiceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:responseBase"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 
   <xs:complexType name="responseBase">
     <xs:sequence>
@@ -77,6 +159,18 @@
       <xs:enumeration value="FAILURE"/>
     </xs:restriction>
   </xs:simpleType>
+
+  <xs:complexType name="invoice">
+    <xs:sequence>
+      <xs:element name="id" type="xs:long"/>
+      <xs:element name="number" type="xs:string"/>
+      <xs:element name="issuedDate" type="xs:date"/>
+      <xs:element name="localDate" type="xs:date"/>
+      <xs:element name="seller" type="tns:company"/>
+      <xs:element name="buyer" type="tns:company"/>
+      <xs:element name="entries" type="tns:invoiceEntry" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:complexType name="company">
     <xs:sequence>

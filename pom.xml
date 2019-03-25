@@ -140,8 +140,9 @@
           </execution>
         </executions>
         <configuration>
-          <schemaDirectory>${project.basedir}/src/main/resources/</schemaDirectory>
-          <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+          <schemaDirectory>src/main/resources/</schemaDirectory>
+          <outputDirectory>src/main/java/</outputDirectory>
+          <packageName>pl.coderstrust.soap.bindingClasses</packageName>
           <clearOutputDir>false</clearOutputDir>
         </configuration>
       </plugin>

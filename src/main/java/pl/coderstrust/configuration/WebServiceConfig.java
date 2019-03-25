@@ -1,4 +1,4 @@
-package pl.coderstrust.soap;
+package pl.coderstrust.configuration;
 
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -21,15 +21,15 @@ public class WebServiceConfig extends WsConfigurerAdapter {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, "/ws/*");
+        return new ServletRegistrationBean(servlet, "/soap/invoices/*");
     }
 
     @Bean(name = "invoices")
     public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema countriesSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("InvoicesPort");
-        wsdl11Definition.setLocationUri("/ws");
-        wsdl11Definition.setTargetNamespace("http://spring.io/guides/gs-producing-web-service");
+        wsdl11Definition.setLocationUri("/soap/invoices");
+        wsdl11Definition.setTargetNamespace("http://project-9-karolina-konrad-lukasz-piotr");
         wsdl11Definition.setSchema(countriesSchema);
         return wsdl11Definition;
     }
