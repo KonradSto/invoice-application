@@ -24,7 +24,6 @@ import pl.coderstrust.model.Invoice;
 @ExtendWith(MockitoExtension.class)
 class HibernateDatabaseTest {
 
-
     @InjectMocks
     private HibernateDatabase hibernateDatabase;
 
