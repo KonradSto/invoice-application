@@ -27,12 +27,17 @@ import pl.coderstrust.utils.ArgumentValidator;
 @RestController
 @RequestMapping("/invoices")
 @Api(tags = "Invoices", description = "Operations")
+/*
 @ApiResponses( {
     @ApiResponse(code = 200, message = "Success"),
     @ApiResponse(code = 400, message = "There was an error in submitted form"),
     @ApiResponse(code = 401, message = "You are not authorized to perform that operation"),
     @ApiResponse(code = 403, message = "Forbidden"),
     @ApiResponse(code = 500, message = "Something went wrong on the server")})
+*/
+@ApiResponses( {
+    @ApiResponse(code = 500, message = "Something went wrong on the server")})
+
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -107,7 +112,7 @@ public class InvoiceController {
 
     @GetMapping("/bySeller")
     @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller")
-    @ApiResponses( {@ApiResponse(code = 400, message = "Please provide sellerId parameter.")})
+    @ApiResponses({@ApiResponse(code = 400, message = "Please provide sellerId parameter.")})
     ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
@@ -122,7 +127,7 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete invoice by id", notes = "Deletes invoice by specified id from database")
-    @ApiResponses( {@ApiResponse(code = 404, message = "Please provide sellerId parameter.")})
+    @ApiResponses( {@ApiResponse(code = 404, message = "Invoice with given id does not exist in database")})
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -138,7 +143,8 @@ public class InvoiceController {
 
     @DeleteMapping
     @ApiOperation(value = "Delete ALL invoices", notes = "WARNING!!! This operation deletes ALL available invoices from database")
-    @ApiResponses( {@ApiResponse(code = 204, message = "All invoices deleted.")})
+    @ApiResponses( {@ApiResponse(code = 204, message = "All invoices deleted."),
+        @ApiResponse(code = 404, message = "Could not deleted all invoices, because could not find them in database")})
     ResponseEntity<?> deleteAllInvoices() {
         try {
             invoiceService.deleteAllInvoices();
