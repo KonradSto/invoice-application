@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.coderstrust.model.Invoice;
-import pl.coderstrust.utils.ArgumentValidator;
 
 // TODO: 26/03/2019 synchronize
 // TODO: 26/03/2019  atomic counter
@@ -17,16 +16,11 @@ public class InfileDataBase implements Database {
     @Autowired
     private ObjectMapper mapper;
     private FileHelper fileHelper;
+    private Long nextId = 1L;
 
-    public InfileDataBase(String inFileDatabasePath) {
-        this.inFileDatabasePath = inFileDatabasePath;
-        this.fileHelper = new FileHelper("inFileDatabaseTest.txt");
-    }
 
     @Override
     public Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
-        ArgumentValidator.ensureNotNull(invoice,"invoice");
-
         return null;
     }
 
