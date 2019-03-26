@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
@@ -14,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.service.InvoicePdfService;
 import pl.coderstrust.service.InvoiceService;
 import pl.coderstrust.utils.ArgumentValidator;
 
@@ -36,6 +40,7 @@ public class InvoiceController {
 
     private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
     private InvoiceService invoiceService;
+    private InvoicePdfService invoicePdfService;
     private String message;
 
     @Autowired
@@ -229,6 +234,22 @@ public class InvoiceController {
             return ResponseEntity.status(HttpStatus.OK).body(savedInvoice);
         } catch (Exception e) {
             log.error("An error occurred during saving an invoice.", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/pdf/{id}")
+    ResponseEntity<?> getInvoiceAsPdf(@PathVariable Long id) {
+        try {
+            Optional<Invoice> invoice = invoiceService.getInvoice(id);
+            if (!invoice.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            byte[] invoiceAsPdf = invoicePdfService.getInvoiceAsPdf(invoice.get());
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentType(MediaType.APPLICATION_PDF);
+            return ResponseEntity.ok().headers(responseHeaders).body(invoiceAsPdf);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
