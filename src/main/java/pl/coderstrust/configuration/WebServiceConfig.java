@@ -25,17 +25,17 @@ public class WebServiceConfig extends WsConfigurerAdapter {
     }
 
     @Bean(name = "invoices")
-    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema countriesSchema) {
+    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema invoicesSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("InvoicesPort");
         wsdl11Definition.setLocationUri("/soap/invoices");
         wsdl11Definition.setTargetNamespace("http://project-9-karolina-konrad-lukasz-piotr");
-        wsdl11Definition.setSchema(countriesSchema);
+        wsdl11Definition.setSchema(invoicesSchema);
         return wsdl11Definition;
     }
 
     @Bean
-    public XsdSchema countriesSchema() {
+    public XsdSchema invoicesSchema() {
         return new SimpleXsdSchema(new ClassPathResource("invoices.xsd"));
     }
 }
