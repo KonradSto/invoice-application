@@ -30,7 +30,7 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfo(
             "Invoices REST API",
-            "This API provides simple CRUD functionality for your invoices.",
+            "This API provides simple functionality to save, update, delete, search for your invoices.",
             "1.0.0",
             "",
             new Contact("Java developers 9th edition", "", "9thedition@coderstrust.com"),

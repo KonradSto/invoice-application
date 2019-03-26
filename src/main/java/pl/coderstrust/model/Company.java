@@ -43,7 +43,7 @@ public class Company {
         this.email = email;
     }
 
-    @ApiModelProperty(value = "Company id", example = "123-34-123")
+    @ApiModelProperty(value = "Company id", example = "543")
     public Long getId() {
         return id;
     }

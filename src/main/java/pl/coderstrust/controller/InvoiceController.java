@@ -41,8 +41,9 @@ public class InvoiceController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get a single invoice", notes = "Gets an invoice by id")
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(code = 404, message = "Invoice with given id does not exist in database."),
+        @ApiResponse(code = 200, message = "Success. Invoice retrieved from database."),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
         try {
@@ -58,9 +59,9 @@ public class InvoiceController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices", notes = "Gets all available invoices from database")
-    @ApiResponses( {
-        @ApiResponse(code = 200, message = "Success"),
+    @ApiOperation(value = "Get all invoices", notes = "Gets all available invoices from database.")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "Success. All invoices retrieved from database."),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> getAllInvoices() {
         try {
@@ -74,9 +75,9 @@ public class InvoiceController {
     @GetMapping("/byDate")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate.")
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(code = 400, message = "Please make sure that fromDate  and toDate parameters are present and in the correct format ie. YYYY.MM.DD. Make sure toDate parameter is after toDate parameter."),
-        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 200, message = "Success. All invoices issued within given dates retrieved from database."),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         if (fromDate == null) {
@@ -98,10 +99,10 @@ public class InvoiceController {
 
     @GetMapping("/byBuyer")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices by buyer", notes = "Gets all invoices issued to specified buyer")
-    @ApiResponses( {
+    @ApiOperation(value = "Get all invoices by buyer", notes = "Gets all invoices issued to specified buyer.")
+    @ApiResponses({
         @ApiResponse(code = 400, message = "Please provide buyerId parameter."),
-        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 200, message = "Success. All invoices issued to given buyer retrieved from database."),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> getInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
@@ -117,10 +118,10 @@ public class InvoiceController {
 
     @GetMapping("/bySeller")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller")
-    @ApiResponses( {
+    @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller.")
+    @ApiResponses({
         @ApiResponse(code = 400, message = "Please provide sellerId parameter."),
-        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 200, message = "Success. All invoices issued to given seller retrieved from database."),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
@@ -136,10 +137,10 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Delete invoice by id", notes = "Deletes invoice by specified id from database")
-    @ApiResponses( {
+    @ApiOperation(value = "Delete an invoice by id", notes = "Deletes invoice by specified id from database.")
+    @ApiResponses({
         @ApiResponse(code = 404, message = "Invoice with given id does not exist in database."),
-        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 200, message = "Success. Invoice with given id deleted from database."),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         try {
@@ -154,12 +155,11 @@ public class InvoiceController {
         }
     }
 
-
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Delete ALL invoices", notes = "WARNING!!! This operation deletes ALL available invoices from database.")
-    @ApiResponses( {
-        @ApiResponse(code = 204, message = "All invoices deleted."),
+    @ApiResponses({
+        @ApiResponse(code = 204, message = "Success. All invoices deleted from database."),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> deleteAllInvoices() {
         try {
@@ -171,10 +171,11 @@ public class InvoiceController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Save or update an invoice", notes = "When id field left blank - saves an invoice to database. When id field filled with number - then application updates the existing invoice with form data.")
-    @ApiResponses( {
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Save or update an invoice", notes = "When invoice id field is set to null - application saves the invoice to database under id which is automatically generated to that invoice. When id field filled with number - then application assumes that the user wants to update the invoice but before proceeding with update- checks if given id exists in database, if so then updates the existing invoice with form data, otherwise 500 error is returned.")
+    @ApiResponses({
         @ApiResponse(code = 400, message = "invoice cannot be null."),
-        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 200, message = "Success. Invoice saved/updated in database"),
         @ApiResponse(code = 500, message = "Something went wrong on the server.")})
     ResponseEntity<?> saveInvoice(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {

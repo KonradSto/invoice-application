@@ -81,7 +81,7 @@ public class InvoiceEntry {
         return grossValue;
     }
 
-    @ApiModelProperty(value = "VAT rate to be applied to nett value ie. 0.23 means 23% VAT", example = "0.23")
+    @ApiModelProperty(value = "VAT rate to be applied to nett value ie. 0.23 means 23% VAT", example = "VAT_23")
     public Vat getVatRate() {
         return vatRate;
     }
