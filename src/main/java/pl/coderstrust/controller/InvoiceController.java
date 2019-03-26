@@ -172,7 +172,8 @@ public class InvoiceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Save or update an invoice", notes = "When invoice id field is set to null - application saves the invoice to database under id which is automatically generated to that invoice. When id field filled with number - then application assumes that the user wants to update the invoice but before proceeding with update- checks if given id exists in database, if so then updates the existing invoice with form data, otherwise 500 error is returned.")
+    @ApiOperation(value = "Save or update an invoice", notes = "When invoice id field is set to null - application saves the invoice to database under id which is automatically generated to that invoice. When id field filled with number - then "
+        + "application assumes that the user wants to update the invoice but before proceeding with update- checks if given id exists in database, if so then updates the existing invoice with form data, otherwise 500 error is returned.")
     @ApiResponses({
         @ApiResponse(code = 400, message = "invoice cannot be null."),
         @ApiResponse(code = 200, message = "Success. Invoice saved/updated in database"),
