@@ -30,14 +30,10 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfo(
             "Invoices REST API",
-            "Some custom description of API.",
-            "API TOS",
-            "Terms of service",
-            new Contact("John Doe", "", "myeaddress@company.com"),
-            "License of API", "API license URL", Collections.emptyList());
+            "This API provides simple CRUD functionality for your invoices.",
+            "1.0.0",
+            "",
+            new Contact("Java developers 9th edition", "", "9thedition@coderstrust.com"),
+            "", "", Collections.emptyList());
     }
 }
-
-// http://localhost:8080/v2/api-docs     - Api
-
-//   http://localhost:8080/swagger-ui.html    - proper swagger
