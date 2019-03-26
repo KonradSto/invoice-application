@@ -7,27 +7,12 @@
         <xs:element name="id" type="xs:long"/>
       </xs:sequence>
     </xs:complexType>
-  </xs:element>
 
-  <xs:element name="getInvoiceResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
-      </xs:sequence>
-    </xs:complexType>
   </xs:element>
 
   <xs:element name="getAllInvoicesRequest">
     <xs:complexType>
       <xs:sequence>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="getAllInvoicesResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -41,26 +26,10 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="getInvoicesByDateResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
   <xs:element name="getInvoicesByBuyerRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="buyerId" type="xs:long"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="getInvoicesByBuyerResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -73,14 +42,6 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="getInvoicesBySellerResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
   <xs:element name="deleteInvoiceRequest">
     <xs:complexType>
       <xs:sequence>
@@ -89,24 +50,8 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="deleteInvoiceResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
   <xs:element name="deleteAllInvoicesRequest">
     <xs:complexType>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="deleteAllInvoicesResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
-      </xs:sequence>
     </xs:complexType>
   </xs:element>
 
@@ -118,7 +63,23 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="saveInvoiceResponse">
+  <xs:element name="singleInvoiceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:invoiceResponse"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="InvoicesListResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="tns:invoicesResponse"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="StatusResponse">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="response" type="tns:responseBase"/>
