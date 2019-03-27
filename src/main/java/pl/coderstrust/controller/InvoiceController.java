@@ -44,10 +44,12 @@ public class InvoiceController {
     private String message;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService) {
+    public InvoiceController(InvoiceService invoiceService, InvoicePdfService invoicePdfService) {
         log.debug("Launching to REST service");
         ArgumentValidator.ensureNotNull(invoiceService, "invoiceService");
+        ArgumentValidator.ensureNotNull(invoicePdfService, "invoicePdfService");
         this.invoiceService = invoiceService;
+        this.invoicePdfService = invoicePdfService;
     }
 
     @GetMapping("/{id}")
