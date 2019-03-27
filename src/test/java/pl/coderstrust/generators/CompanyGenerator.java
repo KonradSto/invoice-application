@@ -27,7 +27,7 @@ public class CompanyGenerator {
         return new Company(id, name, address, taxId, accountId, phoneNumber, name + "@xyz.com");
     }
 
-    private static String getRandomNumberAsString() {
+    public static String getRandomNumberAsString() {
         return String.format("%05d%05d", random.nextInt(99999), random.nextInt(99999));
     }
 }

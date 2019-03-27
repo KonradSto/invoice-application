@@ -166,4 +166,5 @@
       <xs:enumeration value="VAT_23"/>
     </xs:restriction>
   </xs:simpleType>
+
 </xs:schema>

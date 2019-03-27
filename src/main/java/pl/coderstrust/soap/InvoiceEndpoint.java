@@ -1,9 +1,9 @@
 package pl.coderstrust.soap;
 
 import static pl.coderstrust.soap.Mapper.convertXMLGregorianCalendarToLocalDate;
-import static pl.coderstrust.soap.Mapper.mapOriginalInvoiceToSOAPInvoice;
-import static pl.coderstrust.soap.Mapper.mapOriginalInvoicesToSOAPInvoices;
-import static pl.coderstrust.soap.Mapper.mapSOAPInvoiceToOriginalInvoice;
+import static pl.coderstrust.soap.Mapper.mapOriginalInvoiceToSoapInvoice;
+import static pl.coderstrust.soap.Mapper.mapOriginalInvoicesToSoapInvoices;
+import static pl.coderstrust.soap.Mapper.mapSoapInvoiceToOriginalInvoice;
 import static pl.coderstrust.soap.bindingClasses.ResponseStatus.FAILURE;
 import static pl.coderstrust.soap.bindingClasses.ResponseStatus.SUCCESS;
 
@@ -52,7 +52,7 @@ public class InvoiceEndpoint {
             Optional<Invoice> optionalInvoice = invoiceService.getInvoice(request.getId());
             if (optionalInvoice.isPresent()) {
                 Invoice invoice = optionalInvoice.get();
-                pl.coderstrust.soap.bindingClasses.Invoice resultInvoice = mapOriginalInvoiceToSOAPInvoice(invoice);
+                pl.coderstrust.soap.bindingClasses.Invoice resultInvoice = mapOriginalInvoiceToSoapInvoice(invoice);
                 responseBase.setStatus(SUCCESS);
                 responseBase.setInvoice(resultInvoice);
             } else {
@@ -73,7 +73,7 @@ public class InvoiceEndpoint {
         InvoicesResponse responseBase = new InvoicesResponse();
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
-            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSOAPInvoices(invoices);
+            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSoapInvoices(invoices);
             responseBase.getInvoices();
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
                 responseBase.getInvoices().add(invoice);
@@ -95,7 +95,7 @@ public class InvoiceEndpoint {
         InvoicesResponse responseBase = new InvoicesResponse();
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(convertXMLGregorianCalendarToLocalDate(request.getFromDate()), convertXMLGregorianCalendarToLocalDate(request.getToDate()));
-            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSOAPInvoices(invoices);
+            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSoapInvoices(invoices);
             responseBase.getInvoices();
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
                 (responseBase).getInvoices().add(invoice);
@@ -118,7 +118,7 @@ public class InvoiceEndpoint {
         InvoicesResponse responseBase = new InvoicesResponse();
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByBuyer(request.getBuyerId());
-            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSOAPInvoices(invoices);
+            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSoapInvoices(invoices);
             responseBase.getInvoices();
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
                 responseBase.getInvoices().add(invoice);
@@ -139,7 +139,7 @@ public class InvoiceEndpoint {
         InvoicesResponse responseBase = new InvoicesResponse();
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesBySeller(request.getSellerId());
-            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSOAPInvoices(invoices);
+            Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSoapInvoices(invoices);
             responseBase.getInvoices();
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
                 responseBase.getInvoices().add(invoice);
@@ -193,8 +193,8 @@ public class InvoiceEndpoint {
         SingleInvoiceResponse response = new SingleInvoiceResponse();
         InvoiceResponse responseBase = new InvoiceResponse();
         try {
-            Invoice invoice = invoiceService.saveInvoice(mapSOAPInvoiceToOriginalInvoice(request.getInvoice()));
-            pl.coderstrust.soap.bindingClasses.Invoice responseInvoice = mapOriginalInvoiceToSOAPInvoice(invoice);
+            Invoice invoice = invoiceService.saveInvoice(mapSoapInvoiceToOriginalInvoice(request.getInvoice()));
+            pl.coderstrust.soap.bindingClasses.Invoice responseInvoice = mapOriginalInvoiceToSoapInvoice(invoice);
             responseBase.setStatus(SUCCESS);
             responseBase.setInvoice(responseInvoice);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
