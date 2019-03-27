@@ -1,6 +1,7 @@
 package pl.coderstrust.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -27,7 +28,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 
 @RestController
 @RequestMapping("/invoices")
-@Api(tags = "Invoices", description = "Operations")
+@Api(value = "/invoices", description = "Available operations for invoice application", tags = {"Invoices"})
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -40,11 +41,12 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get a single invoice", notes = "Gets an invoice by id")
+    @ApiOperation(value = "Get a single invoice", notes = "Gets an invoice by id", response = Invoice.class)
+    @ApiImplicitParam(name = "id", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
     @ApiResponses({
-        @ApiResponse(code = 404, message = "Invoice with given id does not exist in database."),
-        @ApiResponse(code = 200, message = "Success. Invoice retrieved from database."),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Invoice not found for passed id."),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -59,10 +61,10 @@ public class InvoiceController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices", notes = "Gets all available invoices from database.")
+    @ApiOperation(value = "Get all invoices", response = Invoice.class, responseContainer = "List")
     @ApiResponses({
-        @ApiResponse(code = 200, message = "Success. All invoices retrieved from database."),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getAllInvoices() {
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
@@ -74,11 +76,11 @@ public class InvoiceController {
 
     @GetMapping("/byDate")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate.")
+    @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate.", response = Invoice.class, responseContainer = "List")
     @ApiResponses({
-        @ApiResponse(code = 400, message = "Please make sure that fromDate  and toDate parameters are present and in the correct format ie. YYYY.MM.DD. Make sure toDate parameter is after toDate parameter."),
-        @ApiResponse(code = 200, message = "Success. All invoices issued within given dates retrieved from database."),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Passed dates are invalid."),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         if (fromDate == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fromDate parameter cannot be null.");
@@ -99,11 +101,11 @@ public class InvoiceController {
 
     @GetMapping("/byBuyer")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices by buyer", notes = "Gets all invoices issued to specified buyer.")
+    @ApiOperation(value = "Get all invoices by buyer", notes = "Gets all invoices issued to specified buyer.", response = Invoice.class, responseContainer = "List")
     @ApiResponses({
-        @ApiResponse(code = 400, message = "Please provide buyerId parameter."),
-        @ApiResponse(code = 200, message = "Success. All invoices issued to given buyer retrieved from database."),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Passed buyer id is invalid."),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
@@ -118,11 +120,11 @@ public class InvoiceController {
 
     @GetMapping("/bySeller")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller.")
+    @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller.",response = Invoice.class, responseContainer = "List")
     @ApiResponses({
-        @ApiResponse(code = 400, message = "Please provide sellerId parameter."),
-        @ApiResponse(code = 200, message = "Success. All invoices issued to given seller retrieved from database."),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Passed seller id is invalid."),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id cannot be null.");
@@ -139,9 +141,9 @@ public class InvoiceController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Delete an invoice by id", notes = "Deletes invoice by specified id from database.")
     @ApiResponses({
-        @ApiResponse(code = 404, message = "Invoice with given id does not exist in database."),
-        @ApiResponse(code = 200, message = "Success. Invoice with given id deleted from database."),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Invoice not found for passed id."),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> deleteInvoice(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
@@ -159,8 +161,8 @@ public class InvoiceController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Delete ALL invoices", notes = "WARNING!!! This operation deletes ALL available invoices from database.")
     @ApiResponses({
-        @ApiResponse(code = 204, message = "Success. All invoices deleted from database."),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 204, message = "OK"),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> deleteAllInvoices() {
         try {
             invoiceService.deleteAllInvoices();
@@ -173,11 +175,11 @@ public class InvoiceController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Save or update an invoice", notes = "When invoice id field is set to null - application saves the invoice to database under id which is automatically generated to that invoice. When id field filled with number - then "
-        + "application assumes that the user wants to update the invoice but before proceeding with update- checks if given id exists in database, if so then updates the existing invoice with form data, otherwise 500 error is returned.")
+        + "application assumes that the user wants to update the invoice but before proceeding with update - checks if given id exists in database, if so then updates the existing invoice with form data, otherwise 500 error is returned.",response = Invoice.class)
     @ApiResponses({
-        @ApiResponse(code = 400, message = "invoice cannot be null."),
-        @ApiResponse(code = 200, message = "Success. Invoice saved/updated in database"),
-        @ApiResponse(code = 500, message = "Something went wrong on the server.")})
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Passed invoice is invalid."),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> saveInvoice(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invoice cannot be null.");

@@ -50,6 +50,8 @@ public class Invoice {
         this.buyer = buyer;
         this.entries = entries != null ? new ArrayList(entries) : new ArrayList();
     }
+
+    @ApiModelProperty(value = "The id of invoice.", example = "1234", dataType = "Long", position = -1)
 @ApiModelProperty(value = "invoice id",example = "1")
     public Long getId() {
         return id;

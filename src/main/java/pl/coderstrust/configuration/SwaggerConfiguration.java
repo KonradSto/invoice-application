@@ -1,9 +1,11 @@
 package pl.coderstrust.configuration;
 
+import io.swagger.annotations.Api;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -19,7 +21,7 @@ public class SwaggerConfiguration {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("pl.coderstrust.controller"))
+            .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
             .paths(PathSelectors.ant("/invoices/**"))
             .build()
             .consumes(Collections.singleton("application/json"))
@@ -28,12 +30,11 @@ public class SwaggerConfiguration {
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfo(
-            "Invoices REST API",
-            "This API provides simple functionality to save, update, delete, search for your invoices.",
-            "1.0.0",
-            "",
-            new Contact("Java developers 9th edition", "", "9thedition@coderstrust.com"),
-            "", "", Collections.emptyList());
+        return new ApiInfoBuilder()
+            .title("Invoices REST API")
+            .description("This API provides simple functionality to save, update, delete, search for your invoices.")
+            .version("1.0.0")
+            .contact(new Contact("Java developers 9th edition", "http://9thedition.com", "9thedition@coderstrust.com"))
+            .build();
     }
 }

@@ -22,7 +22,7 @@ public class InvoiceEntry {
     private final double quantity;
     private final String unit;
     private final BigDecimal price;
-    private final BigDecimal nettValue;
+    private final BigDecimal netValue;
     private final BigDecimal grossValue;
     private final Vat vatRate;
 
@@ -32,7 +32,7 @@ public class InvoiceEntry {
                         @JsonProperty("quantity") double quantity,
                         @JsonProperty("unit") String unit,
                         @JsonProperty("price") BigDecimal price,
-                        @JsonProperty("nettValue") BigDecimal nettValue,
+                        @JsonProperty("netValue") BigDecimal netValue,
                         @JsonProperty("grossValue") BigDecimal grossValue,
                         @JsonProperty("vatRate") Vat vatRate) {
 
@@ -41,12 +41,12 @@ public class InvoiceEntry {
         this.quantity = quantity;
         this.unit = unit;
         this.price = price;
-        this.nettValue = nettValue;
+        this.netValue = netValue;
         this.grossValue = grossValue;
         this.vatRate = vatRate;
     }
 
-    @ApiModelProperty(value = "invoice entry id", example = "1")
+    @ApiModelProperty(value = "The id of invoice entry.", dataType = "Long", position = -1)
     public Long getId() {
         return id;
     }
@@ -72,8 +72,8 @@ public class InvoiceEntry {
     }
 
     @ApiModelProperty(value = "total nett value = (nett price per unit)*quantity ", example = "29.99")
-    public BigDecimal getNettValue() {
-        return nettValue;
+    public BigDecimal getNetValue() {
+        return netValue;
     }
 
     @ApiModelProperty(value = "total gross value (total nett value after appropriate VAT rate applied)", example = "34.99")
@@ -100,7 +100,7 @@ public class InvoiceEntry {
             && productName.equals(invoiceEntry.productName)
             && unit.equals(invoiceEntry.unit)
             && price.equals(invoiceEntry.price)
-            && nettValue.equals(invoiceEntry.nettValue)
+            && netValue.equals(invoiceEntry.netValue)
             && grossValue.equals(invoiceEntry.grossValue)
             && vatRate == invoiceEntry.vatRate;
     }
@@ -113,7 +113,7 @@ public class InvoiceEntry {
             + ", quantity=" + quantity
             + ", unit='" + unit + '\''
             + ", price=" + price
-            + ", nettValue=" + nettValue
+            + ", netValue=" + netValue
             + ", grossValue=" + grossValue
             + ", vatRate=" + vatRate
             + '}';
