@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import pl.coderstrust.database.FileHelper;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration

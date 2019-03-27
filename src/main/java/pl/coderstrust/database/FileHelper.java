@@ -14,11 +14,11 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
-class FileHelper {
+public class FileHelper {
 
     private File file;
 
-    FileHelper(String filePath) {
+    public FileHelper(String filePath) {
         this.file = new File(filePath);
     }
 
