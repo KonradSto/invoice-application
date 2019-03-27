@@ -23,10 +23,7 @@ class InfileDataBaseTest {
 
     @BeforeEach
     public void setup() throws IOException {
-        // ObjectMapper mapper = new ObjectMapper();
-
         String inFileDatabasePath = "src/test/resources/inFileDatabaseTest.txt";
-        //FileHelper fileHelper = new FileHelper(inFileDatabasePath);
         if (fileHelper.exists()) {
             fileHelper.delete();
         }
@@ -38,7 +35,6 @@ class InfileDataBaseTest {
     @Test
     void shouldReturnTrueForExistingInvoice() throws DatabaseOperationException, IOException {
         //Given
-        //    FileHelper fileHelper = new FileHelper("src/test/resources/inFileDatabaseTest.txt");
         Invoice invoice = InvoiceGenerator.getRandomInvoice();
         fileHelper.writeLine(toJson(invoice));
         List<String> invoicesInJson;
@@ -50,18 +46,11 @@ class InfileDataBaseTest {
         assertEquals(invoice, getInvoiceFromJson(invoicesInJson.get(0)));
     }
 
-
     private String toJson(Invoice invoice) throws JsonProcessingException {
-        // ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(invoice);
     }
 
     private Invoice getInvoiceFromJson(String invoiceAsJson) throws IOException {
-        // ObjectMapper mapper = new ObjectMapper();
-
         return mapper.readValue(invoiceAsJson, Invoice.class);
     }
 }
-   /* FileHelper(String filePath) {
-        this.file = new File(filePath);
-    }*/
