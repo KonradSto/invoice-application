@@ -58,7 +58,7 @@ public class InfileDataBase implements Database {
         return mapper.writeValueAsString(invoice);
     }
 
-    private Invoice getInvoice(String invoiceAsJson) throws IOException {
+    private Invoice getInvoiceFromJson(String invoiceAsJson) throws IOException {
         return mapper.readValue(invoiceAsJson, Invoice.class);
     }
 }

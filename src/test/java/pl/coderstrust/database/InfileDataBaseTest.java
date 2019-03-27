@@ -22,7 +22,7 @@ class InfileDataBaseTest {
     private FileHelper fileHelper;
 
     @BeforeEach
-    public void setup() throws IOException {
+    private void setup() throws IOException {
         String inFileDatabasePath = "src/test/resources/inFileDatabaseTest.txt";
         if (fileHelper.exists()) {
             fileHelper.delete();

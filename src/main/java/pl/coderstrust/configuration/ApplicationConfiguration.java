@@ -29,4 +29,9 @@ public class ApplicationConfiguration {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return mapper;
     }
+
+    @Bean
+    public FileHelper getFileHelper() {
+        return new FileHelper("src/test/resources/inFileDatabaseTest.txt");
+    }
 }
