@@ -2,6 +2,7 @@ package pl.coderstrust.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -77,6 +78,9 @@ public class InvoiceController {
     @GetMapping("/byDate")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate.", response = Invoice.class, responseContainer = "List")
+    @ApiImplicitParams({
+        @ApiImplicitParam (name = "fromDate", value = "YYYY-MM-DD", example = "2019-02-04", dataType = "LocalDate"),
+        @ApiImplicitParam (name = "toDate", value = "YYYY-MM-DD", example = "2019-03-04", dataType = "LocalDate")})
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed dates are invalid."),
@@ -102,6 +106,7 @@ public class InvoiceController {
     @GetMapping("/byBuyer")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get all invoices by buyer", notes = "Gets all invoices issued to specified buyer.", response = Invoice.class, responseContainer = "List")
+    @ApiImplicitParam(name = "id", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed buyer id is invalid."),
@@ -121,6 +126,7 @@ public class InvoiceController {
     @GetMapping("/bySeller")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller.",response = Invoice.class, responseContainer = "List")
+    @ApiImplicitParam(name = "id", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed seller id is invalid."),
@@ -140,6 +146,7 @@ public class InvoiceController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Delete an invoice by id", notes = "Deletes invoice by specified id from database.")
+    @ApiImplicitParam(name = "id", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Invoice not found for passed id."),
@@ -176,6 +183,7 @@ public class InvoiceController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Save or update an invoice", notes = "When invoice id field is set to null - application saves the invoice to database under id which is automatically generated to that invoice. When id field filled with number - then "
         + "application assumes that the user wants to update the invoice but before proceeding with update - checks if given id exists in database, if so then updates the existing invoice with form data, otherwise 500 error is returned.",response = Invoice.class)
+    @ApiImplicitParam(name = "invoice", value = "Onlyyyyyyyyyyyyyyy, e.g. 7565", example = "7865", dataType = "Invoice")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed invoice is invalid."),
