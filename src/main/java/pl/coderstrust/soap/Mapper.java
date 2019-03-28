@@ -1,7 +1,7 @@
 package pl.coderstrust.soap;
 
+import java.sql.Date;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
@@ -78,8 +78,8 @@ class Mapper {
         );
     }
 
-    static Collection<pl.coderstrust.soap.bindingClasses.Invoice> mapOriginalInvoicesToSoapInvoices(Collection<Invoice> invoices) throws DatatypeConfigurationException {
-        Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = new ArrayList<>();
+    static List<pl.coderstrust.soap.bindingClasses.Invoice> mapOriginalInvoicesToSoapInvoices(Collection<Invoice> invoices) throws DatatypeConfigurationException {
+        List<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = new ArrayList<>();
         for (Invoice invoice : invoices) {
             responseInvoices.add(mapOriginalInvoiceToSoapInvoice(invoice));
         }
@@ -91,7 +91,7 @@ class Mapper {
         responseInvoice.setId(invoice.getId());
         responseInvoice.setNumber(invoice.getNumber());
         responseInvoice.setIssuedDate(convertLocalDateToXMLGregorianCalendar((invoice.getIssuedDate())));
-        responseInvoice.setLocalDate(convertLocalDateToXMLGregorianCalendar(invoice.getIssuedDate()));
+        responseInvoice.setLocalDate(convertLocalDateToXMLGregorianCalendar(invoice.getDueDate()));
         responseInvoice.setSeller(mapOriginalSellerToSoapSeller(invoice.getSeller()));
         responseInvoice.setBuyer(mapOriginalBuyerToSoapBuyer(invoice.getBuyer()));
         List<InvoiceEntry> entries = invoice.getEntries();
@@ -138,9 +138,12 @@ class Mapper {
         return responseBuyer;
     }
 
-    static XMLGregorianCalendar convertLocalDateToXMLGregorianCalendar(LocalDate localdate) throws DatatypeConfigurationException {
-        GregorianCalendar gregorianCalendar = GregorianCalendar.from(localdate.atStartOfDay(ZoneId.systemDefault()));
-        return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+    static XMLGregorianCalendar convertLocalDateToXMLGregorianCalendar(LocalDate localDate) throws DatatypeConfigurationException {
+        GregorianCalendar gregorianDate = new GregorianCalendar();
+        gregorianDate.setTime(Date.valueOf(localDate));
+        XMLGregorianCalendar xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianDate);
+        xmlGregorianDate.setTimezone(0);
+        return xmlGregorianDate;
     }
 
     static LocalDate convertXMLGregorianCalendarToLocalDate(XMLGregorianCalendar gregorianDate) {
