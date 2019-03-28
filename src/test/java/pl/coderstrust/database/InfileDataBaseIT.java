@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class InfileDataBaseIT {
 
     @BeforeEach
     void setup() throws IOException, DatabaseOperationException {
-       inFileDataBase.deleteAllInvoices();
+        inFileDataBase.deleteAllInvoices();
     }
 
     @Test
@@ -67,6 +68,28 @@ class InfileDataBaseIT {
         //Then
         assertEquals(savedInvoice, getInvoiceFromJson(invoicesInJson.get(0)));
         //assertTrue(invoicesAreSame(invoice, getInvoiceFromJson(invoicesInJson.get(0))));
+    }
+
+    @Test
+    void shouldUpdateInvoice() throws DatabaseOperationException, IOException {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice savedInvoice = inFileDataBase.saveInvoice(invoice);
+        Invoice invoiceToUpdate = new Invoice(invoice.getId(), "5/2019", LocalDate.now(), LocalDate.now(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+        String invoiceToUpdateInJson = toJson(invoiceToUpdate);
+
+//        fileHelper.writeLine(toJson(invoice));
+        List<String> invoicesInJson;
+
+        //When
+        Invoice updatedInvoice = inFileDataBase.saveInvoice(invoiceToUpdate);
+
+        //Then
+        assertEquals(updatedInvoice, getInvoiceFromJson(invoicesInJson.get(0)));
+        //assertTrue(invoicesAreSame(invoice, getInvoiceFromJson(invoicesInJson.get(0))));
+
+        //  assertEquals(updatedInvoice, databaseStorage.get(updatedInvoice.getId()));
+        // assertNotEquals(updatedInvoice, invoice);
     }
 
     private String toJson(Invoice invoice) throws JsonProcessingException {

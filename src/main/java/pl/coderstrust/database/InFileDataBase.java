@@ -17,7 +17,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 // TODO: 26/03/2019 synchronize
 // TODO: 26/03/2019  atomic counter
 public class InFileDataBase implements Database {
-
+    private InFileDataBase inFileDataBase;
     private String inFileDatabasePath;
     @Autowired
     private ObjectMapper mapper;
@@ -25,8 +25,8 @@ public class InFileDataBase implements Database {
     private FileHelper fileHelper;
     private Long nextId = 1L;
 
-    //  @Autowired
-    public InFileDataBase(String inFileDatabasePath) {
+    @Autowired
+    public InFileDataBase(String inFileDataBase) {
         this.inFileDatabasePath = inFileDatabasePath;
         FileHelper fileHelper = new FileHelper(inFileDatabasePath);
         this.fileHelper = fileHelper;
@@ -46,10 +46,26 @@ public class InFileDataBase implements Database {
         return update(invoice);
     }
 
-    private Invoice update(Invoice invoice) {
-        return null;
+    private Invoice update(Invoice invoice) throws DatabaseOperationException {
+        try {
+            if (!inFileDataBase.invoiceExists(invoice.getId())) {
+                throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
+            }
+            Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+            fileHelper.writeLine(toJson(updatedInvoice));
+            return updatedInvoice;
+        } catch (DatabaseOperationException | IOException e) {
+            throw new DatabaseOperationException("sfsd");
+        }
     }
-
+  /*  private Invoice updateInvoice(Invoice invoice) throws DatabaseOperationException {
+        if (!invoiceMap.containsKey(invoice.getId())) {
+            throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
+        }
+        Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+        invoiceMap.put(invoice.getId(), updatedInvoice);
+        return updatedInvoice;
+    }*/
 
     @Override
     public void deleteInvoice(Long id) throws DatabaseOperationException {
