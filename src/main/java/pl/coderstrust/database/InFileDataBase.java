@@ -68,6 +68,11 @@ public class InFileDataBase implements Database {
 
     @Override
     public void deleteAllInvoices() throws DatabaseOperationException {
+        try {
+            fileHelper.clear();
+        } catch (IOException e) {
+            throw new DatabaseOperationException("Cannot delete.......");
+        }
 
     }
 
@@ -83,7 +88,6 @@ public class InFileDataBase implements Database {
                 if (id.equals(invoice.getId())) {
                     return true;
                 }
-                return false;
             }
         } catch (FileNotFoundException e) {
             throw new DatabaseOperationException("dfdf");

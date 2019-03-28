@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import pl.coderstrust.database.FileHelper;
 import org.springframework.scheduling.annotation.EnableAsync;
+import pl.coderstrust.database.InFileDataBase;
 
 @Configuration
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class,
@@ -32,6 +33,15 @@ public class ApplicationConfiguration {
 
     @Bean
     public FileHelper getFileHelper() {
+        // TODO: 28/03/2019  path to app properies
         return new FileHelper("src/test/resources/inFileDatabaseTest.txt");
+    }
+
+    @Primary
+    @Bean
+    public InFileDataBase getInFileDatabase() {
+        // TODO: 28/03/2019  path to app properies
+        String inFileDatabasePath = "src/test/resources/inFileDatabaseTest.txt";
+        return new InFileDataBase(inFileDatabasePath);
     }
 }

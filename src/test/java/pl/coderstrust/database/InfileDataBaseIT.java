@@ -5,55 +5,46 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 //@ExtendWith(SpringExtension.class)
-//@SpringBootTest
+@SpringBootTest
 //@RunWith(SpringRunner.class)
-class InfileDataBaseTest {
+class InfileDataBaseIT {
+    @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
     private FileHelper fileHelper;
+
+    @Autowired
     private InFileDataBase inFileDataBase;
 
     @BeforeEach
-    void setup() throws IOException {
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        String inFileDatabasePath = "src/test/resources/inFileDatabaseTest.txt";
-        fileHelper = new FileHelper(inFileDatabasePath);
-        inFileDataBase = new InFileDataBase(inFileDatabasePath);
-        if (fileHelper.exists()) {
-            fileHelper.delete();
-        }
-        fileHelper.create();
+    void setup() throws IOException, DatabaseOperationException {
+       inFileDataBase.deleteAllInvoices();
     }
 
     @Test
     void shouldReturnTrueForExistingInvoice() throws IOException, DatabaseOperationException {
         //Given
-        String inFileDatabasePath = "src/test/resources/inFileDatabaseTest.txt";
-
-        // InFileDataBase inFileDataBase = new InFileDataBase(inFileDatabasePath);
-
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
         Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
         inFileDataBase.saveInvoice(invoice1);
         inFileDataBase.saveInvoice(invoice2);
         inFileDataBase.saveInvoice(invoice3);
-        List<String> allInvoicesInJson;
 
         //When
-        boolean exist = inFileDataBase.invoiceExists(1L);
+        boolean exist = inFileDataBase.invoiceExists(2L);
 
         //Then
         assertTrue(exist);
