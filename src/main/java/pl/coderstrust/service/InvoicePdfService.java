@@ -4,8 +4,11 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import java.io.ByteArrayOutputStream;
+
 import org.springframework.stereotype.Service;
+import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 
 
@@ -27,7 +30,6 @@ public class InvoicePdfService {
             addMetaData(invoicePdf, invoice);
             addInvoiceInformation(invoicePdf, invoice);
             addSellerAndBuyerInformation(invoicePdf, invoice);
-            addBuyer(invoicePdf, invoice);
             addEntries(invoicePdf, invoice);
             invoicePdf.close();
         } catch (DocumentException ex) {
@@ -70,21 +72,33 @@ public class InvoicePdfService {
         addEmptyLine(invoicePdf, paragraph, 2);
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
+        table.setSpacingBefore(3);
         PdfPCell seller = new PdfPCell(new Phrase("Seller: ", subFont));
         seller.setBorder(Rectangle.NO_BORDER);
         table.addCell(seller);
         PdfPCell buyer = new PdfPCell(new Phrase("Buyer: ", subFont));
         buyer.setBorder(Rectangle.NO_BORDER);
         table.addCell(buyer);
+        table.addCell(returnCompanyAsList(invoice.getSeller()));
+        table.addCell(returnCompanyAsList(invoice.getBuyer()));
         invoicePdf.add(table);
-    }
-
-    private static void addBuyer(Document invoicePdf, Invoice invoice) {
-
     }
 
     private static void addEntries(Document invoicePdf, Invoice invoice) {
 
+    }
+
+    private static Phrase returnCompanyAsList(Company company) {
+        Phrase companyInformation = new Phrase();
+        List companyInformationAsList = new List();
+        companyInformationAsList.add(new ListItem(" Name: " + company.getName()));
+        companyInformationAsList.add(new ListItem(" TaxId: " + company.getTaxId()));
+        companyInformationAsList.add(new ListItem(" Address: " + company.getAddress()));
+        companyInformationAsList.add(new ListItem(" Phone number: " + company.getPhoneNumber()));
+        companyInformationAsList.add(new ListItem(" Email: " + company.getEmail()));
+        companyInformationAsList.add(new ListItem(" Account number: " + company.getAccountNumber()));
+        companyInformation.add(companyInformationAsList);
+        return companyInformation;
     }
 
     private static void addEmptyLine(Document invoicePdf, Paragraph paragraph, int number) throws DocumentException {
