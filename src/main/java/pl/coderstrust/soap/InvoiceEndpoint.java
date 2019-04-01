@@ -75,9 +75,12 @@ public class InvoiceEndpoint {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
             Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSoapInvoices(invoices);
             responseBase.getInvoices();
+            int numberOfInvoices = 0;
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
                 responseBase.getInvoices().add(invoice);
+                numberOfInvoices++;
             }
+            responseBase.setMessage("");
             responseBase.setStatus(SUCCESS);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
             responseBase.setMessage("An error occurred during getting all invoices");
@@ -196,6 +199,7 @@ public class InvoiceEndpoint {
             Invoice invoice = invoiceService.saveInvoice(mapSoapInvoiceToOriginalInvoice(request.getInvoice()));
             pl.coderstrust.soap.bindingClasses.Invoice responseInvoice = mapOriginalInvoiceToSoapInvoice(invoice);
             responseBase.setStatus(SUCCESS);
+            responseBase.setMessage("");
             responseBase.setInvoice(responseInvoice);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
             responseBase.setStatus(FAILURE);

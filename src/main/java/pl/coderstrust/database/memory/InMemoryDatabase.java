@@ -40,7 +40,7 @@ public class InMemoryDatabase implements Database {
             log.error(message);
             throw new IllegalArgumentException(message);
         }
-        if (invoice.getId() == null) {
+        if ((invoice.getId() == null) || (invoice.getId() == 0)) {
             return insertInvoice(invoice);
         }
         return updateInvoice(invoice);

@@ -26,6 +26,7 @@ import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.model.InvoiceEntry;
 import pl.coderstrust.model.Vat;
+import pl.coderstrust.soap.bindingClasses.Entries;
 
 class MapperTest {
 
@@ -77,8 +78,11 @@ class MapperTest {
         soapInvoiceEntry.setNettValue(entryNettValue);
         soapInvoiceEntry.setGrossValue(entryGrossValue);
         soapInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingClasses.Vat.VAT_23);
-        List<pl.coderstrust.soap.bindingClasses.InvoiceEntry> soapEntries = new ArrayList<>();
-        soapEntries.add(soapInvoiceEntry);
+//        List<pl.coderstrust.soap.bindingClasses.InvoiceEntry> soapEntries = new ArrayList<>();
+//        soapEntries.add(soapInvoiceEntry);
+        pl.coderstrust.soap.bindingClasses.Entries soapInvoiceEntries = new Entries();
+        soapInvoiceEntries.getInvoiceEntry().add(soapInvoiceEntry);
+
         modelInvoice = new Invoice(invoiceId, invoiceNumber, invoiceIssuedDate, invoiceDueDate, modelCompany, modelCompany, modelEntries);
         soapInvoice = new pl.coderstrust.soap.bindingClasses.Invoice();
         soapInvoice.setId(invoiceId);
@@ -87,7 +91,8 @@ class MapperTest {
         soapInvoice.setLocalDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(2000, 2, 1, 0, 0, 0, 0, 0));
         soapInvoice.setSeller(soapCompany);
         soapInvoice.setBuyer(soapCompany);
-        soapInvoice.getEntries().add(soapInvoiceEntry);
+        soapInvoice.setEntries(soapInvoiceEntries);
+
         modelInvoiceList = new ArrayList<>();
         modelInvoiceList.add(modelInvoice);
         soapInvoiceList = new ArrayList<>();

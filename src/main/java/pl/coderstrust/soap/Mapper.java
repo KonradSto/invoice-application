@@ -14,6 +14,7 @@ import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.model.InvoiceEntry;
 import pl.coderstrust.model.Vat;
+import pl.coderstrust.soap.bindingClasses.Entries;
 
 class Mapper {
 
@@ -28,7 +29,8 @@ class Mapper {
             convertXMLGregorianCalendarToLocalDate(responseInvoice.getLocalDate()),
             mapSoapSellerToOriginalSeller(responseInvoice.getSeller()),
             mapSoapBuyerToOriginalBuyer(responseInvoice.getBuyer()),
-            mapSoapEntriesToOriginalEntries(responseInvoice.getEntries())
+//           null);
+            mapSoapEntriesToOriginalEntries(responseInvoice.getEntries().getInvoiceEntry())
         );
     }
 
@@ -95,8 +97,10 @@ class Mapper {
         responseInvoice.setSeller(mapOriginalSellerToSoapSeller(invoice.getSeller()));
         responseInvoice.setBuyer(mapOriginalBuyerToSoapBuyer(invoice.getBuyer()));
         List<InvoiceEntry> entries = invoice.getEntries();
+        pl.coderstrust.soap.bindingClasses.Entries soapEntries = new Entries();
         for (InvoiceEntry entry : entries) {
-            responseInvoice.getEntries().add(mapOriginalEntryToSoapEntry(entry));
+            soapEntries.getInvoiceEntry().add(mapOriginalEntryToSoapEntry(entry));
+            responseInvoice.setEntries(soapEntries);
         }
         return responseInvoice;
     }
