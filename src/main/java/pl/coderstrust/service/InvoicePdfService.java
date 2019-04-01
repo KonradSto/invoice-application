@@ -1,11 +1,19 @@
 package pl.coderstrust.service;
 
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
@@ -13,31 +21,30 @@ import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.model.InvoiceEntry;
 import pl.coderstrust.model.Vat;
+import pl.coderstrust.utils.ArgumentValidator;
 
 
 @Service
 public class InvoicePdfService {
 
-    InvoicePdfService() {
+    InvoicePdfService() throws IOException, DocumentException {
     }
 
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
-        if (invoice == null) {
-            throw new IllegalArgumentException("Invoice cannot be null");
-        }
+        ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
         Document invoicePdf = new Document();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
-            PdfWriter.getInstance(invoicePdf, baos);
+            PdfWriter.getInstance(invoicePdf, stream);
             invoicePdf.open();
             addInvoiceInformation(invoicePdf, invoice);
-            addSellerAndBuyerSegment(invoicePdf, invoice);
-            addEntriesPart(invoicePdf, invoice);
+            addSellerAndBuyerSection(invoicePdf, invoice);
+            addEntriesSection(invoicePdf, invoice);
             invoicePdf.close();
         } catch (DocumentException ex) {
-            throw new ServiceOperationException("An error occurred during getting all invoices.", ex);
+            throw new ServiceOperationException("An error occurred during getting PDF file of invoice", ex);
         }
-        return baos.toByteArray();
+        return stream.toByteArray();
     }
 
     private void addInvoiceInformation(Document invoicePdf, Invoice invoice) throws DocumentException {
@@ -49,16 +56,14 @@ public class InvoicePdfService {
         paragraph.setAlignment(Element.ALIGN_RIGHT);
         invoicePdf.add(paragraph);
         paragraph = new Paragraph("Invoice number: " + invoice.getNumber(), bigBold);
-        paragraph.setAlignment(Element.ALIGN_CENTER);
         invoicePdf.add(paragraph);
     }
 
-    private static void addSellerAndBuyerSegment(Document invoicePdf, Invoice invoice) throws DocumentException {
+    private void addSellerAndBuyerSection(Document invoicePdf, Invoice invoice) throws DocumentException {
         Paragraph paragraph = new Paragraph();
         addEmptyLine(invoicePdf, paragraph, 2);
         PdfPTable table = new PdfPTable(2);
         setNewTableFormat(table, 100, new int[]{5, 5});
-        table.setWidthPercentage(100);
         PdfPCell seller = new PdfPCell(new Phrase("Seller:", bigBold));
         seller.setBorder(Rectangle.NO_BORDER);
         table.addCell(seller);
@@ -70,56 +75,52 @@ public class InvoicePdfService {
         invoicePdf.add(table);
     }
 
-    private static void addEntriesPart(Document invoicePdf, Invoice invoice) throws DocumentException {
+    private void addEntriesSection(Document invoicePdf, Invoice invoice) throws DocumentException {
         Paragraph paragraph = new Paragraph();
         addEmptyLine(invoicePdf, paragraph, 2);
         initializeTableHeader(invoicePdf);
         addEntries(invoicePdf, invoice.getEntries());
     }
 
-    private static PdfPCell addCompanyInformation(Company company) {
-        List companyInformationAsList = new List();
-        companyInformationAsList.add(new ListItem(" Name: " + company.getName(), smallBold));
-        companyInformationAsList.add(new ListItem(" TaxId: " + company.getTaxId(), smallBold));
-        companyInformationAsList.add(new ListItem(" Address: " + company.getAddress(), smallBold));
-        companyInformationAsList.add(new ListItem(" Phone number: " + company.getPhoneNumber(), smallBold));
-        companyInformationAsList.add(new ListItem(" Email: " + company.getEmail(), smallBold));
-        companyInformationAsList.add(new ListItem(" Account number: " + company.getAccountNumber(), smallBold));
+    private PdfPCell addCompanyInformation(Company company) {
         PdfPCell companyInformation = new PdfPCell();
-        companyInformation.addElement(companyInformationAsList);
+        companyInformation.addElement(new Phrase(" Name: " + company.getName(), smallBold));
+        companyInformation.addElement(new Phrase(" TaxId: " + company.getTaxId(), smallBold));
+        companyInformation.addElement(new Phrase(" Address: " + company.getAddress(), smallBold));
+        companyInformation.addElement(new Phrase(" Phone number: " + company.getPhoneNumber(), smallBold));
+        companyInformation.addElement(new Phrase(" Email: " + company.getEmail(), smallBold));
+        companyInformation.addElement(new Phrase(" Account number: " + company.getAccountNumber(), smallBold));
         companyInformation.setBorder(Rectangle.NO_BORDER);
         return companyInformation;
     }
 
-    private static void initializeTableHeader(Document invoicePdf) throws DocumentException {
-        PdfPTable table = new PdfPTable(8);
-        setNewTableFormat(table, 100, new int[]{1, 2, 1, 1, 1, 1, 1, 1});
-        table.addCell("Id");
+    private void initializeTableHeader(Document invoicePdf) throws DocumentException {
+        PdfPTable table = new PdfPTable(7);
+        setNewTableFormat(table, 100, new int[]{2, 1, 1, 1, 1, 1, 1});
         table.addCell("Product name");
         table.addCell("Quantity");
         table.addCell("Unit");
         table.addCell("Price");
-        table.addCell("VAT rate");
+        table.addCell("VAT");
         table.addCell("Nett value");
         table.addCell("Gross value");
         invoicePdf.add(table);
     }
 
-    private static void addEntries(Document invoicePdf, java.util.List<InvoiceEntry> entries) throws DocumentException {
+    private void addEntries(Document invoicePdf, java.util.List<InvoiceEntry> entries) throws DocumentException {
         BigDecimal totalNettValue = new BigDecimal(0);
         BigDecimal totalGrossValue = new BigDecimal(0);
         for (InvoiceEntry entry : entries) {
-            PdfPTable table = new PdfPTable(8);
-            setNewTableFormat(table, 100, new int[]{1, 2, 1, 1, 1, 1, 1, 1});
-            table.addCell(String.valueOf(entry.getId()));
-            table.addCell(entry.getProductName());
-            table.addCell(String.valueOf(entry.getQuantity()));
-            table.addCell(String.valueOf(entry.getUnit()));
-            table.addCell(String.valueOf(entry.getPrice()));
+            PdfPTable table = new PdfPTable(7);
+            setNewTableFormat(table, 100, new int[]{2, 1, 1, 1, 1, 1, 1});
+            table.addCell(new Phrase(entry.getProductName(), smallBold));
+            table.addCell(new Phrase(String.valueOf(entry.getQuantity()), smallBold));
+            table.addCell(new Phrase(String.valueOf(entry.getUnit()), smallBold));
+            table.addCell(new Phrase(entry.getPrice() + " zł", smallBold));
             Vat vatRate = entry.getVatRate();
-            table.addCell(vatRate.getValue() * 100 + "%");
-            table.addCell(String.valueOf(entry.getNettValue()));
-            table.addCell(String.valueOf(entry.getGrossValue()));
+            table.addCell(new Phrase(vatRate.getValue() * 100 + "%", smallBold));
+            table.addCell(new Phrase(entry.getNettValue() + " zł", smallBold));
+            table.addCell(new Phrase(entry.getGrossValue() + " zł", smallBold));
             invoicePdf.add(table);
             totalNettValue = totalNettValue.add(entry.getNettValue());
             totalGrossValue = totalGrossValue.add(entry.getGrossValue());
@@ -127,31 +128,30 @@ public class InvoicePdfService {
         addEntriesSummary(invoicePdf, totalNettValue, totalGrossValue);
     }
 
-    private static void addEntriesSummary(Document invoicePdf, BigDecimal totalNettValue, BigDecimal totalGrossValue) throws DocumentException {
-        PdfPTable table = new PdfPTable(4);
-        setNewTableFormat(table, 100, new int[]{1, 6, 1, 1});
+    private void addEntriesSummary(Document invoicePdf, BigDecimal totalNettValue, BigDecimal totalGrossValue) throws DocumentException {
+        PdfPTable table = new PdfPTable(3);
+        setNewTableFormat(table, 100, new int[]{6, 1, 1});
         table.addCell(new Phrase("Total:", smallBold));
-        table.addCell("");
-        table.addCell(new Phrase(String.valueOf(totalNettValue), smallBold));
-        table.addCell(new Phrase(String.valueOf(totalGrossValue), smallBold));
+        table.addCell(new Phrase(totalNettValue + " zł", smallBold));
+        table.addCell(new Phrase(totalGrossValue + " zł", smallBold));
         invoicePdf.add(table);
     }
 
-    private static void setNewTableFormat(PdfPTable table, int widthPercentage, int[] spacing) throws DocumentException {
+    private void setNewTableFormat(PdfPTable table, int widthPercentage, int[] spacing) throws DocumentException {
         table.setWidths(spacing);
         table.setWidthPercentage(widthPercentage);
     }
 
-    private static void addEmptyLine(Document invoicePdf, Paragraph paragraph, int number) throws DocumentException {
+    private void addEmptyLine(Document invoicePdf, Paragraph paragraph, int number) throws DocumentException {
         for (int i = 0; i < number; i++) {
             paragraph.add(new Paragraph(" "));
         }
         invoicePdf.add(paragraph);
     }
 
-    private static Font bigBold = new Font(Font.FontFamily.TIMES_ROMAN, 16,
-        Font.BOLD);
+    private BaseFont polishCharTimesRoman = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, BaseFont.EMBEDDED);
 
-    private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 13,
-        Font.BOLD);
+    private Font bigBold = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
+
+    private Font smallBold = new Font(polishCharTimesRoman, 12, Font.BOLD);
 }
