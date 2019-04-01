@@ -1,0 +1,4 @@
+<soap:getInvoicesByDateRequest xmlns:soap="http://project-9-karolina-konrad-lukasz-piotr">
+  <soap:fromDate>2019-01-01</soap:fromDate>
+  <soap:toDate>2019-12-01</soap:toDate>
+</soap:getInvoicesByDateRequest>

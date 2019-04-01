@@ -54,6 +54,7 @@ public class InvoiceEndpoint {
                 Invoice invoice = optionalInvoice.get();
                 pl.coderstrust.soap.bindingClasses.Invoice resultInvoice = mapOriginalInvoiceToSoapInvoice(invoice);
                 responseBase.setStatus(SUCCESS);
+                responseBase.setMessage("");
                 responseBase.setInvoice(resultInvoice);
             } else {
                 responseBase.setMessage("No existing invoice with given Id");
@@ -82,6 +83,7 @@ public class InvoiceEndpoint {
             }
             responseBase.setMessage("");
             responseBase.setStatus(SUCCESS);
+            responseBase.setMessage("");
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
             responseBase.setMessage("An error occurred during getting all invoices");
             responseBase.setStatus(FAILURE);
@@ -104,6 +106,7 @@ public class InvoiceEndpoint {
                 (responseBase).getInvoices().add(invoice);
             }
             responseBase.setStatus(SUCCESS);
+            responseBase.setMessage("");
 
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
             responseBase = new InvoicesResponse();
@@ -127,6 +130,7 @@ public class InvoiceEndpoint {
                 responseBase.getInvoices().add(invoice);
             }
             responseBase.setStatus(SUCCESS);
+            responseBase.setMessage("");
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
             responseBase.setStatus(FAILURE);
             responseBase.setMessage("An error occurred during getting invoices for chosen buyer");
@@ -148,6 +152,7 @@ public class InvoiceEndpoint {
                 responseBase.getInvoices().add(invoice);
             }
             responseBase.setStatus(SUCCESS);
+            responseBase.setMessage("");
             return response;
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
             responseBase.setStatus(FAILURE);
@@ -165,6 +170,7 @@ public class InvoiceEndpoint {
         try {
             invoiceService.deleteInvoice(request.getId());
             responseBase.setStatus(SUCCESS);
+            responseBase.setMessage("");
         } catch (ServiceOperationException e) {
             responseBase.setStatus(FAILURE);
             responseBase.setMessage("An error occurred during deleting invoice");
@@ -181,6 +187,7 @@ public class InvoiceEndpoint {
         try {
             invoiceService.deleteAllInvoices();
             responseBase.setStatus(SUCCESS);
+            responseBase.setMessage("");
         } catch (ServiceOperationException e) {
             responseBase = new InvoiceResponse();
             responseBase.setStatus(FAILURE);

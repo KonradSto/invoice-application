@@ -1,0 +1,3 @@
+<soap:getInvoicesBySellerRequest xmlns:soap="http://project-9-karolina-konrad-lukasz-piotr">
+  <soap:sellerId>3</soap:sellerId>
+</soap:getInvoicesBySellerRequest>
