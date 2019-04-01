@@ -1,4 +1,4 @@
-package pl.coderstrust.database;
+package pl.coderstrust.database.hibernate;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
+import pl.coderstrust.database.Database;
+import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.utils.ArgumentValidator;
 

@@ -23,11 +23,11 @@ public class Invoice {
     private final String number;
     private final LocalDate issuedDate;
     private final LocalDate dueDate;
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     private final Company seller;
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     private final Company buyer;
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
     private final List<InvoiceEntry> entries;
 
     @JsonCreator
