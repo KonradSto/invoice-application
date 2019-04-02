@@ -1,5 +1,6 @@
 <soap:saveInvoiceRequest xmlns:soap="http://project-9-karolina-konrad-lukasz-piotr">
   <soap:invoice>
+    <soap:id>0</soap:id>
     <soap:number>1/2019</soap:number>
     <soap:issuedDate>2019-03-01</soap:issuedDate>
     <soap:localDate>2019-03-20</soap:localDate>
@@ -18,7 +19,7 @@
       <soap:address>bbb</soap:address>
       <soap:taxId>2222</soap:taxId>
       <soap:accountNumber>321321</soap:accountNumber>
-      <soap:phoneNumber>11-11</soap:phoneNumber>
+      <soap:phoneNumber>11-10</soap:phoneNumber>
       <soap:email>email@XYZ.com</soap:email>
     </soap:buyer>
     <soap:entries>
@@ -37,7 +38,7 @@
         <soap:productName>product2</soap:productName>
         <soap:quantity>2</soap:quantity>
         <soap:unit>szt.</soap:unit>
-        <soap:price>1</soap:price>
+        <soap:price>10</soap:price>
         <soap:nettValue>20</soap:nettValue>
         <soap:grossValue>20</soap:grossValue>
         <soap:vatRate>VAT_0</soap:vatRate>
@@ -45,5 +46,3 @@
     </soap:entries>
   </soap:invoice>
 </soap:saveInvoiceRequest>
-
-<soap:saveInvoiceRequest xmlns:soap="http://project-9-karolina-konrad-lukasz-piotr">   <soap:invoice>     <soap:number>1/2019</soap:number>     <soap:issuedDate>2019-03-01</soap:issuedDate>     <soap:localDate>2019-03-20</soap:localDate>     <soap:seller>       <soap:id>3</soap:id>       <soap:name>ABC</soap:name>       <soap:address>aaa</soap:address>       <soap:taxId>1111</soap:taxId>       <soap:accountNumber>123123</soap:accountNumber>       <soap:phoneNumber>00-00</soap:phoneNumber>       <soap:email>email@ABC.com</soap:email>     </soap:seller>     <soap:buyer>       <soap:id>4</soap:id>       <soap:name>XYZ</soap:name>       <soap:address>bbb</soap:address>       <soap:taxId>2222</soap:taxId>       <soap:accountNumber>321321</soap:accountNumber>       <soap:phoneNumber>11-11</soap:phoneNumber>       <soap:email>email@XYZ.com</soap:email>     </soap:buyer>     <soap:entries>       <soap:invoiceEntry>         <soap:id>1</soap:id>         <soap:productName>product1</soap:productName>         <soap:quantity>5</soap:quantity>         <soap:unit>szt.</soap:unit>         <soap:price>20</soap:price>         <soap:nettValue>100</soap:nettValue>         <soap:grossValue>100</soap:grossValue>         <soap:vatRate>VAT_0</soap:vatRate>       </soap:invoiceEntry>       <soap:invoiceEntry>         <soap:id>2</soap:id>         <soap:productName>product2</soap:productName>         <soap:quantity>2</soap:quantity>         <soap:unit>szt.</soap:unit>         <soap:price>1</soap:price>         <soap:nettValue>20</soap:nettValue>         <soap:grossValue>20</soap:grossValue>         <soap:vatRate>VAT_0</soap:vatRate>       </soap:invoiceEntry>     </soap:entries>   </soap:invoice> </soap:saveInvoiceRequest>

@@ -16,7 +16,7 @@ class XmlFileReader {
         return xmlContent;
     }
 
-    static Stream<String> readLinesFromFile(File filename) throws IOException {
+    private static Stream<String> readLinesFromFile(File filename) throws IOException {
         return Files.lines(filename.toPath());
     }
 

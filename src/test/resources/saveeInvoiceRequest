@@ -1,7 +1,4 @@
-    <ns2:singleInvoiceResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
-      <ns2:response>
-        <ns2:status>SUCCESS</ns2:status>
-        <ns2:message/>
+    <ns2:saveInvoiceRequest xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
         <ns2:invoice>
           <ns2:id>1</ns2:id>
           <ns2:number>1/2019</ns2:number>
@@ -48,5 +45,4 @@
             </ns2:invoiceEntry>
           </ns2:entries>
         </ns2:invoice>
-      </ns2:response>
-    </ns2:singleInvoiceResponse>
+    </ns2:saveInvoiceRequest>

@@ -1,6 +1,6 @@
 package pl.coderstrust.soap;
 
-import static pl.coderstrust.soap.Mapper.convertXMLGregorianCalendarToLocalDate;
+import static pl.coderstrust.soap.Mapper.convertXmlGregorianCalendarToLocalDate;
 import static pl.coderstrust.soap.Mapper.mapOriginalInvoiceToSoapInvoice;
 import static pl.coderstrust.soap.Mapper.mapOriginalInvoicesToSoapInvoices;
 import static pl.coderstrust.soap.Mapper.mapSoapInvoiceToOriginalInvoice;
@@ -34,7 +34,6 @@ import pl.coderstrust.soap.bindingClasses.StatusResponse;
 public class InvoiceEndpoint {
 
     private static final String NAMESPACE_URI = "http://project-9-karolina-konrad-lukasz-piotr";
-
     private InvoiceService invoiceService;
 
     @Autowired
@@ -60,12 +59,11 @@ public class InvoiceEndpoint {
                 responseBase.setMessage("No existing invoice with given Id");
             }
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase.setMessage("An error occurred during getting invoice.");
+            responseBase.setMessage("An error occurred during getting invoice");
         }
         response.setResponse(responseBase);
         return response;
     }
-
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getAllInvoicesRequest")
     @ResponsePayload
@@ -76,10 +74,8 @@ public class InvoiceEndpoint {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
             Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSoapInvoices(invoices);
             responseBase.getInvoices();
-            int numberOfInvoices = 0;
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
                 responseBase.getInvoices().add(invoice);
-                numberOfInvoices++;
             }
             responseBase.setMessage("");
             responseBase.setStatus(SUCCESS);
@@ -92,14 +88,13 @@ public class InvoiceEndpoint {
         return response;
     }
 
-
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getInvoicesByDateRequest")
     @ResponsePayload
     public pl.coderstrust.soap.bindingClasses.InvoicesListResponse getInvoicesByDate(@RequestPayload GetInvoicesByDateRequest request) {
         InvoicesListResponse response = new InvoicesListResponse();
         InvoicesResponse responseBase = new InvoicesResponse();
         try {
-            Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(convertXMLGregorianCalendarToLocalDate(request.getFromDate()), convertXMLGregorianCalendarToLocalDate(request.getToDate()));
+            Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(convertXmlGregorianCalendarToLocalDate(request.getFromDate()), convertXmlGregorianCalendarToLocalDate(request.getToDate()));
             Collection<pl.coderstrust.soap.bindingClasses.Invoice> responseInvoices = mapOriginalInvoicesToSoapInvoices(invoices);
             responseBase.getInvoices();
             for (pl.coderstrust.soap.bindingClasses.Invoice invoice : responseInvoices) {
@@ -153,7 +148,6 @@ public class InvoiceEndpoint {
             }
             responseBase.setStatus(SUCCESS);
             responseBase.setMessage("");
-            return response;
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
             responseBase.setStatus(FAILURE);
             responseBase.setMessage("An error occurred during getting invoices for chosen seller");
@@ -183,13 +177,12 @@ public class InvoiceEndpoint {
     @ResponsePayload
     public pl.coderstrust.soap.bindingClasses.StatusResponse deleteAllInvoices() {
         StatusResponse response = new StatusResponse();
-        InvoiceResponse responseBase = new InvoiceResponse();
+        ResponseBase responseBase = new ResponseBase();
         try {
             invoiceService.deleteAllInvoices();
             responseBase.setStatus(SUCCESS);
             responseBase.setMessage("");
         } catch (ServiceOperationException e) {
-            responseBase = new InvoiceResponse();
             responseBase.setStatus(FAILURE);
             responseBase.setMessage("An error occurred during deleting all invoices");
         }

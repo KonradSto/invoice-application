@@ -1,0 +1,3 @@
+<soap:getInvoiceRequest xmlns:soap="http://project-9-karolina-konrad-lukasz-piotr">
+  <soap:id>1</soap:id>
+</soap:getInvoiceRequest>

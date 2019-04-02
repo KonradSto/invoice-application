@@ -21,20 +21,19 @@ class Mapper {
     private Mapper() {
     }
 
-    static Invoice mapSoapInvoiceToOriginalInvoice(pl.coderstrust.soap.bindingClasses.Invoice responseInvoice) throws DatatypeConfigurationException {
+    static Invoice mapSoapInvoiceToOriginalInvoice(pl.coderstrust.soap.bindingClasses.Invoice responseInvoice) {
         return new Invoice(
             responseInvoice.getId(),
             responseInvoice.getNumber(),
-            convertXMLGregorianCalendarToLocalDate(responseInvoice.getIssuedDate()),
-            convertXMLGregorianCalendarToLocalDate(responseInvoice.getLocalDate()),
+            convertXmlGregorianCalendarToLocalDate(responseInvoice.getIssuedDate()),
+            convertXmlGregorianCalendarToLocalDate(responseInvoice.getLocalDate()),
             mapSoapSellerToOriginalSeller(responseInvoice.getSeller()),
             mapSoapBuyerToOriginalBuyer(responseInvoice.getBuyer()),
-//           null);
             mapSoapEntriesToOriginalEntries(responseInvoice.getEntries().getInvoiceEntry())
         );
     }
 
-    static List<InvoiceEntry> mapSoapEntriesToOriginalEntries(List<pl.coderstrust.soap.bindingClasses.InvoiceEntry> responseEntries) {
+    private static List<InvoiceEntry> mapSoapEntriesToOriginalEntries(List<pl.coderstrust.soap.bindingClasses.InvoiceEntry> responseEntries) {
         List<InvoiceEntry> entries = new ArrayList<>();
         for (pl.coderstrust.soap.bindingClasses.InvoiceEntry entry : responseEntries) {
             entries.add(mapSoapEntryToOriginalEntry(entry));
@@ -42,7 +41,7 @@ class Mapper {
         return entries;
     }
 
-    static InvoiceEntry mapSoapEntryToOriginalEntry(pl.coderstrust.soap.bindingClasses.InvoiceEntry responseEntry) {
+    private static InvoiceEntry mapSoapEntryToOriginalEntry(pl.coderstrust.soap.bindingClasses.InvoiceEntry responseEntry) {
         pl.coderstrust.soap.bindingClasses.Vat responseVatRate = responseEntry.getVatRate();
         return new InvoiceEntry(
             responseEntry.getId(),
@@ -56,7 +55,7 @@ class Mapper {
         );
     }
 
-    static Company mapSoapBuyerToOriginalBuyer(pl.coderstrust.soap.bindingClasses.Company responseBuyer) {
+    private static Company mapSoapBuyerToOriginalBuyer(pl.coderstrust.soap.bindingClasses.Company responseBuyer) {
         return new Company(
             responseBuyer.getId(),
             responseBuyer.getName(),
@@ -68,7 +67,7 @@ class Mapper {
         );
     }
 
-    static Company mapSoapSellerToOriginalSeller(pl.coderstrust.soap.bindingClasses.Company responseSeller) {
+    private static Company mapSoapSellerToOriginalSeller(pl.coderstrust.soap.bindingClasses.Company responseSeller) {
         return new Company(
             responseSeller.getId(),
             responseSeller.getName(),
@@ -92,8 +91,8 @@ class Mapper {
         pl.coderstrust.soap.bindingClasses.Invoice responseInvoice = new pl.coderstrust.soap.bindingClasses.Invoice();
         responseInvoice.setId(invoice.getId());
         responseInvoice.setNumber(invoice.getNumber());
-        responseInvoice.setIssuedDate(convertLocalDateToXMLGregorianCalendar((invoice.getIssuedDate())));
-        responseInvoice.setLocalDate(convertLocalDateToXMLGregorianCalendar(invoice.getDueDate()));
+        responseInvoice.setIssuedDate(convertLocalDateToXmlGregorianCalendar((invoice.getIssuedDate())));
+        responseInvoice.setLocalDate(convertLocalDateToXmlGregorianCalendar(invoice.getDueDate()));
         responseInvoice.setSeller(mapOriginalSellerToSoapSeller(invoice.getSeller()));
         responseInvoice.setBuyer(mapOriginalBuyerToSoapBuyer(invoice.getBuyer()));
         List<InvoiceEntry> entries = invoice.getEntries();
@@ -105,7 +104,7 @@ class Mapper {
         return responseInvoice;
     }
 
-    static pl.coderstrust.soap.bindingClasses.InvoiceEntry mapOriginalEntryToSoapEntry(InvoiceEntry entry) {
+    private static pl.coderstrust.soap.bindingClasses.InvoiceEntry mapOriginalEntryToSoapEntry(InvoiceEntry entry) {
         pl.coderstrust.soap.bindingClasses.InvoiceEntry responseEntry = new pl.coderstrust.soap.bindingClasses.InvoiceEntry();
         responseEntry.setId(entry.getId());
         responseEntry.setProductName(entry.getProductName());
@@ -118,7 +117,7 @@ class Mapper {
         return responseEntry;
     }
 
-    static pl.coderstrust.soap.bindingClasses.Company mapOriginalSellerToSoapSeller(Company seller) {
+    private static pl.coderstrust.soap.bindingClasses.Company mapOriginalSellerToSoapSeller(Company seller) {
         pl.coderstrust.soap.bindingClasses.Company responseSeller = new pl.coderstrust.soap.bindingClasses.Company();
         responseSeller.setId(seller.getId());
         responseSeller.setName(seller.getName());
@@ -130,7 +129,7 @@ class Mapper {
         return responseSeller;
     }
 
-    static pl.coderstrust.soap.bindingClasses.Company mapOriginalBuyerToSoapBuyer(Company buyer) {
+    private static pl.coderstrust.soap.bindingClasses.Company mapOriginalBuyerToSoapBuyer(Company buyer) {
         pl.coderstrust.soap.bindingClasses.Company responseBuyer = new pl.coderstrust.soap.bindingClasses.Company();
         responseBuyer.setId(buyer.getId());
         responseBuyer.setName(buyer.getName());
@@ -142,7 +141,7 @@ class Mapper {
         return responseBuyer;
     }
 
-    static XMLGregorianCalendar convertLocalDateToXMLGregorianCalendar(LocalDate localDate) throws DatatypeConfigurationException {
+    static XMLGregorianCalendar convertLocalDateToXmlGregorianCalendar(LocalDate localDate) throws DatatypeConfigurationException {
         GregorianCalendar gregorianDate = new GregorianCalendar();
         gregorianDate.setTime(Date.valueOf(localDate));
         XMLGregorianCalendar xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianDate);
@@ -150,7 +149,7 @@ class Mapper {
         return xmlGregorianDate;
     }
 
-    static LocalDate convertXMLGregorianCalendarToLocalDate(XMLGregorianCalendar gregorianDate) {
+    static LocalDate convertXmlGregorianCalendarToLocalDate(XMLGregorianCalendar gregorianDate) {
         return gregorianDate.toGregorianCalendar().toZonedDateTime().toLocalDate();
     }
 }

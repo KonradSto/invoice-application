@@ -2,8 +2,8 @@ package pl.coderstrust.soap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pl.coderstrust.generators.CompanyGenerator.getRandomNumberAsString;
-import static pl.coderstrust.soap.Mapper.convertLocalDateToXMLGregorianCalendar;
-import static pl.coderstrust.soap.Mapper.convertXMLGregorianCalendarToLocalDate;
+import static pl.coderstrust.soap.Mapper.convertLocalDateToXmlGregorianCalendar;
+import static pl.coderstrust.soap.Mapper.convertXmlGregorianCalendarToLocalDate;
 import static pl.coderstrust.soap.Mapper.mapOriginalInvoiceToSoapInvoice;
 import static pl.coderstrust.soap.Mapper.mapOriginalInvoicesToSoapInvoices;
 import static pl.coderstrust.soap.Mapper.mapSoapInvoiceToOriginalInvoice;
@@ -53,11 +53,6 @@ class MapperTest {
         String companyAccountNumber = getRandomNumberAsString();
         String companyPhoneNumber = getRandomNumberAsString();
         String companyEmail = WordGenerator.getRandomWord();
-        Long invoiceId = IdGenerator.getNextId();
-        String invoiceNumber = InvoiceNumberGenerator.getNextInvoiceNumber();
-        LocalDate invoiceIssuedDate = LocalDate.of(2000, 1, 1);
-        LocalDate invoiceDueDate = LocalDate.of(2000, 2, 1);
-        Company modelCompany = new Company(companyId, companyName, companyAddress, companyTaxId, companyAccountNumber, companyPhoneNumber, companyEmail);
         pl.coderstrust.soap.bindingClasses.Company soapCompany = new pl.coderstrust.soap.bindingClasses.Company();
         soapCompany.setId(companyId);
         soapCompany.setName(companyName);
@@ -78,11 +73,13 @@ class MapperTest {
         soapInvoiceEntry.setNettValue(entryNettValue);
         soapInvoiceEntry.setGrossValue(entryGrossValue);
         soapInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingClasses.Vat.VAT_23);
-//        List<pl.coderstrust.soap.bindingClasses.InvoiceEntry> soapEntries = new ArrayList<>();
-//        soapEntries.add(soapInvoiceEntry);
         pl.coderstrust.soap.bindingClasses.Entries soapInvoiceEntries = new Entries();
         soapInvoiceEntries.getInvoiceEntry().add(soapInvoiceEntry);
-
+        Long invoiceId = IdGenerator.getNextId();
+        String invoiceNumber = InvoiceNumberGenerator.getNextInvoiceNumber();
+        LocalDate invoiceIssuedDate = LocalDate.of(2000, 1, 1);
+        LocalDate invoiceDueDate = LocalDate.of(2000, 2, 1);
+        Company modelCompany = new Company(companyId, companyName, companyAddress, companyTaxId, companyAccountNumber, companyPhoneNumber, companyEmail);
         modelInvoice = new Invoice(invoiceId, invoiceNumber, invoiceIssuedDate, invoiceDueDate, modelCompany, modelCompany, modelEntries);
         soapInvoice = new pl.coderstrust.soap.bindingClasses.Invoice();
         soapInvoice.setId(invoiceId);
@@ -92,7 +89,6 @@ class MapperTest {
         soapInvoice.setSeller(soapCompany);
         soapInvoice.setBuyer(soapCompany);
         soapInvoice.setEntries(soapInvoiceEntries);
-
         modelInvoiceList = new ArrayList<>();
         modelInvoiceList.add(modelInvoice);
         soapInvoiceList = new ArrayList<>();
@@ -129,7 +125,7 @@ class MapperTest {
     @Test
     void shouldConvertLocalDateToXmlGregorianCalendar() throws DatatypeConfigurationException {
         //When
-        XMLGregorianCalendar resultDate = convertLocalDateToXMLGregorianCalendar(modelInvoice.getIssuedDate());
+        XMLGregorianCalendar resultDate = convertLocalDateToXmlGregorianCalendar(modelInvoice.getIssuedDate());
 
         //Then
         assertEquals(soapInvoice.getIssuedDate(), resultDate);
@@ -139,7 +135,7 @@ class MapperTest {
     @Test
     void shouldConvertXmlGregorianCalendarToLocalDate() {
         //When
-        LocalDate resultDate = convertXMLGregorianCalendarToLocalDate(soapInvoice.getIssuedDate());
+        LocalDate resultDate = convertXmlGregorianCalendarToLocalDate(soapInvoice.getIssuedDate());
 
         //Then
         assertEquals(modelInvoice.getIssuedDate(), resultDate);
