@@ -61,22 +61,22 @@ class InvoiceControllerTest {
 
     @Test
     void shouldReturnInvoice() throws Exception {
-        //Given
-        Invoice invoice = InvoiceGenerator.getRandomInvoice();
-        Long invoiceId = 1L;
-        when(invoiceService.getInvoice(invoiceId)).thenReturn(Optional.ofNullable(invoice));
+            //Given
+            Invoice invoice = InvoiceGenerator.getRandomInvoice();
+            Long invoiceId = 1L;
+            when(invoiceService.getInvoice(invoiceId)).thenReturn(Optional.ofNullable(invoice));
 
-        //When
-        MvcResult result = mockMvc.perform(
-            get("/invoices/{id}", invoiceId).accept(MediaType.APPLICATION_JSON_UTF8))
-            .andReturn();
-        int actualHttpStatus = result.getResponse().getStatus();
-        Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
+            //When
+            MvcResult result = mockMvc.perform(
+                get("/invoices/{id}", invoiceId).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn();
+            int actualHttpStatus = result.getResponse().getStatus();
+            Invoice actualInvoice = mapper.readValue(result.getResponse().getContentAsString(), Invoice.class);
 
-        //Then
-        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
-        assertEquals(invoice, actualInvoice);
-        verify(invoiceService).getInvoice(invoiceId);
+            //Then
+            assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+            assertEquals(invoice, actualInvoice);
+            verify(invoiceService).getInvoice(invoiceId);
     }
 
     @Test

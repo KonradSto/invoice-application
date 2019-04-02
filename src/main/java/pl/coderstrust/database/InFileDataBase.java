@@ -58,14 +58,6 @@ public class InFileDataBase implements Database {
             throw new DatabaseOperationException("sfsd");
         }
     }
-  /*  private Invoice updateInvoice(Invoice invoice) throws DatabaseOperationException {
-        if (!invoiceMap.containsKey(invoice.getId())) {
-            throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
-        }
-        Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
-        invoiceMap.put(invoice.getId(), updatedInvoice);
-        return updatedInvoice;
-    }*/
 
     @Override
     public void deleteInvoice(Long id) throws DatabaseOperationException {
@@ -135,11 +127,11 @@ public class InFileDataBase implements Database {
         return insertedInvoice;
     }
 
-    private String toJson(Invoice invoice) throws JsonProcessingException {
+    String toJson(Invoice invoice) throws JsonProcessingException {
         return mapper.writeValueAsString(invoice);
     }
 
-    private Invoice getInvoiceFromJson(String invoiceAsJson) throws IOException {
+    Invoice getInvoiceFromJson(String invoiceAsJson) throws IOException {
         return mapper.readValue(invoiceAsJson, Invoice.class);
     }
 }
