@@ -2,7 +2,6 @@ package pl.coderstrust.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -78,9 +77,6 @@ public class InvoiceController {
     @GetMapping("/byDate")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate.", response = Invoice.class, responseContainer = "List")
-    @ApiImplicitParams({
-        @ApiImplicitParam (name = "fromDate", value = "YYYY-MM-DD", example = "2019-02-04", dataType = "LocalDate"),
-        @ApiImplicitParam (name = "toDate", value = "YYYY-MM-DD", example = "2019-03-04", dataType = "LocalDate")})
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed dates are invalid."),
@@ -182,7 +178,6 @@ public class InvoiceController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "When invoice id field is not set application saves the invoice to database as new invoice, otherwise updates existing invoice.", response = Invoice.class)
-   // @ApiImplicitParam(name = "invoice", value = "Digits, letters possible, e.g. 7565 Wkg-78", example = "7865", dataType = "Long")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed invoice is invalid."),
