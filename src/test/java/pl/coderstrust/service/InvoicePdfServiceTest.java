@@ -1,12 +1,11 @@
 package pl.coderstrust.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-import javax.validation.constraints.AssertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.itextpdf.text.DocumentException;
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
@@ -28,5 +27,10 @@ class InvoicePdfServiceTest {
 
         //Then
         assertNotNull(someBytes);
+    }
+
+    @Test
+    void getInvoiceAsPdfMethodShouldThrowExceptionForNullInvoice() {
+        assertThrows(IllegalArgumentException.class, () -> invoicePdfService.getInvoiceAsPdf(null));
     }
 }

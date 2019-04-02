@@ -33,35 +33,34 @@ public class InvoicePdfService {
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
         Document invoicePdf = new Document();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            PdfWriter.getInstance(invoicePdf, stream);
+            PdfWriter.getInstance(invoicePdf, byteArrayOutputStream);
             invoicePdf.open();
-            addInvoiceInformation(invoicePdf, invoice);
+            addInvoiceNumberAndDates(invoicePdf, invoice);
             addSellerAndBuyerSection(invoicePdf, invoice);
             addEntriesSection(invoicePdf, invoice);
             invoicePdf.close();
         } catch (DocumentException ex) {
             throw new ServiceOperationException("An error occurred during getting PDF file of invoice", ex);
         }
-        return stream.toByteArray();
+        return byteArrayOutputStream.toByteArray();
     }
 
-    private void addInvoiceInformation(Document invoicePdf, Invoice invoice) throws DocumentException {
-        Paragraph paragraph;
-        paragraph = new Paragraph("Issue date: " + invoice.getIssuedDate(), smallBold);
-        paragraph.setAlignment(Element.ALIGN_RIGHT);
-        invoicePdf.add(paragraph);
-        paragraph = new Paragraph("Due date: " + invoice.getDueDate(), smallBold);
-        paragraph.setAlignment(Element.ALIGN_RIGHT);
-        invoicePdf.add(paragraph);
-        paragraph = new Paragraph("Invoice number: " + invoice.getNumber(), bigBold);
-        invoicePdf.add(paragraph);
+    private void addInvoiceNumberAndDates(Document invoicePdf, Invoice invoice) throws DocumentException {
+        Paragraph line;
+        line = new Paragraph("Issue date: " + invoice.getIssuedDate(), smallBold);
+        line.setAlignment(Element.ALIGN_RIGHT);
+        invoicePdf.add(line);
+        line = new Paragraph("Due date: " + invoice.getDueDate(), smallBold);
+        line.setAlignment(Element.ALIGN_RIGHT);
+        invoicePdf.add(line);
+        line = new Paragraph("Invoice number: " + invoice.getNumber(), bigBold);
+        invoicePdf.add(line);
     }
 
     private void addSellerAndBuyerSection(Document invoicePdf, Invoice invoice) throws DocumentException {
-        Paragraph paragraph = new Paragraph();
-        addEmptyLine(invoicePdf, paragraph, 2);
+        addEmptyLine(invoicePdf, 2);
         PdfPTable table = new PdfPTable(2);
         setNewTableFormat(table, 100, new int[]{5, 5});
         PdfPCell seller = new PdfPCell(new Phrase("Seller:", bigBold));
@@ -76,9 +75,8 @@ public class InvoicePdfService {
     }
 
     private void addEntriesSection(Document invoicePdf, Invoice invoice) throws DocumentException {
-        Paragraph paragraph = new Paragraph();
-        addEmptyLine(invoicePdf, paragraph, 2);
-        initializeTableHeader(invoicePdf);
+        addEmptyLine(invoicePdf,2);
+        addEntriesTableHeader(invoicePdf);
         addEntries(invoicePdf, invoice.getEntries());
     }
 
@@ -94,7 +92,7 @@ public class InvoicePdfService {
         return companyInformation;
     }
 
-    private void initializeTableHeader(Document invoicePdf) throws DocumentException {
+    private void addEntriesTableHeader(Document invoicePdf) throws DocumentException {
         PdfPTable table = new PdfPTable(7);
         setNewTableFormat(table, 100, new int[]{2, 1, 1, 1, 1, 1, 1});
         table.addCell("Product name");
@@ -142,7 +140,8 @@ public class InvoicePdfService {
         table.setWidthPercentage(widthPercentage);
     }
 
-    private void addEmptyLine(Document invoicePdf, Paragraph paragraph, int number) throws DocumentException {
+    private void addEmptyLine(Document invoicePdf, int number) throws DocumentException {
+        Paragraph paragraph = new Paragraph();
         for (int i = 0; i < number; i++) {
             paragraph.add(new Paragraph(" "));
         }
