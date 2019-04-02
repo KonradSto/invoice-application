@@ -16,6 +16,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 
 // TODO: 26/03/2019 synchronize
 // TODO: 26/03/2019  atomic counter
+//@Primary
 public class InFileDataBase implements Database {
     private InFileDataBase inFileDataBase;
     private String inFileDatabasePath;
@@ -114,7 +115,7 @@ public class InFileDataBase implements Database {
         return 0;
     }
 
-     Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
+    Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
         Long id = nextId++;
         Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         try {
