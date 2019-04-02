@@ -127,12 +127,12 @@ public class InvoicePdfService {
     }
 
     private void addEntriesSummary(Document invoicePdf, BigDecimal totalNettValue, BigDecimal totalGrossValue) throws DocumentException {
-        PdfPTable table = new PdfPTable(3);
-        setNewTableFormat(table, 100, new int[]{6, 1, 1});
-        table.addCell(new Phrase("Total:", smallBold));
-        table.addCell(new Phrase(totalNettValue + " zł", smallBold));
-        table.addCell(new Phrase(totalGrossValue + " zł", smallBold));
-        invoicePdf.add(table);
+        PdfPTable entriesTable = new PdfPTable(3);
+        setNewTableFormat(entriesTable, 100, new int[]{6, 1, 1});
+        entriesTable.addCell(new Phrase("Total:", smallBold));
+        entriesTable.addCell(new Phrase(totalNettValue + " zł", smallBold));
+        entriesTable.addCell(new Phrase(totalGrossValue + " zł", smallBold));
+        invoicePdf.add(entriesTable);
     }
 
     private void setNewTableFormat(PdfPTable table, int widthPercentage, int[] spacing) throws DocumentException {
@@ -141,11 +141,11 @@ public class InvoicePdfService {
     }
 
     private void addEmptyLine(Document invoicePdf, int number) throws DocumentException {
-        Paragraph paragraph = new Paragraph();
+        Paragraph emptyLine = new Paragraph();
         for (int i = 0; i < number; i++) {
-            paragraph.add(new Paragraph(" "));
+            emptyLine.add(new Paragraph(" "));
         }
-        invoicePdf.add(paragraph);
+        invoicePdf.add(emptyLine);
     }
 
     private BaseFont polishCharTimesRoman = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, BaseFont.EMBEDDED);
