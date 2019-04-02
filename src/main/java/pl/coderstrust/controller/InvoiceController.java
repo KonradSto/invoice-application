@@ -182,7 +182,7 @@ public class InvoiceController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "When invoice id field is not set application saves the invoice to database as new invoice, otherwise updates existing invoice.", response = Invoice.class)
-    @ApiImplicitParam(name = "invoice", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
+   // @ApiImplicitParam(name = "invoice", value = "Digits, letters possible, e.g. 7565 Wkg-78", example = "7865", dataType = "Long")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed invoice is invalid."),

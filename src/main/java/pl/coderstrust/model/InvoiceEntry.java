@@ -65,22 +65,22 @@ public class InvoiceEntry {
         return unit;
     }
 
-    @ApiModelProperty(value = "product nett price per unit", example = "19.99")
+    @ApiModelProperty(value = "product net price per unit", example = "19.99")
     public BigDecimal getPrice() {
         return price;
     }
 
-    @ApiModelProperty(value = "total nett value = (nett price per unit)*quantity ", example = "29.99")
+    @ApiModelProperty(value = "total net value = (net price per unit)*quantity ", example = "29.99")
     public BigDecimal getNetValue() {
         return netValue;
     }
 
-    @ApiModelProperty(value = "total gross value (total nett value after appropriate VAT rate applied)", example = "34.99")
+    @ApiModelProperty(value = "total gross value (total net value after appropriate VAT rate applied)", example = "34.99")
     public BigDecimal getGrossValue() {
         return grossValue;
     }
 
-    @ApiModelProperty(value = "VAT rate to be applied to nett value ie. 0.23 means 23% VAT", example = "VAT_23")
+    @ApiModelProperty(value = "VAT rate to be applied to net value ie. 0.23 means 23% VAT", example = "VAT_23")
     public Vat getVatRate() {
         return vatRate;
     }
