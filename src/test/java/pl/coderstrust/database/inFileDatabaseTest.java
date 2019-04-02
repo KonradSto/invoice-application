@@ -7,19 +7,25 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.HashMap;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import pl.coderstrust.database.memory.InMemoryDatabase;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 @ExtendWith(SpringExtension.class)
+//@RunWith(PowerMockRunner.class)
 @SpringBootTest
 public class inFileDatabaseTest {
+
+    Database database;
 
     @Autowired
     private ObjectMapper mapper;
@@ -27,20 +33,18 @@ public class inFileDatabaseTest {
     @MockBean
     private FileHelper fileHelper;
 
-    @MockBean
-    private Database database;
-/*
     @BeforeEach
-    void setup() throws IOException, DatabaseOperationException {
-        fileHelper.deleteAllInvoices();
-    }*/
+    void setup() {
+        database = new inFileDatabase
+        database = new InMemoryDatabase(databaseStorage);
+    }
 
     @Test
     void shouldAddInvoiceForNullInvoiceId() throws IOException, DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         Invoice returned;
-        when(database.saveInvoice(invoice)).thenReturn(insert(invoice));
+        when(database.saveInvoice(invoice)).thenReturn(invoice);
 
         //When
         returned = database.saveInvoice(invoice);
@@ -49,7 +53,6 @@ public class inFileDatabaseTest {
         verify(database).saveInvoice(invoice);
         assertEquals(invoice, returned);
     }
-
 
     String toJson(Invoice invoice) throws JsonProcessingException {
         return mapper.writeValueAsString(invoice);

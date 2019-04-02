@@ -114,7 +114,7 @@ public class InFileDataBase implements Database {
         return 0;
     }
 
-    private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
+     Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
         Long id = nextId++;
         Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         try {
