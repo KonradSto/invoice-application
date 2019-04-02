@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @ApiModel(value = "Invoice entry")
-@ApiModel(value = "Invoiceee entry", description = "Invoice entryyyyy")
 @Entity
 public class InvoiceEntry {
 

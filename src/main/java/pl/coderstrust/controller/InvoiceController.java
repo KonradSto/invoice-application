@@ -181,9 +181,8 @@ public class InvoiceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Save or update an invoice", notes = "When invoice id field is set to null - application saves the invoice to database under id which is automatically generated to that invoice. When id field filled with number - then "
-        + "application assumes that the user wants to update the invoice but before proceeding with update - checks if given id exists in database, if so then updates the existing invoice with form data, otherwise 500 error is returned.",response = Invoice.class)
-    @ApiImplicitParam(name = "invoice", value = "Onlyyyyyyyyyyyyyyy, e.g. 7565", example = "7865", dataType = "Invoice")
+    @ApiOperation(value = "When invoice id field is not set application saves the invoice to database as new invoice, otherwise updates existing invoice.", response = Invoice.class)
+    @ApiImplicitParam(name = "invoice", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed invoice is invalid."),

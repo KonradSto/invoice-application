@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-@ApiModel(value = "Invoice", description = "Invoiceeeeeed")
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+
 
 @ApiModel(value = "Invoice")
 @Entity
@@ -52,21 +52,21 @@ public class Invoice {
     }
 
     @ApiModelProperty(value = "The id of invoice.", example = "1234", dataType = "Long", position = -1)
-@ApiModelProperty(value = "invoice id",example = "1")
     public Long getId() {
         return id;
     }
 
-    @ApiModelProperty(value = "invoice number",example = "2019/03/2")
+    @ApiModelProperty(value = "invoice number", example = "2019/03/2")
     public String getNumber() {
         return number;
     }
-    @ApiModelProperty(value = "Invoice issue date",example = "2019-03-12")
+
+    @ApiModelProperty(value = "Invoice issue date", example = "2019-03-12")
     public LocalDate getIssuedDate() {
         return issuedDate;
     }
 
-    @ApiModelProperty(value = "Invoice due date",example = "2019-04-12")
+    @ApiModelProperty(value = "Invoice due date", example = "2019-04-12")
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -75,7 +75,6 @@ public class Invoice {
         return seller;
     }
 
-    @ApiModelProperty(value = "Invoice receiver",example = "John Smith")
     public Company getBuyer() {
         return buyer;
     }
