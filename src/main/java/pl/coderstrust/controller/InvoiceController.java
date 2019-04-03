@@ -233,6 +233,7 @@ public class InvoiceController {
         try {
             log.debug("Saving invoice: {}", invoice);
             Invoice savedInvoice = invoiceService.saveInvoice(invoice);
+            //sendEmailWithInvoice(Invoice invoice)
             return ResponseEntity.status(HttpStatus.OK).body(savedInvoice);
         } catch (Exception e) {
             log.error("An error occurred during saving an invoice.", e);
