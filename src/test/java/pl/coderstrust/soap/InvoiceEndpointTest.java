@@ -97,7 +97,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -118,7 +117,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -139,7 +137,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -160,7 +157,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -182,7 +178,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -203,7 +198,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -224,7 +218,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -245,7 +238,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -266,7 +258,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -287,7 +278,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -306,7 +296,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -326,7 +315,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))
@@ -367,7 +355,6 @@ class InvoiceEndpointTest {
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
         responsePayload = new StringSource(stringResponse);
-        System.out.println(withPayload(requestPayload));
 
         //When
         mockClient.sendRequest(withPayload(requestPayload))

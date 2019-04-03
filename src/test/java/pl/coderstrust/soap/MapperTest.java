@@ -26,14 +26,14 @@ import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.model.InvoiceEntry;
 import pl.coderstrust.model.Vat;
-import pl.coderstrust.soap.bindingClasses.Entries;
+import pl.coderstrust.soap.bindingclasses.Entries;
 
 class MapperTest {
 
     private Invoice modelInvoice;
-    private pl.coderstrust.soap.bindingClasses.Invoice soapInvoice;
+    private pl.coderstrust.soap.bindingclasses.Invoice soapInvoice;
     private List<Invoice> modelInvoiceList;
-    private List<pl.coderstrust.soap.bindingClasses.Invoice> soapInvoiceList;
+    private List<pl.coderstrust.soap.bindingclasses.Invoice> soapInvoiceList;
 
 
     @BeforeEach
@@ -53,7 +53,7 @@ class MapperTest {
         String companyAccountNumber = getRandomNumberAsString();
         String companyPhoneNumber = getRandomNumberAsString();
         String companyEmail = WordGenerator.getRandomWord();
-        pl.coderstrust.soap.bindingClasses.Company soapCompany = new pl.coderstrust.soap.bindingClasses.Company();
+        pl.coderstrust.soap.bindingclasses.Company soapCompany = new pl.coderstrust.soap.bindingclasses.Company();
         soapCompany.setId(companyId);
         soapCompany.setName(companyName);
         soapCompany.setAddress(companyAddress);
@@ -64,7 +64,7 @@ class MapperTest {
         InvoiceEntry modelInvoiceEntry = new InvoiceEntry(entryId, entryProductName, entryQuantity, entryUnit, entryPrice, entryNettValue, entryGrossValue, Vat.VAT_23);
         List<InvoiceEntry> modelEntries = new ArrayList<>();
         modelEntries.add(modelInvoiceEntry);
-        pl.coderstrust.soap.bindingClasses.InvoiceEntry soapInvoiceEntry = new pl.coderstrust.soap.bindingClasses.InvoiceEntry();
+        pl.coderstrust.soap.bindingclasses.InvoiceEntry soapInvoiceEntry = new pl.coderstrust.soap.bindingclasses.InvoiceEntry();
         soapInvoiceEntry.setId(entryId);
         soapInvoiceEntry.setProductName(entryProductName);
         soapInvoiceEntry.setQuantity(entryQuantity);
@@ -72,8 +72,8 @@ class MapperTest {
         soapInvoiceEntry.setPrice(entryPrice);
         soapInvoiceEntry.setNettValue(entryNettValue);
         soapInvoiceEntry.setGrossValue(entryGrossValue);
-        soapInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingClasses.Vat.VAT_23);
-        pl.coderstrust.soap.bindingClasses.Entries soapInvoiceEntries = new Entries();
+        soapInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingclasses.Vat.VAT_23);
+        pl.coderstrust.soap.bindingclasses.Entries soapInvoiceEntries = new Entries();
         soapInvoiceEntries.getInvoiceEntry().add(soapInvoiceEntry);
         Long invoiceId = IdGenerator.getNextId();
         String invoiceNumber = InvoiceNumberGenerator.getNextInvoiceNumber();
@@ -81,7 +81,7 @@ class MapperTest {
         LocalDate invoiceDueDate = LocalDate.of(2000, 2, 1);
         Company modelCompany = new Company(companyId, companyName, companyAddress, companyTaxId, companyAccountNumber, companyPhoneNumber, companyEmail);
         modelInvoice = new Invoice(invoiceId, invoiceNumber, invoiceIssuedDate, invoiceDueDate, modelCompany, modelCompany, modelEntries);
-        soapInvoice = new pl.coderstrust.soap.bindingClasses.Invoice();
+        soapInvoice = new pl.coderstrust.soap.bindingclasses.Invoice();
         soapInvoice.setId(invoiceId);
         soapInvoice.setNumber(invoiceNumber);
         soapInvoice.setIssuedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(2000, 1, 1, 0, 0, 0, 0, 0));
@@ -96,7 +96,7 @@ class MapperTest {
     }
 
     @Test
-    void shouldMapSoapInvoiceToOriginalInvoice() throws DatatypeConfigurationException {
+    void shouldMapSoapInvoiceToOriginalInvoice() {
         //When
         Invoice resultInvoice = mapSoapInvoiceToOriginalInvoice(soapInvoice);
 
@@ -107,7 +107,7 @@ class MapperTest {
     @Test
     void shouldMapOriginalInvoiceToSoapInvoice() throws DatatypeConfigurationException {
         //When
-        pl.coderstrust.soap.bindingClasses.Invoice resultInvoice = mapOriginalInvoiceToSoapInvoice(modelInvoice);
+        pl.coderstrust.soap.bindingclasses.Invoice resultInvoice = mapOriginalInvoiceToSoapInvoice(modelInvoice);
 
         //Then
         assertEquals(soapInvoice, resultInvoice);
@@ -116,7 +116,7 @@ class MapperTest {
     @Test
     void shouldMapOriginalInvoicesToSoapInvoices() throws DatatypeConfigurationException {
         //When
-        List<pl.coderstrust.soap.bindingClasses.Invoice> resultInvoices = mapOriginalInvoicesToSoapInvoices(modelInvoiceList);
+        List<pl.coderstrust.soap.bindingclasses.Invoice> resultInvoices = mapOriginalInvoicesToSoapInvoices(modelInvoiceList);
 
         //Then
         assertEquals(soapInvoiceList, resultInvoices);

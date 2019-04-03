@@ -54,6 +54,7 @@
             <exclude>/pl/coderstrust/database/DatabaseOperationException.class</exclude>
             <exclude>/pl/coderstrust/service/ServiceOperationException.class</exclude>
             <exclude>/pl/coderstrust/Application.class</exclude>
+            <exclude>/pl/coderstrust/soap/bindingclasses/*.class</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -140,7 +141,7 @@
         <configuration>
           <schemaDirectory>src/main/resources</schemaDirectory>
           <generateDirectory>src/main/java</generateDirectory>
-          <generatePackage>pl.coderstrust.soap.bindingClasses</generatePackage>
+          <generatePackage>pl.coderstrust.soap.bindingclasses</generatePackage>
           <extension>true</extension>
           <args>
             <arg>-XtoString</arg>
@@ -205,7 +206,7 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>2.25.0</version>
-        <scope>test</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -226,9 +227,9 @@
       <version>2.4</version>
     </dependency>
     <dependency>
-        <groupId>org.jvnet.jaxb2_commons</groupId>
-        <artifactId>jaxb2-basics-runtime</artifactId>
-        <version>0.6.4</version>
+      <groupId>org.jvnet.jaxb2_commons</groupId>
+      <artifactId>jaxb2-basics-runtime</artifactId>
+      <version>0.6.4</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
