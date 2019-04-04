@@ -1,6 +1,8 @@
 package pl.coderstrust.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.itextpdf.text.DocumentException;
 import java.io.IOException;
