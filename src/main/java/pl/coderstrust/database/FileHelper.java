@@ -13,7 +13,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.input.ReversedLinesFileReader;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
+@ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-file")
+@Component
 public class FileHelper {
 
     private File file;

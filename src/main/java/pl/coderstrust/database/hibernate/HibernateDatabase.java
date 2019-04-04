@@ -14,7 +14,7 @@ import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.utils.ArgumentValidator;
 
-@ConditionalOnProperty(name = "database", havingValue = "hibernate")
+@ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "hibernate")
 @Repository
 public class HibernateDatabase implements Database {
 

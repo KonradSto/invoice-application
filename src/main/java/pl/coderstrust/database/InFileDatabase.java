@@ -2,8 +2,6 @@ package pl.coderstrust.database;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
@@ -11,31 +9,27 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Repository;
+import pl.coderstrust.configuration.InFileDatabaseProperties;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.utils.ArgumentValidator;
 
 // TODO: 26/03/2019 synchronize
 // TODO: 26/03/2019  atomic counter
-//@Primary
-public class InFileDataBase implements Database {
-    private InFileDataBase inFileDataBase;
-    private String inFileDatabasePath;
-    @Autowired
+@ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-file")
+@Repository
+public class InFileDatabase implements Database {
+    private final InFileDatabaseProperties inFileDatabaseProperties;
     private ObjectMapper mapper;
-    //  @Autowired
     private FileHelper fileHelper;
-    private Long nextId = 1L;
+    private Long nextId;
 
     @Autowired
-    public InFileDataBase(String inFileDataBase) {
-        this.inFileDatabasePath = inFileDatabasePath;
-        FileHelper fileHelper = new FileHelper(inFileDatabasePath);
-        this.fileHelper = fileHelper;
-        this.inFileDatabasePath = inFileDatabasePath;
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    public InFileDatabase(ObjectMapper mapper, FileHelper fileHelper, InFileDatabaseProperties inFileDatabaseProperties) {
         this.mapper = mapper;
+        this.fileHelper = fileHelper;
+        this.inFileDatabaseProperties = inFileDatabaseProperties;
     }
 
     @Override
@@ -48,16 +42,17 @@ public class InFileDataBase implements Database {
     }
 
     private Invoice update(Invoice invoice) throws DatabaseOperationException {
-        try {
-            if (!inFileDataBase.invoiceExists(invoice.getId())) {
+     /*   try {
+            *//*if (!inFileDataBase.invoiceExists(invoice.getId())) {
                 throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
-            }
+            }*//*
             Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
             fileHelper.writeLine(toJson(updatedInvoice));
             return updatedInvoice;
         } catch (DatabaseOperationException | IOException e) {
             throw new DatabaseOperationException("sfsd");
-        }
+        }*/
+    return  null;
     }
 
     @Override

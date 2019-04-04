@@ -1,9 +1,6 @@
 package pl.coderstrust.database;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,41 +12,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
+//@ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class InFileDatabaseTest {
 
+    @MockBean
+    FileHelper fileHelper;
+    private InFileDatabase inFileDataBase;
     @Autowired
     private ObjectMapper mapper;
 
-    @MockBean
-    private InFileDataBase inFileDataBase;
 
+/*
     @Test
     void shouldAddInvoiceForNullInvoiceId() throws IOException, DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         Invoice returned;
-        when(inFileDataBase.saveInvoice(invoice)).thenReturn(invoice);
-
+       // when(fileHelper.writeLine(toJson(invoice))).thenReturn(invoice);
+        //when(fileHelper.saveInvoice(invoice)).thenReturn(invoice);
+doAnswer()
         //When
         returned = inFileDataBase.saveInvoice(invoice);
 
         //Then
         verify(inFileDataBase).saveInvoice(invoice);
         assertEquals(invoice, returned);
-    }
+    }*/
 
 
     @Test
     void shouldThrowExceptioneForNullInvoiceId() throws IOException, DatabaseOperationException {
-        //When
-        when(inFileDataBase.saveInvoice(null)).thenThrow(IllegalArgumentException.class);
-
-        //Then
         assertThrows(IllegalArgumentException.class, () -> inFileDataBase.saveInvoice(null));
     }
 

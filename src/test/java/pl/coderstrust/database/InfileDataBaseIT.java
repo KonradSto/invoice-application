@@ -27,7 +27,7 @@ class InfileDataBaseIT {
     private FileHelper fileHelper;
 
     @Autowired
-    private InFileDataBase inFileDataBase;
+    private InFileDatabase inFileDataBase;
 
     @BeforeEach
     void setup() throws IOException, DatabaseOperationException {

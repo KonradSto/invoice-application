@@ -12,7 +12,7 @@ import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
 
-@ConditionalOnProperty(name = "database", havingValue = "memory")
+@ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "memory")
 @Repository
 public class InMemoryDatabase implements Database {
 
