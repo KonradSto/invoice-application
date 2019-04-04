@@ -117,10 +117,10 @@ public class InvoicePdfService {
             table.addCell(new Phrase(entry.getPrice() + " zł", smallBold));
             Vat vatRate = entry.getVatRate();
             table.addCell(new Phrase(vatRate.getValue() * 100 + "%", smallBold));
-            table.addCell(new Phrase(entry.getNettValue() + " zł", smallBold));
+            table.addCell(new Phrase(entry.getNetValue() + " zł", smallBold));
             table.addCell(new Phrase(entry.getGrossValue() + " zł", smallBold));
             invoicePdf.add(table);
-            totalNettValue = totalNettValue.add(entry.getNettValue());
+            totalNettValue = totalNettValue.add(entry.getNetValue());
             totalGrossValue = totalGrossValue.add(entry.getGrossValue());
         }
         addEntriesSummary(invoicePdf, totalNettValue, totalGrossValue);

@@ -1,6 +1,9 @@
 package pl.coderstrust.controller;
 
+import static ch.qos.logback.core.encoder.ByteArrayUtil.hexStringToByteArray;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.byteThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -522,5 +525,63 @@ class InvoiceControllerTest {
         //Then
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
         verify(invoiceService).saveInvoice(invoice);
+    }
+
+    @Test
+    void shouldReturnInvoiceAsPdf() throws Exception {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
+        byte[] expectedByteArray = new byte[10];
+        when(invoiceService.getInvoice(invoice.getId())).thenReturn(Optional.ofNullable(invoice));
+        when(invoicePdfService.getInvoiceAsPdf(invoice)).thenReturn(expectedByteArray);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/pdf/{id}", invoice.getId()).accept(MediaType.APPLICATION_PDF_VALUE))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+        byte[] actualByteArray = result.getResponse().getContentAsByteArray();
+
+        //Then
+        assertEquals(HttpStatus.OK.value(), actualHttpStatus);
+        assertArrayEquals(expectedByteArray, actualByteArray);
+        verify(invoiceService).getInvoice(invoice.getId());
+        verify(invoicePdfService).getInvoiceAsPdf(invoice);
+    }
+
+    @Test
+    void shouldReturnNotFoundDuringGettingInvoiceAsPdfWhenInvoiceDoesNotExist() throws Exception {
+        //Given
+        Long invoiceId = 10L;
+        when(invoiceService.getInvoice(invoiceId)).thenReturn(Optional.empty());
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/pdf/{id}", invoiceId).accept(MediaType.APPLICATION_PDF))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.NOT_FOUND.value(), actualHttpStatus);
+        verify(invoiceService).getInvoice(invoiceId);
+    }
+
+    @Test
+    void shouldReturnInternalServerErrorDuringGettingInvoiceAsPdfWhenSomethingWentWrongOnServer() throws Exception {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoice();
+        when(invoiceService.getInvoice(invoice.getId())).thenReturn(Optional.ofNullable(invoice));
+        when(invoicePdfService.getInvoiceAsPdf(invoice)).thenThrow(ServiceOperationException.class);
+
+        //When
+        MvcResult result = mockMvc.perform(
+            get("/invoices/pdf/{id}", invoice.getId()).accept(MediaType.APPLICATION_PDF))
+            .andReturn();
+        int actualHttpStatus = result.getResponse().getStatus();
+
+        //Then
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
+        verify(invoiceService).getInvoice(invoice.getId());
+        verify(invoicePdfService).getInvoiceAsPdf(invoice);
     }
 }

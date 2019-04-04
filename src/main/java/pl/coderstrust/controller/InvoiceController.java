@@ -241,6 +241,13 @@ public class InvoiceController {
     }
 
     @GetMapping("/pdf/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get a single invoice as PDF file.", notes = "Gets a PDF file of invoice by given id", response = Invoice.class)
+    @ApiImplicitParam(name = "id", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Invoice not found for passed id."),
+        @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoiceAsPdf(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
