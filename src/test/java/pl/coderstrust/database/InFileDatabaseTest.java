@@ -18,9 +18,10 @@ import pl.coderstrust.model.Invoice;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class InFileDatabaseTest {
-
+    //@Autowired
     @MockBean
-    FileHelper fileHelper;
+    private FileHelper fileHelper;
+    @Autowired
     private InFileDatabase inFileDataBase;
     @Autowired
     private ObjectMapper mapper;
@@ -45,9 +46,16 @@ doAnswer()
 
 
     @Test
-    void shouldThrowExceptioneForNullInvoiceId() throws IOException, DatabaseOperationException {
-        assertThrows(IllegalArgumentException.class, () -> inFileDataBase.saveInvoice(null));
+    void shouldThrowExceptionForNullInvoice() throws IOException, DatabaseOperationException {
+        assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> inFileDataBase.saveInvoice(null));
     }
+
+    @Test
+    void shouldInsertInvoiceForNullId() throws IOException, DatabaseOperationException {
+
+
+    }
+
 
     String toJson(Invoice invoice) throws JsonProcessingException {
         return mapper.writeValueAsString(invoice);

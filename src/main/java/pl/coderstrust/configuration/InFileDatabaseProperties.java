@@ -1,6 +1,7 @@
 package pl.coderstrust.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class InFileDatabaseProperties {
     private String filePath;
 
+    @Bean
     public String getFilePath() {
         return filePath;
     }

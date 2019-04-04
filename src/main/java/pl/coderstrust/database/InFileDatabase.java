@@ -42,8 +42,8 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice update(Invoice invoice) throws DatabaseOperationException {
-     /*   try {
-            *//*if (!inFileDataBase.invoiceExists(invoice.getId())) {
+        /*   try {
+         *//*if (!inFileDataBase.invoiceExists(invoice.getId())) {
                 throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
             }*//*
             Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
@@ -52,7 +52,7 @@ public class InFileDatabase implements Database {
         } catch (DatabaseOperationException | IOException e) {
             throw new DatabaseOperationException("sfsd");
         }*/
-    return  null;
+        return null;
     }
 
     @Override
