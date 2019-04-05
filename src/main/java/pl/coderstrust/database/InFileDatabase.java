@@ -2,7 +2,6 @@ package pl.coderstrust.database;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -62,7 +61,23 @@ public class InFileDatabase implements Database {
 
     @Override
     public Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
-        return Optional.empty();
+        ArgumentValidator.ensureNotNull(id, "id");
+        try {
+            if (!fileHelper.exists()) {
+                fileHelper.create();
+            }
+            List<String> invoicesAsJson = fileHelper.readLinesFromFile();
+            for (String invoiceAsJson : invoicesAsJson) {
+                Invoice invoice = mapper.readValue(invoiceAsJson, Invoice.class);
+                if (id.equals(invoice.getId())) {
+                    return Optional.of(invoice);
+                }
+            }
+            return Optional.empty();
+        } catch (IOException e) {
+            throw new DatabaseOperationException();
+        }
+        //return Optional.empty();
     }
 
     @Override
@@ -83,24 +98,20 @@ public class InFileDatabase implements Database {
     @Override
     public boolean invoiceExists(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
-        // TODO: 27/03/2019 compare id with count invoices and then invoke reverse read - nie da sie teraz
         try {
+            if (fileHelper.isEmpty()) {
+                return false;
+            }
             List<String> fileLines = fileHelper.readLinesFromFile();
-            // TODO: 27/03/2019 parse just Id not whole object ?
             for (String fileLine : fileLines) {
                 Invoice invoice = mapper.readValue(fileLine, Invoice.class);
                 if (id.equals(invoice.getId())) {
                     return true;
                 }
             }
-        } catch (FileNotFoundException e) {
-            throw new DatabaseOperationException("dfdf");
-        } catch (IOException e) {
-            // TODO: 27/03/2019 what exception to throw here
-            throw new DatabaseOperationException("sfsds");
+        } catch (Exception e) {
+            throw new DatabaseOperationException("InFile database error");
         }
-        // TODO: 27/03/2019 what to return below  maybe exception
-
         return false;
     }
 
@@ -111,14 +122,30 @@ public class InFileDatabase implements Database {
     }
 
     Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
+
+        if (!fileHelper.exists()) {
+            try {
+                fileHelper.create();
+                this.nextId = 1L;
+            } catch (IOException e) {
+                throw new DatabaseOperationException("belelle");
+            }
+        }
+        try {
+            if (fileHelper.isEmpty()) {
+                this.nextId = 1L;
+
+            }
+        } catch (IOException e) {
+            throw new DatabaseOperationException("dfjdfdf");
+        }
         Long id = nextId++;
         Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         try {
-            fileHelper.writeLine(toJson(insertedInvoice));
+            fileHelper.writeLine(mapper.writeValueAsString(insertedInvoice));
         } catch (IOException e) {
             // TODO: 27/03/2019 2 or 3 exceptions catched here
             throw new DatabaseOperationException("Save invoice failed");
-
         }
         return insertedInvoice;
     }

@@ -1,6 +1,7 @@
 package pl.coderstrust.database;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,6 +32,9 @@ class InfileDataBaseIT {
 
     @BeforeEach
     void setup() throws IOException, DatabaseOperationException {
+        if (!fileHelper.exists()) {
+            fileHelper.create();
+        }
         inFileDataBase.deleteAllInvoices();
     }
 
@@ -45,10 +49,18 @@ class InfileDataBaseIT {
         inFileDataBase.saveInvoice(invoice3);
 
         //When
-        boolean exist = inFileDataBase.invoiceExists(2L);
+        boolean exist0 = inFileDataBase.invoiceExists(0L);
+        boolean exist1 = inFileDataBase.invoiceExists(1L);
+        boolean exist2 = inFileDataBase.invoiceExists(2L);
+        boolean exist3 = inFileDataBase.invoiceExists(3L);
+        boolean exist4 = inFileDataBase.invoiceExists(4L);
 
         //Then
-        assertTrue(exist);
+        assertFalse(exist0);
+        assertTrue(exist1);
+        assertTrue(exist2);
+        assertTrue(exist3);
+        assertFalse(exist4);
     }
 
 
@@ -85,7 +97,7 @@ class InfileDataBaseIT {
         Invoice updatedInvoice = inFileDataBase.saveInvoice(invoiceToUpdate);
 
         //Then
-       // assertEquals(updatedInvoice, getInvoiceFromJson(invoicesInJson.get(0)));
+        // assertEquals(updatedInvoice, getInvoiceFromJson(invoicesInJson.get(0)));
         //assertTrue(invoicesAreSame(invoice, getInvoiceFromJson(invoicesInJson.get(0))));
 
         //  assertEquals(updatedInvoice, databaseStorage.get(updatedInvoice.getId()));

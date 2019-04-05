@@ -1,17 +1,26 @@
 package pl.coderstrust.database;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 //@ExtendWith(MockitoExtension.class)
@@ -26,8 +35,58 @@ public class InFileDatabaseTest {
     @Autowired
     private ObjectMapper mapper;
 
+    @BeforeEach
+    void init() {
 
-/*
+    }
+
+    @Test
+    void shouldReturnTrueForExistingInvoice() throws IOException, DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
+        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificId(4L);
+        Collection<Invoice> invoices = Arrays.asList(invoice1, invoice2, invoice3);
+        String invoice1AsJson = mapper.writeValueAsString(invoice1);
+        String invoice2AsJson = mapper.writeValueAsString(invoice2);
+        String invoice3AsJson = mapper.writeValueAsString(invoice3);
+        List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
+        when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
+        when(fileHelper.exists()).thenReturn(true);
+
+        //When
+        boolean exist1 = inFileDataBase.invoiceExists(1L);
+        boolean exist2 = inFileDataBase.invoiceExists(2L);
+        boolean exist3 = inFileDataBase.invoiceExists(3L);
+        boolean exist4 = inFileDataBase.invoiceExists(4L);
+
+        //Then
+        assertTrue(exist1);
+        assertTrue(exist2);
+        assertTrue(exist3);
+        assertFalse(exist4);
+    }
+
+    @Test
+    void shouldThrowExceptionForNotExistingInFileDatabaseDuringCheckingInvoiceExistence() throws IOException {
+        when(fileHelper.isEmpty()).thenThrow(IOException.class);
+        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.invoiceExists(1L));
+    }
+
+    @Test
+    void shouldReturnFalseForEmptyInFileDatabaseDuringCheckingInvoiceExistence() throws IOException, DatabaseOperationException {
+        //Given
+        when(fileHelper.isEmpty()).thenReturn(true);
+
+        //When
+        boolean exist = inFileDataBase.invoiceExists(1L);
+
+        //Then
+        verify(fileHelper).isEmpty();
+        assertFalse(exist);
+    }
+    /*
     @Test
     void shouldAddInvoiceForNullInvoiceId() throws IOException, DatabaseOperationException {
         //Given
@@ -52,7 +111,11 @@ doAnswer()
 
     @Test
     void shouldInsertInvoiceForNullId() throws IOException, DatabaseOperationException {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
+        //When
 
+        //Then
 
     }
 

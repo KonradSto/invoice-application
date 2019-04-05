@@ -52,6 +52,16 @@ public class InvoiceGenerator {
         return new Invoice(null, number, issueDate, dueDate, seller, buyer, entry);
     }
 
+    public static Invoice getRandomInvoiceWithSpecificId(Long id) {
+        String number = InvoiceNumberGenerator.getNextInvoiceNumber();
+        LocalDate issueDate = LocalDate.now();
+        LocalDate dueDate = issueDate.plusDays(2);
+        Company seller = CompanyGenerator.getRandomCompany();
+        Company buyer = CompanyGenerator.getRandomCompany();
+        List<InvoiceEntry> entry = InvoiceEntryGenerator.getRandomEntries(2);
+        return new Invoice(id, number, issueDate, dueDate, seller, buyer, entry);
+    }
+
     public static Invoice getRandomInvoiceWithSpecificIssueDate(LocalDate date) {
         Long id = IdGenerator.getNextId();
         String number = InvoiceNumberGenerator.getNextInvoiceNumber();
