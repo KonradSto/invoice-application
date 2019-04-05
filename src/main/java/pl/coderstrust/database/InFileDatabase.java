@@ -29,6 +29,7 @@ public class InFileDatabase implements Database {
         this.mapper = mapper;
         this.fileHelper = fileHelper;
         this.inFileDatabaseProperties = inFileDatabaseProperties;
+        this.nextId = 1L;
     }
 
     @Override
@@ -122,29 +123,25 @@ public class InFileDatabase implements Database {
     }
 
     Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
-
         if (!fileHelper.exists()) {
             try {
                 fileHelper.create();
-                this.nextId = 1L;
             } catch (IOException e) {
-                throw new DatabaseOperationException("belelle");
+                throw new DatabaseOperationException("InFile database error");
             }
         }
         try {
             if (fileHelper.isEmpty()) {
                 this.nextId = 1L;
-
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException("dfjdfdf");
+            throw new DatabaseOperationException("InFile database error");
         }
         Long id = nextId++;
         Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         try {
             fileHelper.writeLine(mapper.writeValueAsString(insertedInvoice));
         } catch (IOException e) {
-            // TODO: 27/03/2019 2 or 3 exceptions catched here
             throw new DatabaseOperationException("Save invoice failed");
         }
         return insertedInvoice;

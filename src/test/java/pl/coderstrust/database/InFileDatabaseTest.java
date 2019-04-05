@@ -1,5 +1,6 @@
 package pl.coderstrust.database;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,7 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +47,6 @@ public class InFileDatabaseTest {
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
         Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
         Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificId(4L);
-        Collection<Invoice> invoices = Arrays.asList(invoice1, invoice2, invoice3);
         String invoice1AsJson = mapper.writeValueAsString(invoice1);
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
@@ -86,22 +85,45 @@ public class InFileDatabaseTest {
         verify(fileHelper).isEmpty();
         assertFalse(exist);
     }
-    /*
+
     @Test
-    void shouldAddInvoiceForNullInvoiceId() throws IOException, DatabaseOperationException {
+    void shouldCreateInFileDatabaseWhenAddingInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
-        Invoice returned;
-       // when(fileHelper.writeLine(toJson(invoice))).thenReturn(invoice);
-        //when(fileHelper.saveInvoice(invoice)).thenReturn(invoice);
-doAnswer()
+        when(fileHelper.exists()).thenReturn(false);
+
         //When
-        returned = inFileDataBase.saveInvoice(invoice);
+        inFileDataBase.saveInvoice(invoice);
 
         //Then
-        verify(inFileDataBase).saveInvoice(invoice);
-        assertEquals(invoice, returned);
-    }*/
+        verify(fileHelper).exists();
+        verify(fileHelper).create();
+    }
+
+    @Test
+    void shouldThrowExceptionFor() {
+
+    }
+
+    @Test
+    void shouldAddInvoiceToEmptyInFileDatabase() throws IOException, DatabaseOperationException {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
+        when(fileHelper.exists()).thenReturn(true);
+        when(fileHelper.isEmpty()).thenReturn(true);
+        //  (fileHelper.writeLine(mapper.writeValueAsString(invoice))).thenAnswer()
+        // when(fileHelper.writeLine(toJson(invoice))).thenReturn(invoice);
+        //when(fileHelper.saveInvoice(invoice)).thenReturn(invoice);
+
+        //When
+        Invoice returned = inFileDataBase.saveInvoice(invoice);
+        Invoice inserted = new Invoice(1L, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+
+        //Then
+        verify(fileHelper).exists();
+        verify(fileHelper).isEmpty();
+        assertEquals(inserted, returned);
+    }
 
 
     @Test
