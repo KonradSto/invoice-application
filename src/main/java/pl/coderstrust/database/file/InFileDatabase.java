@@ -26,8 +26,11 @@ public class InFileDatabase implements Database {
 
     @Autowired
     public InFileDatabase(ObjectMapper mapper, FileHelper fileHelper, InFileDatabaseProperties inFileDatabaseProperties) {
+        ArgumentValidator.ensureNotNull(mapper, "mapper");
         this.mapper = mapper;
+        ArgumentValidator.ensureNotNull(fileHelper, "fileHelper");
         this.fileHelper = fileHelper;
+        ArgumentValidator.ensureNotNull(inFileDatabaseProperties, "inFileDatabaseProperties");
         this.inFileDatabaseProperties = inFileDatabaseProperties;
         this.nextId = 1L;
     }
@@ -137,12 +140,12 @@ public class InFileDatabase implements Database {
         return invoices.size();
     }
 
-    private  Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
+    private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
         if (!fileHelper.exists()) {
             try {
                 fileHelper.create();
             } catch (IOException e) {
-                throw new DatabaseOperationException("InFile database error");
+                throw new DatabaseOperationException("Add invoice failed");
             }
         }
         try {
