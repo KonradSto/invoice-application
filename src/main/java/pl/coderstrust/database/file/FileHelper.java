@@ -1,4 +1,4 @@
-package pl.coderstrust.database;
+package pl.coderstrust.database.file;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,34 +26,34 @@ public class FileHelper {
         this.file = new File(filePath);
     }
 
-    void create() throws IOException {
+    public void create() throws IOException {
         if (this.file.exists()) {
             validateFileExistence("Failed to create new file");
         }
         Files.createFile(this.file.toPath());
     }
 
-    void delete() throws IOException {
+    public void delete() throws IOException {
         validateFileExistence("Failed to delete file");
         Files.delete(this.file.toPath());
     }
 
-    boolean exists() {
+    public boolean exists() {
         return this.file.exists();
     }
 
-    boolean isEmpty() throws IOException {
+    public boolean isEmpty() throws IOException {
         validateFileExistence("Failed to check file content");
         return (this.file.length() == 0);
     }
 
-    void clear() throws IOException {
+    public void clear() throws IOException {
         validateFileExistence("Failed to clear the file content");
         this.delete();
         this.create();
     }
 
-    void writeLine(String line) throws IOException {
+    public void writeLine(String line) throws IOException {
         validateFileExistence("Failed to write given line");
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.file, true))) {
             if (!this.isEmpty()) {
@@ -63,7 +63,7 @@ public class FileHelper {
         }
     }
 
-    List<String> readLinesFromFile() throws IOException {
+    public List<String> readLinesFromFile() throws IOException {
         validateFileExistence("Failed to read lines");
         List<String> fileLines;
         try (Stream<String> lines = Files.lines(this.file.toPath())) {
@@ -72,14 +72,14 @@ public class FileHelper {
         return fileLines;
     }
 
-    String readLastLine() throws IOException {
+    public String readLastLine() throws IOException {
         validateFileExistence("Failed to read last line");
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(this.file)) {
             return reader.readLine();
         }
     }
 
-    void removeLine(int lineNumber) throws IOException {
+    public void removeLine(int lineNumber) throws IOException {
         validateFileExistence("Failed to delete line");
         File newFile = new File((this.file.getParent() + "temporaryFile.txt"));
         transferRemainingFileContent(lineNumber, newFile);
