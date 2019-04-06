@@ -33,7 +33,7 @@ public class InFileDatabase implements Database {
     }
 
     @Override
-    public Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
+    public synchronized Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(invoice, "invoice");
         if (invoice.getId() == null) {
             return insertInvoice(invoice);
@@ -42,7 +42,7 @@ public class InFileDatabase implements Database {
     }
 
     @Override
-    public void deleteInvoice(Long id) throws DatabaseOperationException {
+    public synchronized void deleteInvoice(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
@@ -58,7 +58,7 @@ public class InFileDatabase implements Database {
     }
 
     @Override
-    public Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
+    public synchronized Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             if (!fileHelper.exists()) {
@@ -78,7 +78,7 @@ public class InFileDatabase implements Database {
     }
 
     @Override
-    public Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
+    public synchronized Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
         List<Invoice> invoices = new ArrayList<>();
         try {
             if (fileHelper.isEmpty()) {
@@ -99,7 +99,7 @@ public class InFileDatabase implements Database {
     }
 
     @Override
-    public void deleteAllInvoices() throws DatabaseOperationException {
+    public synchronized void deleteAllInvoices() throws DatabaseOperationException {
         if (!fileHelper.exists()) {
             throw new DatabaseOperationException("InFile database does not exist");
         }
@@ -112,7 +112,7 @@ public class InFileDatabase implements Database {
     }
 
     @Override
-    public boolean invoiceExists(Long id) throws DatabaseOperationException {
+    public synchronized boolean invoiceExists(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             if (fileHelper.isEmpty()) {
@@ -132,12 +132,12 @@ public class InFileDatabase implements Database {
     }
 
     @Override
-    public long countInvoices() throws DatabaseOperationException {
+    public synchronized long countInvoices() throws DatabaseOperationException {
         Collection<Invoice> invoices = this.getAllInvoices();
         return invoices.size();
     }
 
-    private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
+    private  Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
         if (!fileHelper.exists()) {
             try {
                 fileHelper.create();
