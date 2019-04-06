@@ -7,15 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 class InvoicePdfServiceTest {
 
-    private InvoicePdfService invoicePdfService = new InvoicePdfService();
+    private InvoicePdfService invoicePdfService;
 
-    InvoicePdfServiceTest() throws IOException, DocumentException {
+    @BeforeEach
+    private void setup() throws IOException, DocumentException {
+        invoicePdfService = new InvoicePdfService();
     }
 
     @Test

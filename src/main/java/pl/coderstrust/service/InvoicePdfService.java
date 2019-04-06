@@ -15,6 +15,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Company;
@@ -27,24 +28,30 @@ import pl.coderstrust.utils.ArgumentValidator;
 @Service
 public class InvoicePdfService {
 
+    private BaseFont polishCharTimesRoman = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, BaseFont.EMBEDDED);
+
+    private Font bigBold = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
+
+    private Font smallBold = new Font(polishCharTimesRoman, 12, Font.BOLD);
+
     InvoicePdfService() throws IOException, DocumentException {
     }
 
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
-        Document invoicePdf = new Document();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            Document invoicePdf = new Document();
             PdfWriter.getInstance(invoicePdf, byteArrayOutputStream);
             invoicePdf.open();
             addInvoiceNumberAndDates(invoicePdf, invoice);
             addSellerAndBuyerSection(invoicePdf, invoice);
             addEntriesSection(invoicePdf, invoice);
             invoicePdf.close();
+            return byteArrayOutputStream.toByteArray();
         } catch (DocumentException ex) {
             throw new ServiceOperationException("An error occurred during getting PDF file of invoice", ex);
         }
-        return byteArrayOutputStream.toByteArray();
     }
 
     private void addInvoiceNumberAndDates(Document invoicePdf, Invoice invoice) throws DocumentException {
@@ -105,7 +112,7 @@ public class InvoicePdfService {
         invoicePdf.add(table);
     }
 
-    private void addEntries(Document invoicePdf, java.util.List<InvoiceEntry> entries) throws DocumentException {
+    private void addEntries(Document invoicePdf, List<InvoiceEntry> entries) throws DocumentException {
         BigDecimal totalNettValue = new BigDecimal(0);
         BigDecimal totalGrossValue = new BigDecimal(0);
         for (InvoiceEntry entry : entries) {
@@ -147,10 +154,4 @@ public class InvoicePdfService {
         }
         invoicePdf.add(emptyLine);
     }
-
-    private BaseFont polishCharTimesRoman = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, BaseFont.EMBEDDED);
-
-    private Font bigBold = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
-
-    private Font smallBold = new Font(polishCharTimesRoman, 12, Font.BOLD);
 }
