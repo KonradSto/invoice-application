@@ -1,8 +1,8 @@
 package pl.coderstrust.database;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -41,23 +41,20 @@ public class InFileDatabase implements Database {
         return update(invoice);
     }
 
-    private Invoice update(Invoice invoice) throws DatabaseOperationException {
-        /*   try {
-         *//*if (!inFileDataBase.invoiceExists(invoice.getId())) {
-                throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
-            }*//*
-            Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
-            fileHelper.writeLine(toJson(updatedInvoice));
-            return updatedInvoice;
-        } catch (DatabaseOperationException | IOException e) {
-            throw new DatabaseOperationException("sfsd");
-        }*/
-        return null;
-    }
-
     @Override
     public void deleteInvoice(Long id) throws DatabaseOperationException {
-
+        ArgumentValidator.ensureNotNull(id, "id");
+        try {
+            List<String> invoicesAsJson = fileHelper.readLinesFromFile();
+            for (int line = 1; line < invoicesAsJson.size(); line++) {
+                Invoice invoice = mapper.readValue(invoicesAsJson.get(line), Invoice.class);
+                if (id.equals(invoice.getId())) {
+                    fileHelper.removeLine(line);
+                }
+            }
+        } catch (IOException e) {
+            throw new DatabaseOperationException("error during reading invoices from inFile database");
+        }
     }
 
     @Override
@@ -78,16 +75,34 @@ public class InFileDatabase implements Database {
         } catch (IOException e) {
             throw new DatabaseOperationException();
         }
-        //return Optional.empty();
     }
 
     @Override
     public Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
-        return null;
+        List<Invoice> invoices = new ArrayList<>();
+        try {
+            if (fileHelper.isEmpty()) {
+                return invoices;
+            }
+            try {
+                List<String> invoicesAsJson = fileHelper.readLinesFromFile();
+                for (String invoiceAsJson : invoicesAsJson) {
+                    invoices.add(mapper.readValue(invoiceAsJson, Invoice.class));
+                }
+            } catch (IOException e) {
+                throw new DatabaseOperationException("An error occurred during getting all invoices from Infile database");
+            }
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during getting all invoices from Infile database");
+        }
+        return invoices;
     }
 
     @Override
     public void deleteAllInvoices() throws DatabaseOperationException {
+        if (!fileHelper.exists()) {
+            throw new DatabaseOperationException("InFile database does not exist");
+        }
         try {
             fileHelper.clear();
         } catch (IOException e) {
@@ -118,11 +133,11 @@ public class InFileDatabase implements Database {
 
     @Override
     public long countInvoices() throws DatabaseOperationException {
-
-        return 0;
+        Collection<Invoice> invoices = this.getAllInvoices();
+        return invoices.size();
     }
 
-    Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
+    private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
         if (!fileHelper.exists()) {
             try {
                 fileHelper.create();
@@ -147,11 +162,16 @@ public class InFileDatabase implements Database {
         return insertedInvoice;
     }
 
-    String toJson(Invoice invoice) throws JsonProcessingException {
-        return mapper.writeValueAsString(invoice);
-    }
-
-    Invoice getInvoiceFromJson(String invoiceAsJson) throws IOException {
-        return mapper.readValue(invoiceAsJson, Invoice.class);
+    private Invoice update(Invoice invoice) throws DatabaseOperationException {
+        try {
+            if (!this.invoiceExists(invoice.getId())) {
+                throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
+            }
+            Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+            fileHelper.writeLine(mapper.writeValueAsString(updatedInvoice));
+            return updatedInvoice;
+        } catch (IOException e) {
+            throw new DatabaseOperationException("Update invoice failed, database does not exist");
+        }
     }
 }
