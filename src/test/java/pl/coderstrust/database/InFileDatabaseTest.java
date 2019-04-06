@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import pl.coderstrust.configuration.InFileDatabaseProperties;
 import pl.coderstrust.database.file.FileHelper;
 import pl.coderstrust.database.file.InFileDatabase;
 import pl.coderstrust.generators.InvoiceGenerator;
@@ -40,6 +41,24 @@ class InFileDatabaseTest {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private InFileDatabaseProperties inFileDatabaseProperties;
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionForNullMapper() {
+        assertThrows(IllegalArgumentException.class, () -> new InFileDatabase(null, fileHelper, inFileDatabaseProperties));
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionForNullFileHelper() {
+        assertThrows(IllegalArgumentException.class, () -> new InFileDatabase(mapper, null, inFileDatabaseProperties));
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionForNullInFileDatabaseProperties() {
+        assertThrows(IllegalArgumentException.class, () -> new InFileDatabase(mapper, fileHelper, null));
+    }
 
     @Test
     void shouldReturnTrueForExistingInvoice() throws IOException, DatabaseOperationException {
@@ -66,7 +85,7 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullInvoice()  {
+    void shouldThrowExceptionForNullInvoice() {
         assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> inFileDataBase.saveInvoice(null));
     }
 
@@ -147,7 +166,7 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenInvoiceToBeUpdatedDoesNotExist()  {
+    void shouldThrowExceptionWhenInvoiceToBeUpdatedDoesNotExist() {
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.saveInvoice(invoice));
     }
@@ -314,7 +333,7 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionForNotExistingDatabaseDuringDeletingAllInvoices()  {
+    void shouldThrowExceptionForNotExistingDatabaseDuringDeletingAllInvoices() {
         when(!fileHelper.exists()).thenReturn(false);
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.deleteAllInvoices());
     }
