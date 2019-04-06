@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,14 +28,14 @@ class InfileDataBaseIT {
 
     @Autowired
     private InFileDatabase inFileDataBase;
-/*
+
     @BeforeEach
     void setup() throws IOException, DatabaseOperationException {
         if (!fileHelper.exists()) {
             fileHelper.create();
         }
         inFileDataBase.deleteAllInvoices();
-    }*/
+    }
 
     @Test
     void shouldReturnTrueForExistingInvoice() throws IOException, DatabaseOperationException {
@@ -52,11 +53,6 @@ class InfileDataBaseIT {
         boolean exist3 = inFileDataBase.invoiceExists(3L);
 
         //Then
-        List<String> invoicesAsJson = fileHelper.readLinesFromFile();
-        for (String line : invoicesAsJson) {
-            System.out.println(line);
-        }
-
         assertTrue(exist1);
         assertTrue(exist2);
         assertTrue(exist3);
