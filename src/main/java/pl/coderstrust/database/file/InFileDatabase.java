@@ -32,7 +32,13 @@ public class InFileDatabase implements Database {
         this.fileHelper = fileHelper;
         ArgumentValidator.ensureNotNull(inFileDatabaseProperties, "inFileDatabaseProperties");
         this.inFileDatabaseProperties = inFileDatabaseProperties;
-        this.nextId = 1L;
+        // FIXME: 06/04/2019 next id possibly cannot be here
+        try {
+            this.nextId = getNextId();
+        } catch (DatabaseOperationException e) {
+            // FIXME: 06/04/2019  what to do here ?
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -111,7 +117,6 @@ public class InFileDatabase implements Database {
         } catch (IOException e) {
             throw new DatabaseOperationException("Cannot delete.......");
         }
-
     }
 
     @Override
@@ -175,6 +180,31 @@ public class InFileDatabase implements Database {
             return updatedInvoice;
         } catch (IOException e) {
             throw new DatabaseOperationException("Update invoice failed, database does not exist");
+        }
+    }
+
+    private Long getNextId() throws DatabaseOperationException {
+        if (!fileHelper.exists()) {
+            try {
+                fileHelper.create();
+                return 1L;
+            } catch (IOException e) {
+                throw new DatabaseOperationException("fdfdf");
+            }
+        }
+        try {
+            if (fileHelper.isEmpty()) {
+                return 1L;
+            }
+        } catch (IOException e) {
+            throw new DatabaseOperationException("dfdfdfdf");
+        }
+        try {
+            String invoiceAsJson = fileHelper.readLastLine();
+            Invoice invoice = mapper.readValue(invoiceAsJson, Invoice.class);
+            return invoice.getId() + 1;
+        } catch (IOException e) {
+            throw new DatabaseOperationException("dfdfdfdf");
         }
     }
 }
