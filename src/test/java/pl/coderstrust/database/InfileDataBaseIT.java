@@ -1,7 +1,6 @@
 package pl.coderstrust.database;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,9 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
-//@ExtendWith(SpringExtension.class)
 @SpringBootTest
-//@RunWith(SpringRunner.class)
 class InfileDataBaseIT {
     @Autowired
     private ObjectMapper mapper;
@@ -49,18 +46,14 @@ class InfileDataBaseIT {
         inFileDataBase.saveInvoice(invoice3);
 
         //When
-        boolean exist0 = inFileDataBase.invoiceExists(0L);
         boolean exist1 = inFileDataBase.invoiceExists(1L);
         boolean exist2 = inFileDataBase.invoiceExists(2L);
         boolean exist3 = inFileDataBase.invoiceExists(3L);
-        boolean exist4 = inFileDataBase.invoiceExists(4L);
 
         //Then
-        assertFalse(exist0);
         assertTrue(exist1);
         assertTrue(exist2);
         assertTrue(exist3);
-        assertFalse(exist4);
     }
 
 
@@ -72,7 +65,6 @@ class InfileDataBaseIT {
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         Invoice savedInvoice = inFileDataBase.saveInvoice(invoice);
 
-//        fileHelper.writeLine(toJson(invoice));
         List<String> invoicesInJson;
 
         //When
@@ -90,7 +82,6 @@ class InfileDataBaseIT {
         Invoice invoiceToUpdate = new Invoice(invoice.getId(), "5/2019", LocalDate.now(), LocalDate.now(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         String invoiceToUpdateInJson = toJson(invoiceToUpdate);
 
-//        fileHelper.writeLine(toJson(invoice));
         List<String> invoicesInJson;
 
         //When

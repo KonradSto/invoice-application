@@ -46,7 +46,6 @@ public class InFileDatabaseTest {
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
         Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
-        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificId(4L);
         String invoice1AsJson = mapper.writeValueAsString(invoice1);
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
@@ -58,13 +57,11 @@ public class InFileDatabaseTest {
         boolean exist1 = inFileDataBase.invoiceExists(1L);
         boolean exist2 = inFileDataBase.invoiceExists(2L);
         boolean exist3 = inFileDataBase.invoiceExists(3L);
-        boolean exist4 = inFileDataBase.invoiceExists(4L);
 
         //Then
         assertTrue(exist1);
         assertTrue(exist2);
         assertTrue(exist3);
-        assertFalse(exist4);
     }
 
     @Test
@@ -141,9 +138,9 @@ public class InFileDatabaseTest {
     @Test
     void shouldThrowExceptionWhenDatabaseEmptyDuringAddingInvoice() throws IOException {
         //Given
-        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         when(fileHelper.exists()).thenReturn(true);
         when(fileHelper.isEmpty()).thenReturn(false);
+        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         doThrow(new IOException()).when(fileHelper).writeLine(Mockito.anyString());
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.saveInvoice(invoice));
     }
@@ -285,13 +282,13 @@ public class InFileDatabaseTest {
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
         Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
-        Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
         String invoice1AsJson = mapper.writeValueAsString(invoice1);
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
         when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
+        Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
         //When
         Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
@@ -340,13 +337,13 @@ public class InFileDatabaseTest {
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
         Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
-        Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
         String invoice1AsJson = mapper.writeValueAsString(invoice1);
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
         when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
+        Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
         //When
         long actual = inFileDataBase.countInvoices();
