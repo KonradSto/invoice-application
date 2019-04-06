@@ -30,7 +30,7 @@ import pl.coderstrust.model.Invoice;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class InFileDatabaseTest {
+class InFileDatabaseTest {
 
     @MockBean
     private FileHelper fileHelper;
@@ -66,7 +66,7 @@ public class InFileDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionForNullInvoice() throws IOException, DatabaseOperationException {
+    void shouldThrowExceptionForNullInvoice()  {
         assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> inFileDataBase.saveInvoice(null));
     }
 
@@ -147,7 +147,7 @@ public class InFileDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenInvoiceToBeUpdatedDoesNotExist() throws IOException {
+    void shouldThrowExceptionWhenInvoiceToBeUpdatedDoesNotExist()  {
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.saveInvoice(invoice));
     }
@@ -314,7 +314,7 @@ public class InFileDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionForNotExistingDatabaseDuringDeletingAllInvoices() throws IOException {
+    void shouldThrowExceptionForNotExistingDatabaseDuringDeletingAllInvoices()  {
         when(!fileHelper.exists()).thenReturn(false);
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.deleteAllInvoices());
     }
@@ -354,5 +354,4 @@ public class InFileDatabaseTest {
         verify(fileHelper).readLinesFromFile();
         assertEquals(expected.size(), actual);
     }
-
 }

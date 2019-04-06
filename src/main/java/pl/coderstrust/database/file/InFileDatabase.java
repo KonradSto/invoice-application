@@ -16,8 +16,6 @@ import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.utils.ArgumentValidator;
 
-// TODO: 26/03/2019 synchronize
-// TODO: 26/03/2019  atomic counter
 @ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-file")
 @Repository
 public class InFileDatabase implements Database {
