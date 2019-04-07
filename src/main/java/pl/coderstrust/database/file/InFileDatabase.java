@@ -21,7 +21,6 @@ import pl.coderstrust.utils.ArgumentValidator;
 public class InFileDatabase implements Database {
     private static final String EXCEPTION_MESSAGE = "An error occurred during reading invoices from inFile database";
     private static final String DATABASE_NOT_EXIST = "InFileDatabase does not exist";
-
     private final InFileDatabaseProperties inFileDatabaseProperties;
     private ObjectMapper mapper;
     private FileHelper fileHelper;

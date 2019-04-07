@@ -23,6 +23,7 @@ import pl.coderstrust.model.Invoice;
 
 @SpringBootTest
 class InfileDataBaseIT {
+
     @Autowired
     private ObjectMapper mapper;
 
