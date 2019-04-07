@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.service.InvoicePdfService;
+import pl.coderstrust.service.InvoiceEmailService;
 import pl.coderstrust.service.InvoiceService;
 import pl.coderstrust.utils.ArgumentValidator;
 
@@ -41,15 +42,17 @@ public class InvoiceController {
     private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
     private InvoiceService invoiceService;
     private InvoicePdfService invoicePdfService;
+    private InvoiceEmailService invoiceEmailService;
     private String message;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, InvoicePdfService invoicePdfService) {
+    public InvoiceController(InvoiceService invoiceService, InvoicePdfService invoicePdfService, InvoiceEmailService invoiceEmailService) {
         log.debug("Launching to REST service");
         ArgumentValidator.ensureNotNull(invoiceService, "invoiceService");
         ArgumentValidator.ensureNotNull(invoicePdfService, "invoicePdfService");
         this.invoiceService = invoiceService;
         this.invoicePdfService = invoicePdfService;
+        this.invoiceEmailService = invoiceEmailService;
     }
 
     @GetMapping("/{id}")
@@ -233,7 +236,7 @@ public class InvoiceController {
         try {
             log.debug("Saving invoice: {}", invoice);
             Invoice savedInvoice = invoiceService.saveInvoice(invoice);
-            //sendEmailWithInvoice(Invoice invoice)
+            invoiceEmailService.sendEmailWithInvoice(invoice);
             return ResponseEntity.status(HttpStatus.OK).body(savedInvoice);
         } catch (Exception e) {
             log.error("An error occurred during saving an invoice.", e);
