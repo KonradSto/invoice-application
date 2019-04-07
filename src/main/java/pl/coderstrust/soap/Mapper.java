@@ -18,138 +18,133 @@ import pl.coderstrust.soap.bindingclasses.Entries;
 
 class Mapper {
 
-    private Mapper() {
-    }
-
-    static Invoice mapSoapInvoiceToOriginalInvoice(pl.coderstrust.soap.bindingclasses.Invoice responseInvoice) {
+    static Invoice mapInvoice(pl.coderstrust.soap.bindingclasses.Invoice invoiceToMap) {
         return new Invoice(
-            responseInvoice.getId(),
-            responseInvoice.getNumber(),
-            convertXmlGregorianCalendarToLocalDate(responseInvoice.getIssuedDate()),
-            convertXmlGregorianCalendarToLocalDate(responseInvoice.getLocalDate()),
-            mapSoapSellerToOriginalSeller(responseInvoice.getSeller()),
-            mapSoapBuyerToOriginalBuyer(responseInvoice.getBuyer()),
-            mapSoapEntriesToOriginalEntries(responseInvoice.getEntries().getInvoiceEntry())
+            invoiceToMap.getId(),
+            invoiceToMap.getNumber(),
+            mapXmlGregorianCalendarToLocalDate(invoiceToMap.getIssuedDate()),
+            mapXmlGregorianCalendarToLocalDate(invoiceToMap.getLocalDate()),
+            mapSeller(invoiceToMap.getSeller()),
+            mapBuyer(invoiceToMap.getBuyer()),
+            mapInvoiceEntries(invoiceToMap.getEntries().getInvoiceEntry())
         );
     }
 
-    private static List<InvoiceEntry> mapSoapEntriesToOriginalEntries(List<pl.coderstrust.soap.bindingclasses.InvoiceEntry> responseEntries) {
-        List<InvoiceEntry> entries = new ArrayList<>();
-        for (pl.coderstrust.soap.bindingclasses.InvoiceEntry entry : responseEntries) {
-            entries.add(mapSoapEntryToOriginalEntry(entry));
+    static pl.coderstrust.soap.bindingclasses.Invoice mapInvoice(Invoice invoiceToMap) throws DatatypeConfigurationException {
+        pl.coderstrust.soap.bindingclasses.Invoice mappedInvoice = new pl.coderstrust.soap.bindingclasses.Invoice();
+        mappedInvoice.setId(invoiceToMap.getId());
+        mappedInvoice.setNumber(invoiceToMap.getNumber());
+        mappedInvoice.setIssuedDate(mapLocalDateToXmlGregorianCalendar((invoiceToMap.getIssuedDate())));
+        mappedInvoice.setLocalDate(mapLocalDateToXmlGregorianCalendar(invoiceToMap.getDueDate()));
+        mappedInvoice.setSeller(mapSeller(invoiceToMap.getSeller()));
+        mappedInvoice.setBuyer(mapBuyer(invoiceToMap.getBuyer()));
+        pl.coderstrust.soap.bindingclasses.Entries mappedEntries = new Entries();
+        for (InvoiceEntry entryToMap : invoiceToMap.getEntries()) {
+            mappedEntries.getInvoiceEntry().add(mapInvoiceEntry(entryToMap));
         }
-        return entries;
+        mappedInvoice.setEntries(mappedEntries);
+        return mappedInvoice;
     }
 
-    private static InvoiceEntry mapSoapEntryToOriginalEntry(pl.coderstrust.soap.bindingclasses.InvoiceEntry responseEntry) {
-        pl.coderstrust.soap.bindingclasses.Vat responseVatRate = responseEntry.getVatRate();
+    private static List<InvoiceEntry> mapInvoiceEntries(List<pl.coderstrust.soap.bindingclasses.InvoiceEntry> invoiceEntriesToMap) {
+        List<InvoiceEntry> mappedInvoiceEntries = new ArrayList<>();
+        for (pl.coderstrust.soap.bindingclasses.InvoiceEntry entry : invoiceEntriesToMap) {
+            mappedInvoiceEntries.add(mapInvoiceEntry(entry));
+        }
+        return mappedInvoiceEntries;
+    }
+
+    private static InvoiceEntry mapInvoiceEntry(pl.coderstrust.soap.bindingclasses.InvoiceEntry invoiceEntryToMap) {
         return new InvoiceEntry(
-            responseEntry.getId(),
-            responseEntry.getProductName(),
-            responseEntry.getQuantity(),
-            responseEntry.getUnit(),
-            responseEntry.getPrice(),
-            responseEntry.getNettValue(),
-            responseEntry.getGrossValue(),
-            Vat.valueOf(responseVatRate.value())
+            invoiceEntryToMap.getId(),
+            invoiceEntryToMap.getProductName(),
+            invoiceEntryToMap.getQuantity(),
+            invoiceEntryToMap.getUnit(),
+            invoiceEntryToMap.getPrice(),
+            invoiceEntryToMap.getNettValue(),
+            invoiceEntryToMap.getGrossValue(),
+            Vat.valueOf(invoiceEntryToMap.getVatRate().value())
         );
     }
 
-    private static Company mapSoapBuyerToOriginalBuyer(pl.coderstrust.soap.bindingclasses.Company responseBuyer) {
+    private static pl.coderstrust.soap.bindingclasses.InvoiceEntry mapInvoiceEntry(InvoiceEntry invoiceEntryToMap) {
+        pl.coderstrust.soap.bindingclasses.InvoiceEntry mappedInvoiceEntry = new pl.coderstrust.soap.bindingclasses.InvoiceEntry();
+        mappedInvoiceEntry.setId(invoiceEntryToMap.getId());
+        mappedInvoiceEntry.setProductName(invoiceEntryToMap.getProductName());
+        mappedInvoiceEntry.setQuantity(invoiceEntryToMap.getQuantity());
+        mappedInvoiceEntry.setUnit(invoiceEntryToMap.getUnit());
+        mappedInvoiceEntry.setPrice(invoiceEntryToMap.getPrice());
+        mappedInvoiceEntry.setNettValue(invoiceEntryToMap.getNettValue());
+        mappedInvoiceEntry.setGrossValue(invoiceEntryToMap.getGrossValue());
+        mappedInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingclasses.Vat.valueOf(invoiceEntryToMap.getVatRate().toString()));
+        return mappedInvoiceEntry;
+    }
+
+    private static Company mapBuyer(pl.coderstrust.soap.bindingclasses.Company buyerToMap) {
         return new Company(
-            responseBuyer.getId(),
-            responseBuyer.getName(),
-            responseBuyer.getAddress(),
-            responseBuyer.getTaxId(),
-            responseBuyer.getAccountNumber(),
-            responseBuyer.getPhoneNumber(),
-            responseBuyer.getEmail()
+            buyerToMap.getId(),
+            buyerToMap.getName(),
+            buyerToMap.getAddress(),
+            buyerToMap.getTaxId(),
+            buyerToMap.getAccountNumber(),
+            buyerToMap.getPhoneNumber(),
+            buyerToMap.getEmail()
         );
     }
 
-    private static Company mapSoapSellerToOriginalSeller(pl.coderstrust.soap.bindingclasses.Company responseSeller) {
+    private static pl.coderstrust.soap.bindingclasses.Company mapBuyer(Company buyerToMap) {
+        pl.coderstrust.soap.bindingclasses.Company mappedBuyer = new pl.coderstrust.soap.bindingclasses.Company();
+        mappedBuyer.setId(buyerToMap.getId());
+        mappedBuyer.setName(buyerToMap.getName());
+        mappedBuyer.setAddress(buyerToMap.getAddress());
+        mappedBuyer.setTaxId(buyerToMap.getTaxId());
+        mappedBuyer.setAccountNumber(buyerToMap.getAccountNumber());
+        mappedBuyer.setPhoneNumber(buyerToMap.getPhoneNumber());
+        mappedBuyer.setEmail(buyerToMap.getEmail());
+        return mappedBuyer;
+    }
+
+    private static Company mapSeller(pl.coderstrust.soap.bindingclasses.Company sellerToMap) {
         return new Company(
-            responseSeller.getId(),
-            responseSeller.getName(),
-            responseSeller.getAddress(),
-            responseSeller.getTaxId(),
-            responseSeller.getAccountNumber(),
-            responseSeller.getPhoneNumber(),
-            responseSeller.getEmail()
+            sellerToMap.getId(),
+            sellerToMap.getName(),
+            sellerToMap.getAddress(),
+            sellerToMap.getTaxId(),
+            sellerToMap.getAccountNumber(),
+            sellerToMap.getPhoneNumber(),
+            sellerToMap.getEmail()
         );
     }
 
-    static List<pl.coderstrust.soap.bindingclasses.Invoice> mapOriginalInvoicesToSoapInvoices(Collection<Invoice> invoices) throws DatatypeConfigurationException {
-        List<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = new ArrayList<>();
-        for (Invoice invoice : invoices) {
-            responseInvoices.add(mapOriginalInvoiceToSoapInvoice(invoice));
-        }
-        return responseInvoices;
-    }
-
-    static pl.coderstrust.soap.bindingclasses.Invoice mapOriginalInvoiceToSoapInvoice(Invoice invoice) throws DatatypeConfigurationException {
-        pl.coderstrust.soap.bindingclasses.Invoice responseInvoice = new pl.coderstrust.soap.bindingclasses.Invoice();
-        responseInvoice.setId(invoice.getId());
-        responseInvoice.setNumber(invoice.getNumber());
-        responseInvoice.setIssuedDate(convertLocalDateToXmlGregorianCalendar((invoice.getIssuedDate())));
-        responseInvoice.setLocalDate(convertLocalDateToXmlGregorianCalendar(invoice.getDueDate()));
-        responseInvoice.setSeller(mapOriginalSellerToSoapSeller(invoice.getSeller()));
-        responseInvoice.setBuyer(mapOriginalBuyerToSoapBuyer(invoice.getBuyer()));
-        List<InvoiceEntry> entries = invoice.getEntries();
-        pl.coderstrust.soap.bindingclasses.Entries soapEntries = new Entries();
-        for (InvoiceEntry entry : entries) {
-            soapEntries.getInvoiceEntry().add(mapOriginalEntryToSoapEntry(entry));
-            responseInvoice.setEntries(soapEntries);
-        }
-        return responseInvoice;
-    }
-
-    private static pl.coderstrust.soap.bindingclasses.InvoiceEntry mapOriginalEntryToSoapEntry(InvoiceEntry entry) {
-        pl.coderstrust.soap.bindingclasses.InvoiceEntry responseEntry = new pl.coderstrust.soap.bindingclasses.InvoiceEntry();
-        responseEntry.setId(entry.getId());
-        responseEntry.setProductName(entry.getProductName());
-        responseEntry.setQuantity(entry.getQuantity());
-        responseEntry.setUnit(entry.getUnit());
-        responseEntry.setPrice(entry.getPrice());
-        responseEntry.setNettValue(entry.getNettValue());
-        responseEntry.setGrossValue(entry.getGrossValue());
-        responseEntry.setVatRate(pl.coderstrust.soap.bindingclasses.Vat.valueOf(entry.getVatRate().toString()));
-        return responseEntry;
-    }
-
-    private static pl.coderstrust.soap.bindingclasses.Company mapOriginalSellerToSoapSeller(Company seller) {
+    private static pl.coderstrust.soap.bindingclasses.Company mapSeller(Company sellerToMap) {
         pl.coderstrust.soap.bindingclasses.Company responseSeller = new pl.coderstrust.soap.bindingclasses.Company();
-        responseSeller.setId(seller.getId());
-        responseSeller.setName(seller.getName());
-        responseSeller.setAddress(seller.getAddress());
-        responseSeller.setTaxId(seller.getTaxId());
-        responseSeller.setAccountNumber(seller.getAccountNumber());
-        responseSeller.setPhoneNumber(seller.getPhoneNumber());
-        responseSeller.setEmail(seller.getEmail());
+        responseSeller.setId(sellerToMap.getId());
+        responseSeller.setName(sellerToMap.getName());
+        responseSeller.setAddress(sellerToMap.getAddress());
+        responseSeller.setTaxId(sellerToMap.getTaxId());
+        responseSeller.setAccountNumber(sellerToMap.getAccountNumber());
+        responseSeller.setPhoneNumber(sellerToMap.getPhoneNumber());
+        responseSeller.setEmail(sellerToMap.getEmail());
         return responseSeller;
     }
 
-    private static pl.coderstrust.soap.bindingclasses.Company mapOriginalBuyerToSoapBuyer(Company buyer) {
-        pl.coderstrust.soap.bindingclasses.Company responseBuyer = new pl.coderstrust.soap.bindingclasses.Company();
-        responseBuyer.setId(buyer.getId());
-        responseBuyer.setName(buyer.getName());
-        responseBuyer.setAddress(buyer.getAddress());
-        responseBuyer.setTaxId(buyer.getTaxId());
-        responseBuyer.setAccountNumber(buyer.getAccountNumber());
-        responseBuyer.setPhoneNumber(buyer.getPhoneNumber());
-        responseBuyer.setEmail(buyer.getEmail());
-        return responseBuyer;
+    static List<pl.coderstrust.soap.bindingclasses.Invoice> mapInvoices(Collection<Invoice> invoicesToMap) throws DatatypeConfigurationException {
+        List<pl.coderstrust.soap.bindingclasses.Invoice> mappedInvoices = new ArrayList<>();
+        for (Invoice invoiceToMap : invoicesToMap) {
+            mappedInvoices.add(mapInvoice(invoiceToMap));
+        }
+        return mappedInvoices;
     }
 
-    static XMLGregorianCalendar convertLocalDateToXmlGregorianCalendar(LocalDate localDate) throws DatatypeConfigurationException {
+    static XMLGregorianCalendar mapLocalDateToXmlGregorianCalendar(LocalDate localDateToMap) throws DatatypeConfigurationException {
         GregorianCalendar gregorianDate = new GregorianCalendar();
-        gregorianDate.setTime(Date.valueOf(localDate));
+        gregorianDate.setTime(Date.valueOf(localDateToMap));
         XMLGregorianCalendar xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianDate);
         xmlGregorianDate.setTimezone(0);
         return xmlGregorianDate;
     }
 
-    static LocalDate convertXmlGregorianCalendarToLocalDate(XMLGregorianCalendar gregorianDate) {
-        return gregorianDate.toGregorianCalendar().toZonedDateTime().toLocalDate();
+    static LocalDate mapXmlGregorianCalendarToLocalDate(XMLGregorianCalendar gregorianDateToMap) {
+        return gregorianDateToMap.toGregorianCalendar().toZonedDateTime().toLocalDate();
     }
 }

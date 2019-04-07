@@ -2,11 +2,10 @@ package pl.coderstrust.soap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pl.coderstrust.generators.CompanyGenerator.getRandomNumberAsString;
-import static pl.coderstrust.soap.Mapper.convertLocalDateToXmlGregorianCalendar;
-import static pl.coderstrust.soap.Mapper.convertXmlGregorianCalendarToLocalDate;
-import static pl.coderstrust.soap.Mapper.mapOriginalInvoiceToSoapInvoice;
-import static pl.coderstrust.soap.Mapper.mapOriginalInvoicesToSoapInvoices;
-import static pl.coderstrust.soap.Mapper.mapSoapInvoiceToOriginalInvoice;
+import static pl.coderstrust.soap.Mapper.mapInvoice;
+import static pl.coderstrust.soap.Mapper.mapInvoices;
+import static pl.coderstrust.soap.Mapper.mapLocalDateToXmlGregorianCalendar;
+import static pl.coderstrust.soap.Mapper.mapXmlGregorianCalendarToLocalDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -98,7 +97,7 @@ class MapperTest {
     @Test
     void shouldMapSoapInvoiceToOriginalInvoice() {
         //When
-        Invoice resultInvoice = mapSoapInvoiceToOriginalInvoice(soapInvoice);
+        Invoice resultInvoice = mapInvoice(soapInvoice);
 
         //Then
         assertEquals(modelInvoice, resultInvoice);
@@ -107,7 +106,7 @@ class MapperTest {
     @Test
     void shouldMapOriginalInvoiceToSoapInvoice() throws DatatypeConfigurationException {
         //When
-        pl.coderstrust.soap.bindingclasses.Invoice resultInvoice = mapOriginalInvoiceToSoapInvoice(modelInvoice);
+        pl.coderstrust.soap.bindingclasses.Invoice resultInvoice = Mapper.mapInvoice(modelInvoice);
 
         //Then
         assertEquals(soapInvoice, resultInvoice);
@@ -116,7 +115,7 @@ class MapperTest {
     @Test
     void shouldMapOriginalInvoicesToSoapInvoices() throws DatatypeConfigurationException {
         //When
-        List<pl.coderstrust.soap.bindingclasses.Invoice> resultInvoices = mapOriginalInvoicesToSoapInvoices(modelInvoiceList);
+        List<pl.coderstrust.soap.bindingclasses.Invoice> resultInvoices = mapInvoices(modelInvoiceList);
 
         //Then
         assertEquals(soapInvoiceList, resultInvoices);
@@ -125,7 +124,7 @@ class MapperTest {
     @Test
     void shouldConvertLocalDateToXmlGregorianCalendar() throws DatatypeConfigurationException {
         //When
-        XMLGregorianCalendar resultDate = convertLocalDateToXmlGregorianCalendar(modelInvoice.getIssuedDate());
+        XMLGregorianCalendar resultDate = mapLocalDateToXmlGregorianCalendar(modelInvoice.getIssuedDate());
 
         //Then
         assertEquals(soapInvoice.getIssuedDate(), resultDate);
@@ -135,7 +134,7 @@ class MapperTest {
     @Test
     void shouldConvertXmlGregorianCalendarToLocalDate() {
         //When
-        LocalDate resultDate = convertXmlGregorianCalendarToLocalDate(soapInvoice.getIssuedDate());
+        LocalDate resultDate = mapXmlGregorianCalendarToLocalDate(soapInvoice.getIssuedDate());
 
         //Then
         assertEquals(modelInvoice.getIssuedDate(), resultDate);

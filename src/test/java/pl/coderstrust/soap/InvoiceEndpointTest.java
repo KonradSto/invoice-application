@@ -7,7 +7,6 @@ import static org.springframework.ws.test.server.ResponseMatchers.noFault;
 import static org.springframework.ws.test.server.ResponseMatchers.payload;
 import static org.springframework.ws.test.server.ResponseMatchers.validPayload;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -41,8 +40,8 @@ class InvoiceEndpointTest {
     private Invoice invoice1;
     private String stringRequest;
     private String stringResponse;
-    private File filePathRequest;
-    private File filePathResponse;
+    private String filePathRequest;
+    private String filePathResponse;
     private Source requestPayload;
     private Source responsePayload;
 
@@ -71,8 +70,8 @@ class InvoiceEndpointTest {
         //Given
         Optional<Invoice> invoiceOptional = Optional.of(invoice1);
         when(invoiceService.getInvoice(1L)).thenReturn(invoiceOptional);
-        filePathRequest = new File("src/test/resources/getInvoiceRequest");
-        filePathResponse = new File("src/test/resources/getInvoiceResponse");
+        filePathRequest = "src/test/resources/getInvoiceRequest";
+        filePathResponse = "src/test/resources/getInvoiceResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -91,8 +90,8 @@ class InvoiceEndpointTest {
     void shouldValidateXsdGetInvoiceResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getInvoice(1L)).thenThrow(ServiceOperationException.class);
-        filePathRequest = new File("src/test/resources/getInvoiceRequest");
-        filePathResponse = new File("src/test/resources/getInvoiceWithExceptionResponse");
+        filePathRequest = "src/test/resources/getInvoiceRequest";
+        filePathResponse = "src/test/resources/getInvoiceWithExceptionResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -111,8 +110,8 @@ class InvoiceEndpointTest {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoices()).thenReturn(invoices);
-        filePathRequest = new File("src/test/resources/getAllInvoicesRequest");
-        filePathResponse = new File("src/test/resources/getAllInvoicesResponse");
+        filePathRequest = "src/test/resources/getAllInvoicesRequest";
+        filePathResponse = "src/test/resources/getAllInvoicesResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -131,8 +130,8 @@ class InvoiceEndpointTest {
     void shouldValidateXsdGetAllInvoicesResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoices()).thenThrow(ServiceOperationException.class);
-        filePathRequest = new File("src/test/resources/getAllInvoicesRequest");
-        filePathResponse = new File("src/test/resources/getAllInvoicesWithExceptionResponse");
+        filePathRequest = "src/test/resources/getAllInvoicesRequest";
+        filePathResponse = "src/test/resources/getAllInvoicesWithExceptionResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -151,8 +150,8 @@ class InvoiceEndpointTest {
         //Given
         Collection<Invoice> invoices = new ArrayList<>();
         when(invoiceService.getAllInvoices()).thenReturn(invoices);
-        filePathRequest = new File("src/test/resources/getAllInvoicesRequest");
-        filePathResponse = new File("src/test/resources/getAllInvoicesResponseWhenThereAreNoInvoicesResponse");
+        filePathRequest = "src/test/resources/getAllInvoicesRequest";
+        filePathResponse = "src/test/resources/getAllInvoicesResponseWhenThereAreNoInvoicesResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -172,8 +171,8 @@ class InvoiceEndpointTest {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoicesByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 1))).thenReturn(invoices);
-        filePathRequest = new File("src/test/resources/getAllInvoicesByDateRequest");
-        filePathResponse = new File("src/test/resources/getInvoicesByDateResponse");
+        filePathRequest = "src/test/resources/getAllInvoicesByDateRequest";
+        filePathResponse = "src/test/resources/getInvoicesByDateResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -192,8 +191,8 @@ class InvoiceEndpointTest {
     void shouldValidateXsdGetAllInvoicesByDateResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoicesByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 1))).thenThrow(ServiceOperationException.class);
-        filePathRequest = new File("src/test/resources/getAllInvoicesByDateRequest");
-        filePathResponse = new File("src/test/resources/getAllInvoicesByDateWithExceptionResponse");
+        filePathRequest = "src/test/resources/getAllInvoicesByDateRequest";
+        filePathResponse = "src/test/resources/getAllInvoicesByDateWithExceptionResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -212,8 +211,8 @@ class InvoiceEndpointTest {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoicesBySeller(3L)).thenReturn(invoices);
-        filePathRequest = new File("src/test/resources/getInvoicesBySellerRequest");
-        filePathResponse = new File("src/test/resources/getInvoicesBySellerResponse");
+        filePathRequest = "src/test/resources/getInvoicesBySellerRequest";
+        filePathResponse = "src/test/resources/getInvoicesBySellerResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -232,8 +231,8 @@ class InvoiceEndpointTest {
     void shouldValidateXsdGetInvoicesByGivenSellerResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoicesBySeller(3L)).thenThrow(ServiceOperationException.class);
-        filePathRequest = new File("src/test/resources/getInvoicesBySellerRequest");
-        filePathResponse = new File("src/test/resources/getAllInvoicesBySellerWithExceptionResponse");
+        filePathRequest = "src/test/resources/getInvoicesBySellerRequest";
+        filePathResponse = "src/test/resources/getAllInvoicesBySellerWithExceptionResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -252,8 +251,8 @@ class InvoiceEndpointTest {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoicesByBuyer(4L)).thenReturn(invoices);
-        filePathRequest = new File("src/test/resources/getInvoicesByBuyerRequest");
-        filePathResponse = new File("src/test/resources/getInvoicesByBuyerResponse");
+        filePathRequest = "src/test/resources/getInvoicesByBuyerRequest";
+        filePathResponse = "src/test/resources/getInvoicesByBuyerResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -272,8 +271,8 @@ class InvoiceEndpointTest {
     void shouldValidateXsdGetInvoicesByGivenBuyerResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoicesByBuyer(4L)).thenThrow(ServiceOperationException.class);
-        filePathRequest = new File("src/test/resources/getInvoicesByBuyerRequest");
-        filePathResponse = new File("src/test/resources/getAllInvoicesByBuyerWithExceptionResponse");
+        filePathRequest = "src/test/resources/getInvoicesByBuyerRequest";
+        filePathResponse = "src/test/resources/getAllInvoicesByBuyerWithExceptionResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -290,8 +289,8 @@ class InvoiceEndpointTest {
     @Test
     void shouldValidateXsdDeleteInvoiceResponse() throws IOException {
         //Given
-        filePathRequest = new File("src/test/resources/deleteInvoiceRequest");
-        filePathResponse = new File("src/test/resources/deleteInvoiceResponse");
+        filePathRequest = "src/test/resources/deleteInvoiceRequest";
+        filePathResponse = "src/test/resources/deleteInvoiceResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -309,8 +308,8 @@ class InvoiceEndpointTest {
     @Test
     void shouldValidateXsdDeleteAllInvoicesResponse() throws IOException {
         //Given
-        filePathRequest = new File("src/test/resources/deleteAllInvoicesRequest");
-        filePathResponse = new File("src/test/resources/deleteAllInvoicesResponse");
+        filePathRequest = "src/test/resources/deleteAllInvoicesRequest";
+        filePathResponse = "src/test/resources/deleteAllInvoicesResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -329,8 +328,8 @@ class InvoiceEndpointTest {
     void shouldValidateXsdSaveInvoiceResponse() throws ServiceOperationException, IOException {
         //Given
         when(invoiceService.saveInvoice(invoice1)).thenReturn(invoice1);
-        filePathRequest = new File("src/test/resources/saveInvoiceRequest");
-        filePathResponse = new File("src/test/resources/saveInvoiceResponse");
+        filePathRequest = "src/test/resources/saveInvoiceRequest";
+        filePathResponse = "src/test/resources/saveInvoiceResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
@@ -349,8 +348,8 @@ class InvoiceEndpointTest {
     void shouldValidateXsdSaveInvoiceResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.saveInvoice(invoice1)).thenThrow(ServiceOperationException.class);
-        filePathRequest = new File("src/test/resources/saveInvoiceRequest");
-        filePathResponse = new File("src/test/resources/saveInvoiceWithExceptionResponse");
+        filePathRequest = "src/test/resources/saveInvoiceRequest";
+        filePathResponse = "src/test/resources/saveInvoiceWithExceptionResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
         stringResponse = XmlFileReader.readFromFile(filePathResponse);
         requestPayload = new StringSource(stringRequest);
