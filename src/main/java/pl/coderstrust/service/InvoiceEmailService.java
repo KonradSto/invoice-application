@@ -29,7 +29,7 @@ public class InvoiceEmailService {
         //helper.setText(content);
         helper.setTo(mailProperties.getProperties().get("receiver"));
         helper.setFrom("@coderstrust.pl");
-        helper.addAttachment(String.format("%s.pdf", invoice.getNumber()), new ByteArrayResource(//invoiceService));
+        helper.addAttachment(String.format("%s.pdf", invoice.getNumber()), new ByteArrayResource();//invoiceService));
         emailSender.send(email);
     }
 }
