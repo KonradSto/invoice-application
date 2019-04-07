@@ -1,15 +1,15 @@
 package pl.coderstrust.controller;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Optional;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +88,8 @@ public class InvoiceController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get all invoices by dates", notes = "Gets all invoices issued between specified dates (inclusive) fromDate and toDate.", response = Invoice.class, responseContainer = "List")
     @ApiImplicitParams({
-        @ApiImplicitParam (name = "fromDate", value = "YYYY-MM-DD", example = "2019-02-04", dataType = "date"),
-        @ApiImplicitParam (name = "toDate", value = "YYYY-MM-DD", example = "2019-03-04", dataType = "date")})
+        @ApiImplicitParam(name = "fromDate", value = "YYYY-MM-DD", example = "2019-02-04", dataType = "date"),
+        @ApiImplicitParam(name = "toDate", value = "YYYY-MM-DD", example = "2019-03-04", dataType = "date")})
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Passed dates are invalid."),
@@ -142,7 +142,7 @@ public class InvoiceController {
 
     @GetMapping("/bySeller")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller.",response = Invoice.class, responseContainer = "List")
+    @ApiOperation(value = "Get all invoices by seller", notes = "Gets all invoices issued to specified seller.", response = Invoice.class, responseContainer = "List")
     @ApiImplicitParam(name = "id", value = "Only digits possible, e.g. 7565", example = "7865", dataType = "Long")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),

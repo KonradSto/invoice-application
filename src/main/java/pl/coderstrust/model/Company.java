@@ -9,9 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.coderstrust.controller.InvoiceController;
+
 @Entity
 @ApiModel(value = "Company")
 public class Company {
+
+    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +38,7 @@ public class Company {
                    @JsonProperty("phoneNumber") String phoneNumber,
                    @JsonProperty("email") String email) {
 
+        log.debug("Creating new company:{} ",name);
         this.id = id;
         this.name = name;
         this.address = address;
