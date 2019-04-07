@@ -55,10 +55,10 @@ public class InFileDatabase implements Database {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
-            for (int line = 1; line < invoicesAsJson.size(); line++) {
+            for (int line = 0; line < invoicesAsJson.size(); line++) {
                 Invoice invoice = mapper.readValue(invoicesAsJson.get(line), Invoice.class);
                 if (id.equals(invoice.getId())) {
-                    fileHelper.removeLine(line);
+                    fileHelper.removeLine(++line);
                 }
             }
         } catch (IOException e) {
@@ -176,6 +176,7 @@ public class InFileDatabase implements Database {
                 throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
             }
             Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+            this.deleteInvoice(invoice.getId());
             fileHelper.writeLine(mapper.writeValueAsString(updatedInvoice));
             return updatedInvoice;
         } catch (IOException e) {

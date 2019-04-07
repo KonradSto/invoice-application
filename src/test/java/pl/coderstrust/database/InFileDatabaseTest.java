@@ -86,6 +86,30 @@ class InFileDatabaseTest {
     }
 
     @Test
+    void shouldReturnFalseForNotExistingInvoice() throws IOException, DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
+        String invoice1AsJson = mapper.writeValueAsString(invoice1);
+        String invoice2AsJson = mapper.writeValueAsString(invoice2);
+        String invoice3AsJson = mapper.writeValueAsString(invoice3);
+        List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
+        when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
+        when(fileHelper.exists()).thenReturn(true);
+
+        //When
+        boolean exist4 = inFileDataBase.invoiceExists(4L);
+        boolean exist5 = inFileDataBase.invoiceExists(5L);
+        boolean exist6 = inFileDataBase.invoiceExists(6L);
+
+        //Then
+        assertFalse(exist4);
+        assertFalse(exist5);
+        assertFalse(exist6);
+    }
+
+    @Test
     void shouldThrowExceptionForNullInvoice() {
         assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> inFileDataBase.saveInvoice(null));
     }
@@ -121,6 +145,21 @@ class InFileDatabaseTest {
         //Then
         verify(fileHelper).exists();
         verify(fileHelper).create();
+    }
+
+    @Test
+    void shouldAddInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
+        //Given
+        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
+        when(fileHelper.exists()).thenReturn(false);
+
+        //When
+        Invoice returned = inFileDataBase.saveInvoice(invoice);
+        Invoice inserted = new Invoice(1L, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+
+        //Then
+        verify(fileHelper,atLeast(1)).exists();
+        assertEquals(inserted, returned);
     }
 
     @Test
@@ -185,9 +224,7 @@ class InFileDatabaseTest {
 
         //Then
         assertEquals(updated, actual);
-        assertEquals(updated, actual);
     }
-
 
     @Test
     void shouldThrowExceptionForNotExistingDatabaseDuringUpdatingInvoice() throws IOException {
@@ -352,7 +389,7 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldReturnCorrectNumberOfInvoices() throws IOException, DatabaseOperationException {
+    void shouldReturnCorrectInvoiceCount() throws IOException, DatabaseOperationException {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
         Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
