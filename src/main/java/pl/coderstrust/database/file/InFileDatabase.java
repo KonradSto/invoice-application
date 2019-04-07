@@ -19,25 +19,26 @@ import pl.coderstrust.utils.ArgumentValidator;
 @ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-file")
 @Repository
 public class InFileDatabase implements Database {
+    private static final String EXCEPTION_MESSAGE = "An error occurred during reading invoices from inFile database";
+    private static final String DATABASE_NOT_EXIST = "InFileDatabase does not exist";
+
     private final InFileDatabaseProperties inFileDatabaseProperties;
     private ObjectMapper mapper;
     private FileHelper fileHelper;
     private Long nextId;
 
     @Autowired
-    public InFileDatabase(ObjectMapper mapper, FileHelper fileHelper, InFileDatabaseProperties inFileDatabaseProperties) {
+    public InFileDatabase(ObjectMapper mapper, FileHelper fileHelper, InFileDatabaseProperties inFileDatabaseProperties) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(mapper, "mapper");
         this.mapper = mapper;
         ArgumentValidator.ensureNotNull(fileHelper, "fileHelper");
         this.fileHelper = fileHelper;
         ArgumentValidator.ensureNotNull(inFileDatabaseProperties, "inFileDatabaseProperties");
         this.inFileDatabaseProperties = inFileDatabaseProperties;
-        // FIXME: 06/04/2019 next id possibly cannot be here
         try {
             this.nextId = getNextId();
-        } catch (DatabaseOperationException e) {
-            // FIXME: 06/04/2019  what to do here ?
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new DatabaseOperationException("An error occurred during initializing nextId");
         }
     }
 
@@ -62,7 +63,7 @@ public class InFileDatabase implements Database {
                 }
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException("error during reading invoices from inFile database");
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
         }
     }
 
@@ -82,7 +83,7 @@ public class InFileDatabase implements Database {
             }
             return Optional.empty();
         } catch (IOException e) {
-            throw new DatabaseOperationException();
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
         }
     }
 
@@ -99,10 +100,10 @@ public class InFileDatabase implements Database {
                     invoices.add(mapper.readValue(invoiceAsJson, Invoice.class));
                 }
             } catch (IOException e) {
-                throw new DatabaseOperationException("An error occurred during getting all invoices from Infile database");
+                throw new DatabaseOperationException(EXCEPTION_MESSAGE);
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException("An error occurred during getting all invoices from Infile database");
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
         }
         return invoices;
     }
@@ -110,12 +111,12 @@ public class InFileDatabase implements Database {
     @Override
     public synchronized void deleteAllInvoices() throws DatabaseOperationException {
         if (!fileHelper.exists()) {
-            throw new DatabaseOperationException("InFile database does not exist");
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
         }
         try {
             fileHelper.clear();
         } catch (IOException e) {
-            throw new DatabaseOperationException("Cannot delete.......");
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
         }
     }
 
@@ -133,8 +134,8 @@ public class InFileDatabase implements Database {
                     return true;
                 }
             }
-        } catch (Exception e) {
-            throw new DatabaseOperationException("InFile database error");
+        } catch (IOException e) {
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
         }
         return false;
     }
@@ -150,7 +151,7 @@ public class InFileDatabase implements Database {
             try {
                 fileHelper.create();
             } catch (IOException e) {
-                throw new DatabaseOperationException("Add invoice failed");
+                throw new DatabaseOperationException(DATABASE_NOT_EXIST);
             }
         }
         try {
@@ -158,14 +159,14 @@ public class InFileDatabase implements Database {
                 this.nextId = 1L;
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException("InFile database error");
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
         }
         Long id = nextId++;
         Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         try {
             fileHelper.writeLine(mapper.writeValueAsString(insertedInvoice));
         } catch (IOException e) {
-            throw new DatabaseOperationException("Save invoice failed");
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
         }
         return insertedInvoice;
     }
@@ -180,17 +181,18 @@ public class InFileDatabase implements Database {
             fileHelper.writeLine(mapper.writeValueAsString(updatedInvoice));
             return updatedInvoice;
         } catch (IOException e) {
-            throw new DatabaseOperationException("Update invoice failed, database does not exist");
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
         }
     }
 
-    private Long getNextId() throws DatabaseOperationException {
+    private Long getNextId() throws IOException {
+        final String errorMessage = "An error occurred during getting id for nextId";
         if (!fileHelper.exists()) {
             try {
                 fileHelper.create();
                 return 1L;
             } catch (IOException e) {
-                throw new DatabaseOperationException("fdfdf");
+                throw new IOException(errorMessage);
             }
         }
         try {
@@ -198,14 +200,14 @@ public class InFileDatabase implements Database {
                 return 1L;
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException("dfdfdfdf");
+            throw new IOException(errorMessage);
         }
         try {
             String invoiceAsJson = fileHelper.readLastLine();
             Invoice invoice = mapper.readValue(invoiceAsJson, Invoice.class);
             return invoice.getId() + 1;
         } catch (IOException e) {
-            throw new DatabaseOperationException("dfdfdfdf");
+            throw new IOException(errorMessage);
         }
     }
 }
