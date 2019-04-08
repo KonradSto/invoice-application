@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Invoice;
 
@@ -29,11 +30,12 @@ public class InvoiceEmailService {
     @Autowired
     private MailProperties mailProperties;
 
+    @Async
     public void sendEmailWithInvoice(Invoice invoice) throws MessagingException, ServiceOperationException {
         MimeMessage email = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(email, true);
-        helper.setTo("ctrust.group9@gmail.com");
-        helper.setFrom("ctrust.group9@gmail.com");
+        helper.setTo(mailProperties.getUsername());
+        helper.setFrom(mailProperties.getUsername());
         helper.setSubject(String.format("Invoice nr: %s", invoice.getNumber()));
         helper.setText("Please see attachments for your saved invoice");
         helper.addAttachment(String.format("%s.pdf", invoice.getNumber()), new ByteArrayResource(invoicePdfService.getInvoiceAsPdf(invoice)));
