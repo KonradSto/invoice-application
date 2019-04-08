@@ -3,17 +3,14 @@ package pl.coderstrust.service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -27,15 +24,6 @@ import pl.coderstrust.utils.ArgumentValidator;
 
 @Service
 public class InvoicePdfService {
-
-    private BaseFont polishCharTimesRoman = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, BaseFont.EMBEDDED);
-
-    private Font bigBold = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
-
-    private Font smallBold = new Font(polishCharTimesRoman, 12, Font.BOLD);
-
-    InvoicePdfService() throws IOException, DocumentException {
-    }
 
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
         ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
@@ -56,13 +44,13 @@ public class InvoicePdfService {
 
     private void addInvoiceNumberAndDates(Document invoicePdf, Invoice invoice) throws DocumentException {
         Paragraph line;
-        line = new Paragraph("Issue date: " + invoice.getIssuedDate(), smallBold);
+        line = new Paragraph("Issue date: " + invoice.getIssuedDate());
         line.setAlignment(Element.ALIGN_RIGHT);
         invoicePdf.add(line);
-        line = new Paragraph("Due date: " + invoice.getDueDate(), smallBold);
+        line = new Paragraph("Due date: " + invoice.getDueDate());
         line.setAlignment(Element.ALIGN_RIGHT);
         invoicePdf.add(line);
-        line = new Paragraph("Invoice number: " + invoice.getNumber(), bigBold);
+        line = new Paragraph("Invoice number: " + invoice.getNumber());
         invoicePdf.add(line);
     }
 
@@ -70,10 +58,10 @@ public class InvoicePdfService {
         addEmptyLine(invoicePdf, 2);
         PdfPTable table = new PdfPTable(2);
         setNewTableFormat(table, 100, new int[]{5, 5});
-        PdfPCell seller = new PdfPCell(new Phrase("Seller:", bigBold));
+        PdfPCell seller = new PdfPCell(new Phrase("Seller:"));
         seller.setBorder(Rectangle.NO_BORDER);
         table.addCell(seller);
-        PdfPCell buyer = new PdfPCell(new Phrase("Buyer:", bigBold));
+        PdfPCell buyer = new PdfPCell(new Phrase("Buyer:"));
         buyer.setBorder(Rectangle.NO_BORDER);
         table.addCell(buyer);
         table.addCell(addCompanyInformation(invoice.getSeller()));
@@ -89,12 +77,12 @@ public class InvoicePdfService {
 
     private PdfPCell addCompanyInformation(Company company) {
         PdfPCell companyInformation = new PdfPCell();
-        companyInformation.addElement(new Phrase(" Name: " + company.getName(), smallBold));
-        companyInformation.addElement(new Phrase(" TaxId: " + company.getTaxId(), smallBold));
-        companyInformation.addElement(new Phrase(" Address: " + company.getAddress(), smallBold));
-        companyInformation.addElement(new Phrase(" Phone number: " + company.getPhoneNumber(), smallBold));
-        companyInformation.addElement(new Phrase(" Email: " + company.getEmail(), smallBold));
-        companyInformation.addElement(new Phrase(" Account number: " + company.getAccountNumber(), smallBold));
+        companyInformation.addElement(new Phrase(" Name: " + company.getName()));
+        companyInformation.addElement(new Phrase(" TaxId: " + company.getTaxId()));
+        companyInformation.addElement(new Phrase(" Address: " + company.getAddress()));
+        companyInformation.addElement(new Phrase(" Phone number: " + company.getPhoneNumber()));
+        companyInformation.addElement(new Phrase(" Email: " + company.getEmail()));
+        companyInformation.addElement(new Phrase(" Account number: " + company.getAccountNumber()));
         companyInformation.setBorder(Rectangle.NO_BORDER);
         return companyInformation;
     }
@@ -118,14 +106,14 @@ public class InvoicePdfService {
         for (InvoiceEntry entry : entries) {
             PdfPTable table = new PdfPTable(7);
             setNewTableFormat(table, 100, new int[]{2, 1, 1, 1, 1, 1, 1});
-            table.addCell(new Phrase(entry.getProductName(), smallBold));
-            table.addCell(new Phrase(String.valueOf(entry.getQuantity()), smallBold));
-            table.addCell(new Phrase(String.valueOf(entry.getUnit()), smallBold));
-            table.addCell(new Phrase(entry.getPrice() + " zł", smallBold));
+            table.addCell(new Phrase(entry.getProductName()));
+            table.addCell(new Phrase(String.valueOf(entry.getQuantity())));
+            table.addCell(new Phrase(String.valueOf(entry.getUnit())));
+            table.addCell(new Phrase(entry.getPrice() + " zł"));
             Vat vatRate = entry.getVatRate();
-            table.addCell(new Phrase(vatRate.getValue() * 100 + "%", smallBold));
-            table.addCell(new Phrase(entry.getNetValue() + " zł", smallBold));
-            table.addCell(new Phrase(entry.getGrossValue() + " zł", smallBold));
+            table.addCell(new Phrase(vatRate.getValue() * 100 + "%"));
+            table.addCell(new Phrase(entry.getNetValue() + " zł"));
+            table.addCell(new Phrase(entry.getGrossValue() + " zł"));
             invoicePdf.add(table);
             totalNettValue = totalNettValue.add(entry.getNetValue());
             totalGrossValue = totalGrossValue.add(entry.getGrossValue());
@@ -136,9 +124,9 @@ public class InvoicePdfService {
     private void addEntriesSummary(Document invoicePdf, BigDecimal totalNettValue, BigDecimal totalGrossValue) throws DocumentException {
         PdfPTable entriesTable = new PdfPTable(3);
         setNewTableFormat(entriesTable, 100, new int[]{6, 1, 1});
-        entriesTable.addCell(new Phrase("Total:", smallBold));
-        entriesTable.addCell(new Phrase(totalNettValue + " zł", smallBold));
-        entriesTable.addCell(new Phrase(totalGrossValue + " zł", smallBold));
+        entriesTable.addCell(new Phrase("Total:"));
+        entriesTable.addCell(new Phrase(totalNettValue + " zł"));
+        entriesTable.addCell(new Phrase(totalGrossValue + " zł"));
         invoicePdf.add(entriesTable);
     }
 
