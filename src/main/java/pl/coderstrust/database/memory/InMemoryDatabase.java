@@ -21,12 +21,14 @@ public class InMemoryDatabase implements Database {
 
     private Map<Long, Invoice> invoiceMap;
     private Long nextId = 1L;
+    private String message;
 
     public InMemoryDatabase(Map<Long, Invoice> databaseStorage) {
         log.debug("Launching to InMemoryDatabase");
         if (databaseStorage == null) {
-            log.error("An error occurred during launching to InMemoryDatabase, database cannot be null");
-            throw new IllegalArgumentException("Invoice storage cannot be null");
+            message = "An error occurred during launching to InMemoryDatabase, invoice storage cannot be null";
+            log.error(message);
+            throw new IllegalArgumentException(message);
         }
         invoiceMap = databaseStorage;
     }
@@ -34,8 +36,9 @@ public class InMemoryDatabase implements Database {
     @Override
     public synchronized Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
         if (invoice == null) {
-            log.error("Passed invoice cannot be null");
-            throw new IllegalArgumentException("Invoice cannot be null");
+            message = "An error occurred during saving invoice, invoice cannot be null";
+            log.error(message);
+            throw new IllegalArgumentException(message);
         }
         if (invoice.getId() == null) {
             return insertInvoice(invoice);
@@ -53,8 +56,9 @@ public class InMemoryDatabase implements Database {
 
     private Invoice updateInvoice(Invoice invoice) throws DatabaseOperationException {
         if (!invoiceMap.containsKey(invoice.getId())) {
-            log.error("Update invoice failed. Invoice with following id does not exist: {} ", invoice.getId());
-            throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
+            message = String.format("An error occurred during updating invoice, invoice with following id does not exist: %d", invoice.getId());
+            log.error(message);
+            throw new DatabaseOperationException(message);
         }
         log.debug("Updating invoice: {}", invoice);
         Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
@@ -65,12 +69,14 @@ public class InMemoryDatabase implements Database {
     @Override
     public synchronized void deleteInvoice(Long id) throws DatabaseOperationException {
         if (id == null) {
-            log.error("An error occurred during deleting an invoice, invoice id cannot be null");
-            throw new IllegalArgumentException("Id cannot be null");
+            message = "An error occurred during deleting invoice, invoice id cannot be null";
+            log.error(message);
+            throw new IllegalArgumentException(message);
         }
         if (!invoiceMap.containsKey(id)) {
-            log.error("An error occurred during deleting an invoice, invoice not found for passed id: {}", id);
-            throw new DatabaseOperationException(String.format("Delete invoice failed. Invoice with following id does not exist: %d", id));
+            message = String.format("An error occurred during deleting an invoice, invoice with following id does not exist: %d", id);
+            log.error(message);
+            throw new DatabaseOperationException(message);
         }
         log.debug("Deleting invoice by id: {}", id);
         invoiceMap.remove(id);
@@ -79,8 +85,9 @@ public class InMemoryDatabase implements Database {
     @Override
     public synchronized Optional<Invoice> getInvoice(Long id) {
         if (id == null) {
-            log.error("An error occurred during getting an invoice, invoice id cannot be null");
-            throw new IllegalArgumentException("Id cannot be null");
+            message = "An error occurred during getting an invoice, invoice id cannot be null";
+            log.error(message);
+            throw new IllegalArgumentException(message);
         }
         log.debug("Getting invoice by id: {}", id);
         return Optional.ofNullable(invoiceMap.get(id));
@@ -102,8 +109,9 @@ public class InMemoryDatabase implements Database {
     public synchronized boolean invoiceExists(Long id) {
         log.debug("Checking invoice existence of id {}: ", id);
         if (id == null) {
-            log.error("An error occurred during checking invoice existence, id cannot be null");
-            throw new IllegalArgumentException("Id cannot be null");
+            message = "An error occurred during checking invoice existence, id cannot be null";
+            log.error(message);
+            throw new IllegalArgumentException(message);
         }
         return invoiceMap.containsKey(id);
     }

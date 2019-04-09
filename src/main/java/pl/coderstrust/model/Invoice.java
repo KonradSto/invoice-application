@@ -15,16 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pl.coderstrust.controller.InvoiceController;
-
 
 @ApiModel(value = "Invoice")
 @Entity
 public class Invoice {
-
-    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +42,6 @@ public class Invoice {
         @JsonProperty("buyer") Company buyer,
         @JsonProperty("entries") List<InvoiceEntry> entries) {
 
-        log.debug("Creating new invoice");
         this.id = id;
         this.number = number;
         this.issuedDate = issuedDate;

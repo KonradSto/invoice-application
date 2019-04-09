@@ -18,8 +18,8 @@ import pl.coderstrust.utils.ArgumentValidator;
 public class InvoiceService {
 
     private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
-
     private Database database;
+    private String message;
 
     InvoiceService(Database database) {
         log.debug("Launching to InvoiceService with database: {}", database);
@@ -32,8 +32,9 @@ public class InvoiceService {
             log.debug("Getting all invoices");
             return database.getAllInvoices();
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during getting all invoices.", e);
-            throw new ServiceOperationException("An error occurred during getting all invoices.", e);
+            message = "An error occurred during getting all invoices.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 
@@ -41,8 +42,9 @@ public class InvoiceService {
         ArgumentValidator.ensureNotNull(fromDate, "fromDate");
         ArgumentValidator.ensureNotNull(toDate, "toDate");
         if (fromDate.isAfter(toDate)) {
-            log.error("Passed dates are invalid, fromDate cannot be after toDate.");
-            throw new IllegalArgumentException("From date cannot be after to date.");
+            message = "An error occurred during getting all invoices by dates, fromDate cannot be after toDate.";
+            log.error(message);
+            throw new IllegalArgumentException(message);
         }
         try {
             log.debug("Getting all invoices by dates: from {} to {}", fromDate, toDate);
@@ -51,8 +53,9 @@ public class InvoiceService {
                 .filter(invoice -> (invoice.getIssuedDate().compareTo(fromDate) >= 0 && invoice.getIssuedDate().compareTo(toDate) <= 0))
                 .collect(Collectors.toList());
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during getting all invoices by dates.", e);
-            throw new ServiceOperationException("An error occurred during getting all invoices in given date range.", e);
+            message = "An error occurred during getting all invoices by dates.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 
@@ -65,8 +68,9 @@ public class InvoiceService {
                 .filter(invoice -> (invoice.getBuyer().getId().equals(id)))
                 .collect(Collectors.toList());
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during getting all invoices by buyer.", e);
-            throw new ServiceOperationException("An error occurred during getting all invoices for chosen buyer.", e);
+            message = "An error occurred during getting all invoices by buyer.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 
@@ -79,8 +83,9 @@ public class InvoiceService {
                 .filter(invoice -> (invoice.getSeller().getId().equals(id)))
                 .collect(Collectors.toList());
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during getting all invoices by seller.", e);
-            throw new ServiceOperationException("An error occurred during getting all invoices for chosen seller.", e);
+            message = "An error occurred during getting all invoices by seller.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 
@@ -90,8 +95,9 @@ public class InvoiceService {
             log.debug("Getting an invoice by id: {}", id);
             return database.getInvoice(id);
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during getting invoice.", e);
-            throw new ServiceOperationException("An error occurred during getting invoice.", e);
+            message = "An error occurred during getting invoice.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 
@@ -101,8 +107,9 @@ public class InvoiceService {
             log.debug("Saving invoice: {}", invoice);
             return database.saveInvoice(invoice);
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during saving an invoice.", e);
-            throw new ServiceOperationException("An error occurred during saving invoice.", e);
+            message = "An error occurred during saving an invoice.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 
@@ -112,8 +119,9 @@ public class InvoiceService {
             log.debug("Deleting invoice by id: {}", id);
             database.deleteInvoice(id);
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during deleting an invoice.", e);
-            throw new ServiceOperationException("An error occurred during deleting invoice.", e);
+            message = "An error occurred during deleting an invoice.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 
@@ -122,8 +130,9 @@ public class InvoiceService {
             log.debug("Deleting all invoices");
             database.deleteAllInvoices();
         } catch (DatabaseOperationException e) {
-            log.error("An error occurred during deleting all invoices.", e);
-            throw new ServiceOperationException("An error occurred during deleting all invoices", e);
+            message = "An error occurred during deleting all invoices.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 }

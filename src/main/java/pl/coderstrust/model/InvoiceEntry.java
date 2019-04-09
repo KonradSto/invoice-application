@@ -10,15 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pl.coderstrust.controller.InvoiceController;
-
 @ApiModel(value = "Invoice entry")
 @Entity
 public class InvoiceEntry {
-
-    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +35,6 @@ public class InvoiceEntry {
         @JsonProperty("grossValue") BigDecimal grossValue,
         @JsonProperty("vatRate") Vat vatRate) {
 
-        log.debug("Creating new invoiceEntry");
         this.id = id;
         this.productName = productName;
         this.quantity = quantity;

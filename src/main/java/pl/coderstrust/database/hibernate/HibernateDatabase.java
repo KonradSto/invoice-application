@@ -41,8 +41,9 @@ public class HibernateDatabase implements Database {
         log.debug("Deleting invoice by id: {}", id);
         ArgumentValidator.ensureNotNull(id, "id");
         if (!invoiceRepository.existsById(id)) {
-            log.error("An error occurred during deleting an invoice, invoice not found for passed id: {}", id);
-            throw new DatabaseOperationException(String.format("Delete invoice failed. Invoice with following id does not exist: %d", id));
+            String message = String.format("An error occurred during deleting an invoice, invoice with following id does not exist: %d", id);
+            log.error(message);
+            throw new DatabaseOperationException(message);
         }
         invoiceRepository.deleteById(id);
     }
@@ -56,23 +57,26 @@ public class HibernateDatabase implements Database {
 
     @Override
     public Collection<Invoice> getAllInvoices() {
+        log.debug("Getting all invoices");
         return invoiceRepository.findAll();
     }
 
     @Override
     public void deleteAllInvoices() {
-        log.debug("Getting all invoices");
+        log.debug("Deleting all invoices");
         invoiceRepository.deleteAll();
     }
 
     @Override
     public boolean invoiceExists(Long id) {
+        log.debug("Verifying if passed invoice exists");
         ArgumentValidator.ensureNotNull(id, "id");
         return invoiceRepository.existsById(id);
     }
 
     @Override
     public long countInvoices() {
+        log.debug("Counting number of invoices");
         return invoiceRepository.count();
     }
 }
