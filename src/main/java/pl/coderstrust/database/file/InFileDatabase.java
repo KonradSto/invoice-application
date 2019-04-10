@@ -72,7 +72,7 @@ public class InFileDatabase implements Database {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             if (!fileHelper.isExist()) {
-                return  Optional.empty();
+                return Optional.empty();
             }
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (String invoiceAsJson : invoicesAsJson) {
@@ -94,16 +94,12 @@ public class InFileDatabase implements Database {
             if (fileHelper.isEmpty()) {
                 return invoices;
             }
-            try {
-                List<String> invoicesAsJson = fileHelper.readLinesFromFile();
-                for (String invoiceAsJson : invoicesAsJson) {
-                    invoices.add(mapper.readValue(invoiceAsJson, Invoice.class));
-                }
-            } catch (IOException e) {
-                throw new DatabaseOperationException(EXCEPTION_MESSAGE);
+            List<String> invoicesAsJson = fileHelper.readLinesFromFile();
+            for (String invoiceAsJson : invoicesAsJson) {
+                invoices.add(mapper.readValue(invoiceAsJson, Invoice.class));
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
         }
         return invoices;
     }
