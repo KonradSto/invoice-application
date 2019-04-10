@@ -53,6 +53,7 @@ public class InFileDatabase implements Database {
     @Override
     public synchronized void deleteInvoice(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
+        // TODO: 10/04/2019 what if invoice does not exist
         try {
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (int line = 0; line < invoicesAsJson.size(); line++) {
@@ -70,8 +71,8 @@ public class InFileDatabase implements Database {
     public synchronized Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
-            if (!fileHelper.exists()) {
-                fileHelper.create();
+            if (!fileHelper.isExist()) {
+                return  Optional.empty();
             }
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (String invoiceAsJson : invoicesAsJson) {
@@ -109,7 +110,7 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized void deleteAllInvoices() throws DatabaseOperationException {
-        if (!fileHelper.exists()) {
+        if (!fileHelper.isExist()) {
             throw new DatabaseOperationException(DATABASE_NOT_EXIST);
         }
         try {
@@ -146,7 +147,7 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
-        if (!fileHelper.exists()) {
+        if (!fileHelper.isExist()) {
             try {
                 fileHelper.create();
             } catch (IOException e) {
@@ -176,8 +177,8 @@ public class InFileDatabase implements Database {
                 throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
             }
             Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
-            this.deleteInvoice(invoice.getId());
             fileHelper.writeLine(mapper.writeValueAsString(updatedInvoice));
+            this.deleteInvoice(invoice.getId());
             return updatedInvoice;
         } catch (IOException e) {
             throw new DatabaseOperationException(DATABASE_NOT_EXIST);
@@ -186,7 +187,7 @@ public class InFileDatabase implements Database {
 
     private Long getNextId() throws IOException {
         final String errorMessage = "An error occurred during getting id for nextId";
-        if (!fileHelper.exists()) {
+        if (!fileHelper.isExist()) {
             try {
                 fileHelper.create();
                 return 1L;
@@ -203,10 +204,8 @@ public class InFileDatabase implements Database {
             throw new IOException(errorMessage);
         }
         try {
-            String invoiceAsJson = fileHelper.readLastLine();
-            Invoice invoice = mapper.readValue(invoiceAsJson, Invoice.class);
-            return invoice.getId() + 1;
-        } catch (IOException e) {
+            return this.countInvoices() + 1;
+        } catch (DatabaseOperationException e) {
             throw new IOException(errorMessage);
         }
     }

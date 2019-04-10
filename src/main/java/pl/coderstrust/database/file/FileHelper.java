@@ -39,7 +39,7 @@ public class FileHelper {
         Files.delete(this.file.toPath());
     }
 
-    public boolean exists() {
+    public boolean isExist() {
         return this.file.exists();
     }
 

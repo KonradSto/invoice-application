@@ -86,12 +86,12 @@ class FileHelperTest {
         assertTrue(resultFile.createNewFile());
 
         //Then
-        assertTrue(new FileHelper(resultFilePath).exists());
+        assertTrue(new FileHelper(resultFilePath).isExist());
     }
 
     @Test
     void shouldReturnFalseWhenFileDoNotExists() {
-        assertFalse(new FileHelper(resultFilePath).exists());
+        assertFalse(new FileHelper(resultFilePath).isExist());
     }
 
     @Test

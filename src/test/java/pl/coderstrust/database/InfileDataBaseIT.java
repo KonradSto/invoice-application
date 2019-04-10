@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.util.ReflectionTestUtils.getField;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pl.coderstrust.configuration.InFileDatabaseProperties;
 import pl.coderstrust.database.file.FileHelper;
 import pl.coderstrust.database.file.InFileDatabase;
 import pl.coderstrust.generators.InvoiceGenerator;
@@ -31,18 +33,21 @@ class InfileDataBaseIT {
     private FileHelper fileHelper;
 
     @Autowired
+    private InFileDatabaseProperties inFileDatabaseProperties;
+
+    @Autowired
     private InFileDatabase inFileDataBase;
 
     @BeforeEach
     void setup() throws IOException {
-        if (!fileHelper.exists()) {
+        if (!fileHelper.isExist()) {
             fileHelper.create();
         }
     }
 
     @AfterEach
     void clear() throws IOException {
-        if (fileHelper.exists()) {
+        if (fileHelper.isExist()) {
             fileHelper.clear();
         }
     }
@@ -117,7 +122,7 @@ class InfileDataBaseIT {
         inFileDataBase.saveInvoice(invoice);
 
         //Then
-        assertTrue(fileHelper.exists());
+        assertTrue(fileHelper.isExist());
     }
 
     @Test
@@ -153,6 +158,27 @@ class InfileDataBaseIT {
     }
 
     @Test
+    void shouldAddInvoiceToNonEmptyDatabase() throws IOException, DatabaseOperationException {
+        //Given
+        fileHelper.clear();
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice1);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice2);
+        assertEquals(2, inFileDataBase.countInvoices());
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        final Invoice expected = new Invoice(3L, invoice3.getNumber(), invoice3.getIssuedDate(), invoice3.getDueDate(), invoice3.getSeller(), invoice3.getBuyer(), invoice3.getEntries());
+
+        //When
+        inFileDataBase.saveInvoice(invoice3);
+
+        //Then
+        assertEquals(3, inFileDataBase.countInvoices());
+        assertTrue(inFileDataBase.getInvoice(3L).isPresent());
+        assertEquals(expected, inFileDataBase.getInvoice(3L).get());
+    }
+
+    @Test
     void shouldUpdateInvoice() throws DatabaseOperationException {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
@@ -179,11 +205,57 @@ class InfileDataBaseIT {
         inFileDataBase.saveInvoice(invoice1);
         inFileDataBase.saveInvoice(invoice2);
         inFileDataBase.saveInvoice(invoice3);
+        assertEquals(3, inFileDataBase.countInvoices());
 
         //When
         inFileDataBase.deleteInvoice(2L);
 
         //Then
+        assertEquals(2, inFileDataBase.countInvoices());
+        assertFalse(inFileDataBase.getInvoice(2L).isPresent());
+    }
+
+    @Test
+    void shouldDeleteCorrectInvoiceWhenOtherInvoicesWereUpdated() throws DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice1);
+        inFileDataBase.saveInvoice(invoice2);
+        inFileDataBase.saveInvoice(invoice3);
+        Invoice invoice1Update = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
+        inFileDataBase.saveInvoice(invoice1Update);
+        Invoice invoice3Update = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
+        inFileDataBase.saveInvoice(invoice3Update);
+        assertEquals(3, inFileDataBase.countInvoices());
+
+        //When
+        inFileDataBase.deleteInvoice(2L);
+
+        //Then
+        assertEquals(2, inFileDataBase.countInvoices());
+        assertFalse(inFileDataBase.getInvoice(2L).isPresent());
+    }
+
+    @Test
+    void shouldDeleteCorrectInvoiceWhenTheInvoiceWasUpdated() throws DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice1);
+        inFileDataBase.saveInvoice(invoice2);
+        inFileDataBase.saveInvoice(invoice3);
+        Invoice invoice2Update = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
+        inFileDataBase.saveInvoice(invoice2Update);
+        assertEquals(3, inFileDataBase.countInvoices());
+
+        //When
+        inFileDataBase.deleteInvoice(2L);
+
+        //Then
+        assertEquals(2, inFileDataBase.countInvoices());
         assertFalse(inFileDataBase.getInvoice(2L).isPresent());
     }
 
@@ -300,5 +372,56 @@ class InfileDataBaseIT {
 
         //Then
         assertEquals(3, invoiceCount);
+    }
+
+    @Test
+    void shouldReturnCorrectNextIdForNonEmptyDatabase() throws DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice1);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice2);
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice3);
+        Long expected = 4L;
+
+        //When
+        InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
+
+        //Then
+        assertEquals(expected, getField(inFileDatabase, "nextId"));
+    }
+
+    @Test
+    void shouldReturnCorrectNextIdForEmptyDatabase() throws DatabaseOperationException {
+        //Given
+        Long expected = 1L;
+
+        //When
+        InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
+
+        //Then
+        assertEquals(expected, getField(inFileDatabase, "nextId"));
+    }
+
+    @Test
+    void shouldReturnCorrectNextIdForNonEmptyDatabaseWhenInvoiceUpdated() throws DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice1);
+        inFileDataBase.saveInvoice(invoice2);
+        inFileDataBase.saveInvoice(invoice3);
+        Invoice invoice1Update = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
+        inFileDataBase.saveInvoice(invoice1Update);
+        assertEquals(3, inFileDataBase.countInvoices());
+        Long expected = 4L;
+
+        //When
+        InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
+
+        //Then
+        assertEquals(expected, getField(inFileDatabase, "nextId"));
     }
 }
