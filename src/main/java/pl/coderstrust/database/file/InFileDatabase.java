@@ -26,14 +26,13 @@ public class InFileDatabase implements Database {
     private FileHelper fileHelper;
 
     @Autowired
-    public InFileDatabase(ObjectMapper mapper, FileHelper fileHelper, InFileDatabaseProperties inFileDatabaseProperties) throws DatabaseOperationException {
+    public InFileDatabase(ObjectMapper mapper, FileHelper fileHelper, InFileDatabaseProperties inFileDatabaseProperties) {
         ArgumentValidator.ensureNotNull(mapper, "mapper");
         this.mapper = mapper;
         ArgumentValidator.ensureNotNull(fileHelper, "fileHelper");
         this.fileHelper = fileHelper;
         ArgumentValidator.ensureNotNull(inFileDatabaseProperties, "inFileDatabaseProperties");
         this.inFileDatabaseProperties = inFileDatabaseProperties;
-
     }
 
     @Override
@@ -159,10 +158,10 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice update(Invoice invoice) throws DatabaseOperationException {
+        if (!this.invoiceExists(invoice.getId())) {
+            throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
+        }
         try {
-            if (!this.invoiceExists(invoice.getId())) {
-                throw new DatabaseOperationException(String.format("Update invoice failed. Invoice with following id does not exist: %d", invoice.getId()));
-            }
             Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
             fileHelper.writeLine(mapper.writeValueAsString(updatedInvoice));
             this.deleteInvoice(invoice.getId());

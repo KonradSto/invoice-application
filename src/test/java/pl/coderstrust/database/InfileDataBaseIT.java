@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import pl.coderstrust.configuration.InFileDatabaseProperties;
 import pl.coderstrust.database.file.FileHelper;
 import pl.coderstrust.database.file.InFileDatabase;
@@ -24,6 +25,7 @@ import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 @SpringBootTest
+@TestPropertySource(locations = "classpath:test.properties")
 class InfileDataBaseIT {
 
     @Autowired
