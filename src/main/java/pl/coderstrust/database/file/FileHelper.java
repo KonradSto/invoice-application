@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-file")
 @Component
 public class FileHelper {
+    static final String EMPTY_STRING = "";
 
     private File file;
 
@@ -28,13 +29,13 @@ public class FileHelper {
 
     public void create() throws IOException {
         if (this.file.exists()) {
-            validateFileExistence("Failed to create new file");
+            validateFileExistance("Failed to create new file");
         }
         Files.createFile(this.file.toPath());
     }
 
     public void delete() throws IOException {
-        validateFileExistence("Failed to delete file");
+        validateFileExistance("Failed to delete file");
         Files.delete(this.file.toPath());
     }
 
@@ -43,28 +44,22 @@ public class FileHelper {
     }
 
     public boolean isEmpty() throws IOException {
-        validateFileExistence("Failed to check file content");
+        validateFileExistance("Failed to check file content");
         return (this.file.length() == 0);
     }
 
     public void clear() throws IOException {
-        validateFileExistence("Failed to clear the file content");
-        this.delete();
-        this.create();
+        validateFileExistance("Failed to clear the file content");
+        writeToFile(false, EMPTY_STRING);
     }
 
     public void writeLine(String line) throws IOException {
-        validateFileExistence("Failed to write given line");
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.file, true))) {
-            if (!this.isEmpty()) {
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.write(line);
-        }
+        validateFileExistance("Failed to write given line");
+        writeToFile(true, line);
     }
 
     public List<String> readLinesFromFile() throws IOException {
-        validateFileExistence("Failed to read lines");
+        validateFileExistance("Failed to read lines");
         List<String> fileLines;
         try (Stream<String> lines = Files.lines(this.file.toPath())) {
             fileLines = lines.collect(Collectors.toList());
@@ -73,14 +68,14 @@ public class FileHelper {
     }
 
     public String readLastLine() throws IOException {
-        validateFileExistence("Failed to read last line");
+        validateFileExistance("Failed to read last line");
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(this.file)) {
             return reader.readLine();
         }
     }
 
     public void removeLine(int lineNumber) throws IOException {
-        validateFileExistence("Failed to delete line");
+        validateFileExistance("Failed to delete line");
         File newFile = new File((this.file.getParent() + "temporaryFile.txt"));
         transferRemainingFileContent(lineNumber, newFile);
         moveFile(newFile);
@@ -111,9 +106,18 @@ public class FileHelper {
         newFile.renameTo(this.file);
     }
 
-    private void validateFileExistence(String errorMessage) throws FileNotFoundException {
+    private void validateFileExistance(String errorMessage) throws FileNotFoundException {
         if (!this.file.exists()) {
             throw new FileNotFoundException(String.format("%s. File is not exist. Path to file=[%s]", errorMessage, this.file.getAbsoluteFile()));
+        }
+    }
+
+    private void writeToFile(boolean append, String content) throws IOException {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.file, append))) {
+            if (!this.isEmpty()) {
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write(content);
         }
     }
 }

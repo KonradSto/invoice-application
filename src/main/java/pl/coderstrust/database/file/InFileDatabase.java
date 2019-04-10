@@ -195,7 +195,8 @@ public class InFileDatabase implements Database {
             }
         }
         try {
-            if (fileHelper.isEmpty()) {
+            // TODO: 10/04/2019  define in properties empty string
+            if (fileHelper.isEmpty() || fileHelper.readLastLine().equals("")) {
                 return 1L;
             }
         } catch (IOException e) {

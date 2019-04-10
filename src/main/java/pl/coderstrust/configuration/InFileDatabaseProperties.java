@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class InFileDatabaseProperties {
     private String filePath;
 
+    // TODO: 10/04/2019 Component
     @Bean
     public String getFilePath() {
         return filePath;
