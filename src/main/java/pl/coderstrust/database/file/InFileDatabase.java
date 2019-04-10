@@ -63,7 +63,7 @@ public class InFileDatabase implements Database {
                 }
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -83,7 +83,7 @@ public class InFileDatabase implements Database {
             }
             return Optional.empty();
         } catch (IOException e) {
-            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -99,7 +99,7 @@ public class InFileDatabase implements Database {
                 invoices.add(mapper.readValue(invoiceAsJson, Invoice.class));
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
         return invoices;
     }
@@ -112,7 +112,7 @@ public class InFileDatabase implements Database {
         try {
             fileHelper.clear();
         } catch (IOException e) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
         }
     }
 
@@ -131,15 +131,14 @@ public class InFileDatabase implements Database {
                 }
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException(EXCEPTION_MESSAGE);
+            throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
         return false;
     }
 
     @Override
     public synchronized long countInvoices() throws DatabaseOperationException {
-        Collection<Invoice> invoices = this.getAllInvoices();
-        return invoices.size();
+        return getAllInvoices().size();
     }
 
     private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
@@ -147,7 +146,7 @@ public class InFileDatabase implements Database {
             try {
                 fileHelper.create();
             } catch (IOException e) {
-                throw new DatabaseOperationException(DATABASE_NOT_EXIST);
+                throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
             }
         }
         try {
@@ -155,14 +154,18 @@ public class InFileDatabase implements Database {
                 this.nextId = 1L;
             }
         } catch (IOException e) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
         }
-        Long id = nextId++;
-        Invoice insertedInvoice = new Invoice(id, invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+        Invoice insertedInvoice;
+        try {
+            insertedInvoice = new Invoice(getNextId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+        } catch (IOException e) {
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
+        }
         try {
             fileHelper.writeLine(mapper.writeValueAsString(insertedInvoice));
         } catch (IOException e) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
         }
         return insertedInvoice;
     }
@@ -177,7 +180,7 @@ public class InFileDatabase implements Database {
             this.deleteInvoice(invoice.getId());
             return updatedInvoice;
         } catch (IOException e) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
         }
     }
 

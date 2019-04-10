@@ -143,8 +143,8 @@ class InFileDatabaseTest {
         inFileDataBase.saveInvoice(invoice);
 
         //Then
-        verify(fileHelper).isExist();
-        verify(fileHelper).create();
+        verify(fileHelper,atLeast(1)).isExist();
+        verify(fileHelper,atLeast(1)).create();
     }
 
     @Test
@@ -175,7 +175,7 @@ class InFileDatabaseTest {
 
         //Then
         verify(fileHelper, atLeast(1)).isExist();
-        verify(fileHelper).isEmpty();
+        verify(fileHelper,atLeast(1)).isEmpty();
         assertEquals(inserted, returned);
     }
 
@@ -192,16 +192,6 @@ class InFileDatabaseTest {
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         when(fileHelper.isExist()).thenReturn(true);
         doThrow(new IOException()).when(fileHelper).isEmpty();
-        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.saveInvoice(invoice));
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDatabaseEmptyDuringAddingInvoice() throws IOException {
-        //Given
-        when(fileHelper.isExist()).thenReturn(true);
-        when(fileHelper.isEmpty()).thenReturn(false);
-        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
-        doThrow(new IOException()).when(fileHelper).writeLine(Mockito.anyString());
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.saveInvoice(invoice));
     }
 
