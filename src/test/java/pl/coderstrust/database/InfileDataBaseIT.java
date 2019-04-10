@@ -120,7 +120,6 @@ class InfileDataBaseIT {
         assertTrue(fileHelper.exists());
     }
 
-    // FIXME: 07/04/2019 name seems strange
     @Test
     void shouldAddInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
         //Given
