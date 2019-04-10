@@ -42,7 +42,7 @@ public class InvoiceService {
         ArgumentValidator.ensureNotNull(fromDate, "fromDate");
         ArgumentValidator.ensureNotNull(toDate, "toDate");
         if (fromDate.isAfter(toDate)) {
-            message = "An error occurred during getting all invoices by dates, fromDate cannot be after toDate.";
+            message = "fromDate cannot be after toDate.";
             log.error(message);
             throw new IllegalArgumentException(message);
         }
