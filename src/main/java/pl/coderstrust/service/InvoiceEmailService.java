@@ -18,27 +18,31 @@ import pl.coderstrust.model.Invoice;
 public class InvoiceEmailService {
 
     private InvoicePdfService invoicePdfService;
-
-    @Autowired
-    public InvoiceEmailService(InvoicePdfService invoicePdfService) {
-        this.invoicePdfService = invoicePdfService;
-    }
-
-    @Autowired
     private JavaMailSender emailSender;
-
-    @Autowired
     private MailProperties mailProperties;
 
+    @Autowired
+    public InvoiceEmailService(InvoicePdfService invoicePdfService, JavaMailSender emailSender, MailProperties mailProperties) {
+        this.invoicePdfService = invoicePdfService;
+        this.emailSender = emailSender;
+        this.mailProperties = mailProperties;
+    }
+
     @Async
-    public void sendEmailWithInvoice(Invoice invoice) throws MessagingException, ServiceOperationException {
-        MimeMessage email = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(email, true);
-        helper.setTo(mailProperties.getUsername());
-        helper.setFrom(mailProperties.getUsername());
-        helper.setSubject(String.format("Invoice nr: %s", invoice.getNumber()));
-        helper.setText("Please see attachments for your saved invoice");
-        helper.addAttachment(String.format("%s.pdf", invoice.getNumber()), new ByteArrayResource(invoicePdfService.getInvoiceAsPdf(invoice)));
-        emailSender.send(email);
+    public void sendEmailWithInvoice(Invoice invoice) {
+
+        //czy invoice nie jest null
+        try {
+            MimeMessage email = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(email, true);
+            helper.addAttachment(String.format("%s.pdf", invoice.getNumber()), new ByteArrayResource(invoicePdfService.getInvoiceAsPdf(invoice)));
+            helper.setTo(mailProperties.getProperties().get("receiver"));
+            helper.setFrom(mailProperties.getUsername());
+            helper.setSubject(String.format("Invoice nr: %s", invoice.getNumber()));
+            helper.setText("Please see attachments for your saved invoice");
+            emailSender.send(email);
+        } catch (ServiceOperationException | MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }
