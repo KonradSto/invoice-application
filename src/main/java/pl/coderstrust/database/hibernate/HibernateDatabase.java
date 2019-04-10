@@ -41,7 +41,7 @@ public class HibernateDatabase implements Database {
         log.debug("Deleting invoice by id: {}", id);
         ArgumentValidator.ensureNotNull(id, "id");
         if (!invoiceRepository.existsById(id)) {
-            String message = String.format("An error occurred during deleting an invoice, invoice with following id does not exist: %d", id);
+            String message = String.format("Invoice with following id does not exist: %d", id);
             log.error(message);
             throw new DatabaseOperationException(message);
         }
