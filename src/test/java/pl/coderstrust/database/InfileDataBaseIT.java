@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.util.ReflectionTestUtils.getField;
+import static org.springframework.test.util.ReflectionTestUtils.invokeMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -389,7 +389,8 @@ class InfileDataBaseIT {
         InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
 
         //Then
-        assertEquals(expected, getField(inFileDatabase, "nextId"));
+        assertEquals(expected, invokeMethod(inFileDatabase, "getNextId"));
+        ;
     }
 
     @Test
@@ -401,7 +402,7 @@ class InfileDataBaseIT {
         InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
 
         //Then
-        assertEquals(expected, getField(inFileDatabase, "nextId"));
+        assertEquals(expected, invokeMethod(inFileDatabase, "getNextId"));
     }
 
     @Test
@@ -422,6 +423,6 @@ class InfileDataBaseIT {
         InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
 
         //Then
-        assertEquals(expected, getField(inFileDatabase, "nextId"));
+        assertEquals(expected, invokeMethod(inFileDatabase, "getNextId"));
     }
 }
