@@ -144,13 +144,6 @@ public class InFileDatabase implements Database {
                 throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
             }
         }
-      /*  try {
-            if (fileHelper.isEmpty()) {
-                this.nextId = 1L;
-            }
-        } catch (IOException e) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
-        }*/
         Invoice insertedInvoice;
         try {
             insertedInvoice = new Invoice(getNextId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
