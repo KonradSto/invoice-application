@@ -47,8 +47,9 @@ public class InFileDatabase implements Database {
     @Override
     public synchronized void deleteInvoice(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
-        // TODO: 10/04/2019 what if invoice does not exist
+        // TODO: 10/04/2019 what if invoice does not exist - Map<Long,Boolean> (Big Omega=1) as a cache, exist method (Big Omega = n),
         try {
+            // TODO: 11/04/2019 fileHelper(Long id) - deserialize line by line?
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (int line = 0; line < invoicesAsJson.size(); line++) {
                 Invoice invoice = mapper.readValue(invoicesAsJson.get(line), Invoice.class);
@@ -125,6 +126,7 @@ public class InFileDatabase implements Database {
                 }
             }
         } catch (IOException e) {
+            // TODO: 11/04/2019  root exception -
             throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
         return false;
@@ -182,7 +184,8 @@ public class InFileDatabase implements Database {
             }
         }
         try {
-            // TODO: 10/04/2019  define in properties empty string
+            // TODO: 10/04/2019  define in properties empty string - maybe put it to application properties and inject here and in other places instead declaring final
+
             if (fileHelper.isEmpty() || fileHelper.readLastLine().equals("")) {
                 return 1L;
             }

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import pl.coderstrust.configuration.InFileDatabaseProperties;
 
 @ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-file")
 @Component
@@ -23,8 +24,8 @@ public class FileHelper {
 
     private File file;
 
-    public FileHelper(String filePath) {
-        this.file = new File(filePath);
+    public FileHelper(InFileDatabaseProperties properties) {
+        this.file = new File(properties.getFilePath());
     }
 
     public void create() throws IOException {

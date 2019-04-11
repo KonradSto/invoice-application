@@ -18,14 +18,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.coderstrust.configuration.InFileDatabaseProperties;
 import pl.coderstrust.database.file.FileHelper;
 
 class FileHelperTest {
-
+    private static final InFileDatabaseProperties properties = new InFileDatabaseProperties();
     private static final String resultFilePath = "src/test/resources/resultFile.txt";
     private File resultFile;
+
+    @BeforeAll
+    static void init() {
+        properties.setFilePath(resultFilePath);
+    }
 
     @BeforeEach
     void initializeTestFile() {
@@ -45,7 +52,7 @@ class FileHelperTest {
         List<String> expectedFileLines = new ArrayList<>();
 
         //When
-        new FileHelper(resultFilePath).create();
+        new FileHelper(properties).create();
 
         //Then
         List<String> resultFileLines;
@@ -59,7 +66,7 @@ class FileHelperTest {
     void shouldThrowExceptionForCreateMethod() throws IOException {
         File alreadyExistingFile = new File(resultFilePath);
         assertTrue(alreadyExistingFile.createNewFile());
-        assertThrows(FileAlreadyExistsException.class, () -> new FileHelper(resultFilePath).create());
+        assertThrows(FileAlreadyExistsException.class, () -> new FileHelper(properties).create());
         assertTrue(alreadyExistingFile.delete());
     }
 
@@ -69,7 +76,7 @@ class FileHelperTest {
         Files.write(Paths.get(resultFilePath), Arrays.asList("first test line", "second test line"));
 
         //When
-        new FileHelper(resultFilePath).delete();
+        new FileHelper(properties).delete();
 
         //Then
         assertFalse(resultFile.exists());
@@ -77,7 +84,7 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionForDeleteMethod() {
-        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).delete());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(properties).delete());
     }
 
     @Test
@@ -86,12 +93,12 @@ class FileHelperTest {
         assertTrue(resultFile.createNewFile());
 
         //Then
-        assertTrue(new FileHelper(resultFilePath).isExist());
+        assertTrue(new FileHelper(properties).isExist());
     }
 
     @Test
     void shouldReturnFalseWhenFileDoNotExists() {
-        assertFalse(new FileHelper(resultFilePath).isExist());
+        assertFalse(new FileHelper(properties).isExist());
     }
 
     @Test
@@ -100,7 +107,7 @@ class FileHelperTest {
         assertTrue(resultFile.createNewFile());
 
         //Then
-        assertTrue(new FileHelper(resultFilePath).isEmpty());
+        assertTrue(new FileHelper(properties).isEmpty());
     }
 
     @Test
@@ -110,12 +117,12 @@ class FileHelperTest {
         Files.write(Paths.get(resultFilePath), "first test line".getBytes());
 
         //Then
-        assertFalse(new FileHelper(resultFilePath).isEmpty());
+        assertFalse(new FileHelper(properties).isEmpty());
     }
 
     @Test
     void shouldThrowExceptionWhileCheckingIfNonExistingFileIsEmpty() {
-        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).isEmpty());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(properties).isEmpty());
     }
 
     @Test
@@ -127,7 +134,7 @@ class FileHelperTest {
         List<String> expectedFileLines = new ArrayList<>();
 
         //When
-        new FileHelper(resultFilePath).clear();
+        new FileHelper(properties).clear();
 
         //Then
         try (Stream<String> lines = Files.lines(Paths.get(resultFilePath))) {
@@ -145,7 +152,7 @@ class FileHelperTest {
         List<String> resultFileLines;
 
         //When
-        new FileHelper(resultFilePath).writeLine("second test line");
+        new FileHelper(properties).writeLine("second test line");
 
         //Then
         try (Stream<String> lines = Files.lines(Paths.get(resultFilePath))) {
@@ -156,7 +163,7 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionWhileWritingToNonExistingFile() {
-        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).writeLine("test line"));
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(properties).writeLine("test line"));
     }
 
     @Test
@@ -167,7 +174,7 @@ class FileHelperTest {
         List<String> expectedFileList = Arrays.asList("first test line", "second test line");
 
         //When
-        List<String> resultFileList = new FileHelper(resultFilePath).readLinesFromFile();
+        List<String> resultFileList = new FileHelper(properties).readLinesFromFile();
 
         //Then
         assertEquals(expectedFileList, resultFileList);
@@ -175,7 +182,7 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionWhileReadingLinesForNotExistingFile() {
-        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).readLinesFromFile());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(properties).readLinesFromFile());
     }
 
     @Test
@@ -187,7 +194,7 @@ class FileHelperTest {
         String expectedString = "third test line";
 
         //When
-        String resultString = new FileHelper(resultFilePath).readLastLine();
+        String resultString = new FileHelper(properties).readLastLine();
 
         //Then
         assertEquals(expectedString, resultString);
@@ -195,7 +202,7 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionForReadLastLineFromFile() {
-        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).readLastLine());
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(properties).readLastLine());
     }
 
     @Test
@@ -207,7 +214,7 @@ class FileHelperTest {
         List<String> resultFileLines;
 
         //When
-        new FileHelper(resultFilePath).removeLine(3);
+        new FileHelper(properties).removeLine(3);
 
         //Then
         try (Stream<String> lines = Files.lines(Paths.get(resultFilePath))) {
@@ -218,6 +225,6 @@ class FileHelperTest {
 
     @Test
     void shouldThrowExceptionForRemoveLineFromNonExistentFile() {
-        assertThrows(FileNotFoundException.class, () -> new FileHelper(resultFilePath).removeLine(2));
+        assertThrows(FileNotFoundException.class, () -> new FileHelper(properties).removeLine(2));
     }
 }
