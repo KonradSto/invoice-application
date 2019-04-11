@@ -287,8 +287,10 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdDeleteInvoiceResponse() throws IOException {
+    void shouldValidateXsdDeleteInvoiceResponse() throws IOException, ServiceOperationException {
         //Given
+        Optional<Invoice> invoiceOptional = Optional.of(invoice1);
+        when(invoiceService.getInvoice(1L)).thenReturn(invoiceOptional);
         filePathRequest = "src/test/resources/deleteInvoiceRequest";
         filePathResponse = "src/test/resources/deleteInvoiceResponse";
         stringRequest = XmlFileReader.readFromFile(filePathRequest);
