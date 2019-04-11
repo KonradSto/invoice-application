@@ -21,7 +21,6 @@ import pl.coderstrust.model.InvoiceEntry;
 import pl.coderstrust.model.Vat;
 import pl.coderstrust.utils.ArgumentValidator;
 
-
 @Service
 public class InvoicePdfService {
 
