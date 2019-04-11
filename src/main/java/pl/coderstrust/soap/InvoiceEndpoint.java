@@ -18,6 +18,7 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.service.InvoiceService;
 import pl.coderstrust.service.ServiceOperationException;
+import pl.coderstrust.soap.bindingclasses.DeleteInvoiceRequest;
 import pl.coderstrust.soap.bindingclasses.GetInvoiceRequest;
 import pl.coderstrust.soap.bindingclasses.GetInvoicesByBuyerRequest;
 import pl.coderstrust.soap.bindingclasses.GetInvoicesByDateRequest;
@@ -26,8 +27,10 @@ import pl.coderstrust.soap.bindingclasses.InvoiceResponse;
 import pl.coderstrust.soap.bindingclasses.InvoicesListResponse;
 import pl.coderstrust.soap.bindingclasses.InvoicesResponse;
 import pl.coderstrust.soap.bindingclasses.ResponseBase;
+import pl.coderstrust.soap.bindingclasses.SaveInvoiceRequest;
 import pl.coderstrust.soap.bindingclasses.SingleInvoiceResponse;
 import pl.coderstrust.soap.bindingclasses.StatusResponse;
+import pl.coderstrust.utils.ArgumentValidator;
 
 @Endpoint
 public class InvoiceEndpoint {
@@ -37,174 +40,175 @@ public class InvoiceEndpoint {
 
     @Autowired
     public InvoiceEndpoint(InvoiceService invoiceService) {
+        ArgumentValidator.ensureNotNull(invoiceService, "invoiceService");
         this.invoiceService = invoiceService;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getInvoiceRequest")
     @ResponsePayload
     public SingleInvoiceResponse getInvoice(@RequestPayload GetInvoiceRequest request) {
-        SingleInvoiceResponse response = new SingleInvoiceResponse();
-        InvoiceResponse responseBase = new InvoiceResponse();
-        responseBase.setStatus(FAILURE);
         try {
             Optional<Invoice> optionalInvoice = invoiceService.getInvoice(request.getId());
             if (optionalInvoice.isPresent()) {
                 Invoice invoice = optionalInvoice.get();
                 pl.coderstrust.soap.bindingclasses.Invoice resultInvoice = Mapper.mapInvoice(invoice);
-                responseBase.setStatus(SUCCESS);
-                responseBase.setMessage("");
-                responseBase.setInvoice(resultInvoice);
-            } else {
-                responseBase.setMessage("No existing invoice with given Id");
+                return createSuccessSingleInvoiceResponse(resultInvoice);
             }
+            return createErrorSingleInvoiceResponse("No existing invoice with given Id");
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase.setMessage("An error occurred during getting invoice");
+            return createErrorSingleInvoiceResponse("An error occurred during getting invoice");
         }
-        response.setResponse(responseBase);
-        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getAllInvoicesRequest")
     @ResponsePayload
-    public pl.coderstrust.soap.bindingclasses.InvoicesListResponse getAllInvoices() {
-        InvoicesListResponse response = new InvoicesListResponse();
-        InvoicesResponse responseBase = new InvoicesResponse();
+    public InvoicesListResponse getAllInvoices() {
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoices();
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
-            responseBase.getInvoices();
-            for (pl.coderstrust.soap.bindingclasses.Invoice invoice : responseInvoices) {
-                responseBase.getInvoices().add(invoice);
-            }
-            responseBase.setMessage("");
-            responseBase.setStatus(SUCCESS);
-            responseBase.setMessage("");
+            return createSuccessInvoicesListResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase.setMessage("An error occurred during getting all invoices");
-            responseBase.setStatus(FAILURE);
+            return createErrorInvoicesListResponse("An error occurred during getting all invoices");
         }
-        response.setResponse(responseBase);
-        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getInvoicesByDateRequest")
     @ResponsePayload
-    public pl.coderstrust.soap.bindingclasses.InvoicesListResponse getInvoicesByDate(@RequestPayload GetInvoicesByDateRequest request) {
-        InvoicesListResponse response = new InvoicesListResponse();
-        InvoicesResponse responseBase = new InvoicesResponse();
+    public InvoicesListResponse getInvoicesByDate(@RequestPayload GetInvoicesByDateRequest request) {
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByDate(mapXmlGregorianCalendarToLocalDate(request.getFromDate()), mapXmlGregorianCalendarToLocalDate(request.getToDate()));
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
-            responseBase.getInvoices();
-            for (pl.coderstrust.soap.bindingclasses.Invoice invoice : responseInvoices) {
-                (responseBase).getInvoices().add(invoice);
-            }
-            responseBase.setStatus(SUCCESS);
-            responseBase.setMessage("");
-
+            return createSuccessInvoicesListResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase = new InvoicesResponse();
-            responseBase.setStatus(FAILURE);
-            responseBase.setMessage("An error occurred during getting invoices in given date range");
+            return createErrorInvoicesListResponse("An error occurred during getting invoices in given date range");
         }
-        response.setResponse(responseBase);
-        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getInvoicesByBuyerRequest")
     @ResponsePayload
-    public pl.coderstrust.soap.bindingclasses.InvoicesListResponse getInvoicesByBuyer(@RequestPayload GetInvoicesByBuyerRequest request) {
-        InvoicesListResponse response = new InvoicesListResponse();
-        InvoicesResponse responseBase = new InvoicesResponse();
+    public InvoicesListResponse getInvoicesByBuyer(@RequestPayload GetInvoicesByBuyerRequest request) {
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesByBuyer(request.getBuyerId());
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
-            responseBase.getInvoices();
-            for (pl.coderstrust.soap.bindingclasses.Invoice invoice : responseInvoices) {
-                responseBase.getInvoices().add(invoice);
-            }
-            responseBase.setStatus(SUCCESS);
-            responseBase.setMessage("");
+            return createSuccessInvoicesListResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase.setStatus(FAILURE);
-            responseBase.setMessage("An error occurred during getting invoices for chosen buyer");
+            return createErrorInvoicesListResponse("An error occurred during getting invoices for chosen buyer");
         }
-        response.setResponse(responseBase);
-        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getInvoicesBySellerRequest")
     @ResponsePayload
-    public pl.coderstrust.soap.bindingclasses.InvoicesListResponse getInvoicesBySeller(@RequestPayload GetInvoicesBySellerRequest request) {
-        pl.coderstrust.soap.bindingclasses.InvoicesListResponse response = new pl.coderstrust.soap.bindingclasses.InvoicesListResponse();
-        InvoicesResponse responseBase = new InvoicesResponse();
+    public InvoicesListResponse getInvoicesBySeller(@RequestPayload GetInvoicesBySellerRequest request) {
         try {
             Collection<Invoice> invoices = invoiceService.getAllInvoicesBySeller(request.getSellerId());
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
-            responseBase.getInvoices();
-            for (pl.coderstrust.soap.bindingclasses.Invoice invoice : responseInvoices) {
-                responseBase.getInvoices().add(invoice);
-            }
-            responseBase.setStatus(SUCCESS);
-            responseBase.setMessage("");
+            return createSuccessInvoicesListResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase.setStatus(FAILURE);
-            responseBase.setMessage("An error occurred during getting invoices for chosen seller");
+            return createErrorInvoicesListResponse("An error occurred during getting invoices for chosen seller");
         }
-        response.setResponse(responseBase);
-        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteInvoiceRequest")
     @ResponsePayload
-    public pl.coderstrust.soap.bindingclasses.StatusResponse deleteInvoice(@RequestPayload pl.coderstrust.soap.bindingclasses.DeleteInvoiceRequest request) {
-        pl.coderstrust.soap.bindingclasses.StatusResponse response = new pl.coderstrust.soap.bindingclasses.StatusResponse();
-        ResponseBase responseBase = new ResponseBase();
+    public StatusResponse deleteInvoice(@RequestPayload DeleteInvoiceRequest request) {
         try {
+            Optional<Invoice> invoice = invoiceService.getInvoice(request.getId());
+            if (!invoice.isPresent()) {
+                return createErrorStatusResponse("Invoice with given id does not exist");
+            }
             invoiceService.deleteInvoice(request.getId());
-            responseBase.setStatus(SUCCESS);
-            responseBase.setMessage("");
+            return createSuccessStatusResponse();
         } catch (ServiceOperationException e) {
-            responseBase.setStatus(FAILURE);
-            responseBase.setMessage("An error occurred during deleting invoice");
+            return createErrorStatusResponse("An error occurred during deleting invoice");
         }
-        response.setResponse(responseBase);
-        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteAllInvoicesRequest")
     @ResponsePayload
-    public pl.coderstrust.soap.bindingclasses.StatusResponse deleteAllInvoices() {
-        StatusResponse response = new StatusResponse();
-        ResponseBase responseBase = new ResponseBase();
+    public StatusResponse deleteAllInvoices() {
         try {
             invoiceService.deleteAllInvoices();
-            responseBase.setStatus(SUCCESS);
-            responseBase.setMessage("");
+            return createSuccessStatusResponse();
         } catch (ServiceOperationException e) {
-            responseBase.setStatus(FAILURE);
-            responseBase.setMessage("An error occurred during deleting all invoices");
+            return createErrorStatusResponse("An error occurred during deleting all invoices");
         }
-        response.setResponse(responseBase);
-        return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "saveInvoiceRequest")
     @ResponsePayload
-    public pl.coderstrust.soap.bindingclasses.SingleInvoiceResponse saveInvoice(@RequestPayload pl.coderstrust.soap.bindingclasses.SaveInvoiceRequest request) {
-        SingleInvoiceResponse response = new SingleInvoiceResponse();
-        InvoiceResponse responseBase = new InvoiceResponse();
+
+    public SingleInvoiceResponse saveInvoice(@RequestPayload SaveInvoiceRequest request) {
         try {
             Invoice invoice = invoiceService.saveInvoice(mapInvoice(request.getInvoice()));
             pl.coderstrust.soap.bindingclasses.Invoice responseInvoice = Mapper.mapInvoice(invoice);
-            responseBase.setStatus(SUCCESS);
-            responseBase.setMessage("");
-            responseBase.setInvoice(responseInvoice);
+            return createSuccessSingleInvoiceResponse(responseInvoice);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            responseBase.setStatus(FAILURE);
-            responseBase.setMessage("An error occurred during saving invoice");
+            return createErrorSingleInvoiceResponse("An error occurred during saving invoice");
         }
-        response.setResponse(responseBase);
-        return response;
+    }
+
+    private StatusResponse createErrorStatusResponse(String errorMessage) {
+        ResponseBase responseBase = new ResponseBase();
+        responseBase.setStatus(FAILURE);
+        responseBase.setMessage(errorMessage);
+        return createStatusResponse(responseBase);
+    }
+
+    private StatusResponse createSuccessStatusResponse() {
+        ResponseBase responseBase = new ResponseBase();
+        responseBase.setStatus(SUCCESS);
+        responseBase.setMessage("");
+        return createStatusResponse(responseBase);
+    }
+
+    private StatusResponse createStatusResponse(ResponseBase responseBase) {
+        StatusResponse statusResponse = new StatusResponse();
+        statusResponse.setResponse(responseBase);
+        return statusResponse;
+    }
+
+    private SingleInvoiceResponse createErrorSingleInvoiceResponse(String errorMessage) {
+        InvoiceResponse invoiceResponse = new InvoiceResponse();
+        invoiceResponse.setStatus(FAILURE);
+        invoiceResponse.setMessage(errorMessage);
+        return createSingleInvoiceResponse(invoiceResponse);
+    }
+
+    private InvoicesListResponse createErrorInvoicesListResponse(String errorMessage) {
+        InvoicesResponse invoicesResponse = new InvoicesResponse();
+        invoicesResponse.setStatus(FAILURE);
+        invoicesResponse.setMessage(errorMessage);
+        return createInvoicesResponse(invoicesResponse);
+    }
+
+    private SingleInvoiceResponse createSuccessSingleInvoiceResponse(pl.coderstrust.soap.bindingclasses.Invoice invoice) {
+        InvoiceResponse invoiceResponse = new InvoiceResponse();
+        invoiceResponse.setStatus(SUCCESS);
+        invoiceResponse.setInvoice(invoice);
+        invoiceResponse.setMessage("");
+        return createSingleInvoiceResponse(invoiceResponse);
+    }
+
+    private InvoicesListResponse createSuccessInvoicesListResponse(Collection<pl.coderstrust.soap.bindingclasses.Invoice> invoices) {
+        InvoicesResponse invoicesResponse = new InvoicesResponse();
+        invoicesResponse.setStatus(SUCCESS);
+        invoicesResponse.getInvoices();
+        for (pl.coderstrust.soap.bindingclasses.Invoice invoice : invoices) {
+            invoicesResponse.getInvoices().add(invoice);
+        }
+        invoicesResponse.setMessage("");
+        return createInvoicesResponse(invoicesResponse);
+    }
+
+    private SingleInvoiceResponse createSingleInvoiceResponse(InvoiceResponse invoiceResponse) {
+        SingleInvoiceResponse singleInvoiceResponse = new SingleInvoiceResponse();
+        singleInvoiceResponse.setResponse(invoiceResponse);
+        return singleInvoiceResponse;
+    }
+
+    private InvoicesListResponse createInvoicesResponse(InvoicesResponse invoicesResponse) {
+        InvoicesListResponse invoicesListResponse = new InvoicesListResponse();
+        invoicesListResponse.setResponse(invoicesResponse);
+        return invoicesListResponse;
     }
 }
