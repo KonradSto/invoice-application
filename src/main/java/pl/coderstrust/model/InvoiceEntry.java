@@ -45,6 +45,17 @@ public class InvoiceEntry {
         this.vatRate = vatRate;
     }
 
+    private InvoiceEntry() {
+        this.id = null;
+        this.productName = null;
+        this.quantity = 0;
+        this.unit = null;
+        this.price = null;
+        this.netValue = null;
+        this.grossValue = null;
+        this.vatRate = null;
+    }
+
     @ApiModelProperty(value = "The id of invoice entry.", dataType = "Long", position = -1)
     public Long getId() {
         return id;

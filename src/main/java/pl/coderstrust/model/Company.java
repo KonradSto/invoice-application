@@ -41,6 +41,16 @@ public class Company {
         this.email = email;
     }
 
+    private Company() {
+        this.id = null;
+        this.name = null;
+        this.address = null;
+        this.taxId = null;
+        this.accountNumber = null;
+        this.phoneNumber = null;
+        this.email = null;
+    }
+
     @ApiModelProperty(value = "The id of company.", dataType = "Long", position = -1)
     public Long getId() {
         return id;
