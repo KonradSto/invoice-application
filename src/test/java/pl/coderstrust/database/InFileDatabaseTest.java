@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -136,22 +137,24 @@ class InFileDatabaseTest {
     @Test
     void shouldCreateInFileDatabaseWhenAddingInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
         //Given
-        Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
-        when(fileHelper.isExist()).thenReturn(false);
+        final Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
+        when(fileHelper.isExist()).thenReturn(false,true);
+        doNothing().when(fileHelper).create();
 
         //When
         inFileDataBase.saveInvoice(invoice);
 
         //Then
-        verify(fileHelper,atLeast(1)).isExist();
-        verify(fileHelper,atLeast(1)).create();
+        verify(fileHelper, atLeast(1)).isExist();
+        verify(fileHelper).create();
     }
 
     @Test
-    void shouldAddInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
+    void shouldAddInvoiceToNotExistentDatabase() throws  DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         when(fileHelper.isExist()).thenReturn(false);
+        when(fileHelper.isExist()).thenReturn(true);
 
         //When
         Invoice returned = inFileDataBase.saveInvoice(invoice);
@@ -175,7 +178,7 @@ class InFileDatabaseTest {
 
         //Then
         verify(fileHelper, atLeast(1)).isExist();
-        verify(fileHelper,atLeast(1)).isEmpty();
+        verify(fileHelper, atLeast(1)).isEmpty();
         assertEquals(inserted, returned);
     }
 
@@ -272,7 +275,7 @@ class InFileDatabaseTest {
         Optional<Invoice> invoice = inFileDataBase.getInvoice(2L);
 
         //Then
-        verify(fileHelper,atLeast(1)).isExist();
+        verify(fileHelper, atLeast(1)).isExist();
         assertFalse(invoice.isPresent());
     }
 
@@ -301,12 +304,14 @@ class InFileDatabaseTest {
     @Test
     void shouldReturnEmptyCollectionForEmptyDatabaseDuringGettingAllInvoices() throws IOException, DatabaseOperationException {
         //Given
+        when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.isEmpty()).thenReturn(true);
 
         //When
         Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
 
         //Then
+        verify(fileHelper).isExist();
         verify(fileHelper).isEmpty();
         assertTrue(invoices.isEmpty());
     }
@@ -321,6 +326,7 @@ class InFileDatabaseTest {
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
+        when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
         Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
@@ -329,6 +335,8 @@ class InFileDatabaseTest {
         Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
 
         //Then
+        verify(fileHelper).isExist();
+        verify(fileHelper).isEmpty();
         verify(fileHelper).readLinesFromFile();
         assertFalse(invoices.isEmpty());
         assertEquals(expected, invoices);
@@ -375,6 +383,7 @@ class InFileDatabaseTest {
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
+        when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
         Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
@@ -383,6 +392,7 @@ class InFileDatabaseTest {
         long actual = inFileDataBase.countInvoices();
 
         //Then
+        verify(fileHelper).isExist();
         verify(fileHelper).isEmpty();
         verify(fileHelper).readLinesFromFile();
         assertEquals(expected.size(), actual);

@@ -47,9 +47,7 @@ public class InFileDatabase implements Database {
     @Override
     public synchronized void deleteInvoice(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
-        // TODO: 10/04/2019 what if invoice does not exist - Map<Long,Boolean> (Big Omega=1) as a cache, exist method (Big Omega = n),
         try {
-            // TODO: 11/04/2019 fileHelper(Long id) - deserialize line by line?
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (int line = 0; line < invoicesAsJson.size(); line++) {
                 Invoice invoice = mapper.readValue(invoicesAsJson.get(line), Invoice.class);
@@ -61,7 +59,7 @@ public class InFileDatabase implements Database {
         } catch (IOException e) {
             throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
-        throw new DatabaseOperationException("Invoice id ......");
+        throw new DatabaseOperationException(String.format("Delete invoice failed. Invoice with following id does not exist: %d", id));
     }
 
     @Override
@@ -131,7 +129,6 @@ public class InFileDatabase implements Database {
                 }
             }
         } catch (IOException e) {
-            // TODO: 11/04/2019  root exception -
             throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
         return false;
@@ -151,7 +148,7 @@ public class InFileDatabase implements Database {
             }
         }
         Invoice insertedInvoice;
-            insertedInvoice = new Invoice(getNextId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
+        insertedInvoice = new Invoice(getNextId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
         try {
             fileHelper.writeLine(mapper.writeValueAsString(insertedInvoice));
         } catch (IOException e) {

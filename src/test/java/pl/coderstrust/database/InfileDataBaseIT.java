@@ -25,7 +25,6 @@ import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 @SpringBootTest
-// TODO: 11/04/2019  is it ok ? 
 @TestPropertySource(locations = "classpath:test.properties")
 class InfileDataBaseIT {
 
@@ -181,8 +180,6 @@ class InfileDataBaseIT {
         assertEquals(expected, inFileDataBase.getInvoice(3L).get());
     }
 
-    // TODO: 11/04/2019  fails from time to time - access denied
-    //@RepeatedTest(1000)
     @Test
     void shouldUpdateInvoice() throws DatabaseOperationException {
         //Given
