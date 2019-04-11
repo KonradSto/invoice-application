@@ -5,7 +5,6 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Invoice;
 
 @Service
-@ConfigurationProperties(prefix = "spring.mail")
 public class InvoiceEmailService {
 
     private InvoicePdfService invoicePdfService;
