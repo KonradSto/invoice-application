@@ -180,6 +180,7 @@ class InfileDataBaseIT {
         assertEquals(expected, inFileDataBase.getInvoice(3L).get());
     }
 
+    //@RepeatedTest(1000)
     @Test
     void shouldUpdateInvoice() throws DatabaseOperationException {
         //Given
