@@ -55,11 +55,13 @@ public class InFileDatabase implements Database {
                 Invoice invoice = mapper.readValue(invoicesAsJson.get(line), Invoice.class);
                 if (id.equals(invoice.getId())) {
                     fileHelper.removeLine(++line);
+                    return;
                 }
             }
         } catch (IOException e) {
             throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
+        throw new DatabaseOperationException("Invoice id ......");
     }
 
     @Override
@@ -84,6 +86,9 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
+        if (!fileHelper.isExist()) {
+            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
+        }
         List<Invoice> invoices = new ArrayList<>();
         try {
             if (fileHelper.isEmpty()) {
@@ -146,11 +151,7 @@ public class InFileDatabase implements Database {
             }
         }
         Invoice insertedInvoice;
-        try {
             insertedInvoice = new Invoice(getNextId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
-        } catch (IOException e) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
-        }
         try {
             fileHelper.writeLine(mapper.writeValueAsString(insertedInvoice));
         } catch (IOException e) {
@@ -173,29 +174,7 @@ public class InFileDatabase implements Database {
         }
     }
 
-    private Long getNextId() throws IOException {
-        final String errorMessage = "An error occurred during getting id for nextId";
-        if (!fileHelper.isExist()) {
-            try {
-                fileHelper.create();
-                return 1L;
-            } catch (IOException e) {
-                throw new IOException(errorMessage);
-            }
-        }
-        try {
-            // TODO: 10/04/2019  define in properties empty string - maybe put it to application properties and inject here and in other places instead declaring final
-
-            if (fileHelper.isEmpty() || fileHelper.readLastLine().equals("")) {
-                return 1L;
-            }
-        } catch (IOException e) {
-            throw new IOException(errorMessage);
-        }
-        try {
-            return this.countInvoices() + 1;
-        } catch (DatabaseOperationException e) {
-            throw new IOException(errorMessage);
-        }
+    private Long getNextId() throws DatabaseOperationException {
+        return this.countInvoices() + 1;
     }
 }
