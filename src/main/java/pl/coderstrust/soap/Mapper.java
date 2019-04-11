@@ -10,6 +10,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.coderstrust.controller.InvoiceController;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.model.InvoiceEntry;
@@ -18,7 +21,10 @@ import pl.coderstrust.soap.bindingclasses.Entries;
 
 class Mapper {
 
+    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
+
     static Invoice mapInvoice(pl.coderstrust.soap.bindingclasses.Invoice invoiceToMap) {
+        log.debug("Mapping generated SOAP Invoice to model Invoice");
         return new Invoice(
             invoiceToMap.getId(),
             invoiceToMap.getNumber(),
@@ -31,6 +37,7 @@ class Mapper {
     }
 
     static pl.coderstrust.soap.bindingclasses.Invoice mapInvoice(Invoice invoiceToMap) throws DatatypeConfigurationException {
+        log.debug("Mapping model Invoice to generated SOAP Invoice");
         pl.coderstrust.soap.bindingclasses.Invoice mappedInvoice = new pl.coderstrust.soap.bindingclasses.Invoice();
         mappedInvoice.setId(invoiceToMap.getId());
         mappedInvoice.setNumber(invoiceToMap.getNumber());
@@ -47,6 +54,7 @@ class Mapper {
     }
 
     private static List<InvoiceEntry> mapInvoiceEntries(List<pl.coderstrust.soap.bindingclasses.InvoiceEntry> invoiceEntriesToMap) {
+        log.debug("Mapping generated SOAP List of InvoiceEntries to model List of InvoiceEntries");
         List<InvoiceEntry> mappedInvoiceEntries = new ArrayList<>();
         for (pl.coderstrust.soap.bindingclasses.InvoiceEntry entry : invoiceEntriesToMap) {
             mappedInvoiceEntries.add(mapInvoiceEntry(entry));
@@ -55,6 +63,7 @@ class Mapper {
     }
 
     private static InvoiceEntry mapInvoiceEntry(pl.coderstrust.soap.bindingclasses.InvoiceEntry invoiceEntryToMap) {
+        log.debug("Mapping generated SOAP InvoiceEntry to model InvoiceEntry");
         return new InvoiceEntry(
             invoiceEntryToMap.getId(),
             invoiceEntryToMap.getProductName(),
@@ -68,19 +77,21 @@ class Mapper {
     }
 
     private static pl.coderstrust.soap.bindingclasses.InvoiceEntry mapInvoiceEntry(InvoiceEntry invoiceEntryToMap) {
+        log.debug("Mapping model InvoiceEntry to generated SOAP InvoiceEntry");
         pl.coderstrust.soap.bindingclasses.InvoiceEntry mappedInvoiceEntry = new pl.coderstrust.soap.bindingclasses.InvoiceEntry();
         mappedInvoiceEntry.setId(invoiceEntryToMap.getId());
         mappedInvoiceEntry.setProductName(invoiceEntryToMap.getProductName());
         mappedInvoiceEntry.setQuantity(invoiceEntryToMap.getQuantity());
         mappedInvoiceEntry.setUnit(invoiceEntryToMap.getUnit());
         mappedInvoiceEntry.setPrice(invoiceEntryToMap.getPrice());
-        mappedInvoiceEntry.setNettValue(invoiceEntryToMap.getNettValue());
+        mappedInvoiceEntry.setNettValue(invoiceEntryToMap.getNetValue());
         mappedInvoiceEntry.setGrossValue(invoiceEntryToMap.getGrossValue());
         mappedInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingclasses.Vat.valueOf(invoiceEntryToMap.getVatRate().toString()));
         return mappedInvoiceEntry;
     }
 
     private static Company mapBuyer(pl.coderstrust.soap.bindingclasses.Company buyerToMap) {
+        log.debug("Mapping generated SOAP Buyer to model Buyer");
         return new Company(
             buyerToMap.getId(),
             buyerToMap.getName(),
@@ -93,6 +104,7 @@ class Mapper {
     }
 
     private static pl.coderstrust.soap.bindingclasses.Company mapBuyer(Company buyerToMap) {
+        log.debug("Mapping model Buyer to generated SOAP Buyer");
         pl.coderstrust.soap.bindingclasses.Company mappedBuyer = new pl.coderstrust.soap.bindingclasses.Company();
         mappedBuyer.setId(buyerToMap.getId());
         mappedBuyer.setName(buyerToMap.getName());
@@ -105,6 +117,7 @@ class Mapper {
     }
 
     private static Company mapSeller(pl.coderstrust.soap.bindingclasses.Company sellerToMap) {
+        log.debug("Mapping generated SOAP Seller to model Seller");
         return new Company(
             sellerToMap.getId(),
             sellerToMap.getName(),
@@ -117,6 +130,7 @@ class Mapper {
     }
 
     private static pl.coderstrust.soap.bindingclasses.Company mapSeller(Company sellerToMap) {
+        log.debug("Mapping model Seller to generated SOAP Seller");
         pl.coderstrust.soap.bindingclasses.Company responseSeller = new pl.coderstrust.soap.bindingclasses.Company();
         responseSeller.setId(sellerToMap.getId());
         responseSeller.setName(sellerToMap.getName());
@@ -129,6 +143,7 @@ class Mapper {
     }
 
     static List<pl.coderstrust.soap.bindingclasses.Invoice> mapInvoices(Collection<Invoice> invoicesToMap) throws DatatypeConfigurationException {
+        log.debug("Mapping model List of Invoices to generated SOAP List of Invoices");
         List<pl.coderstrust.soap.bindingclasses.Invoice> mappedInvoices = new ArrayList<>();
         for (Invoice invoiceToMap : invoicesToMap) {
             mappedInvoices.add(mapInvoice(invoiceToMap));
@@ -137,6 +152,7 @@ class Mapper {
     }
 
     static XMLGregorianCalendar mapLocalDateToXmlGregorianCalendar(LocalDate localDateToMap) throws DatatypeConfigurationException {
+        log.debug("Converting LocalDate date to XMLGregorianCalendar date");
         GregorianCalendar gregorianDate = new GregorianCalendar();
         gregorianDate.setTime(Date.valueOf(localDateToMap));
         XMLGregorianCalendar xmlGregorianDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianDate);
@@ -145,6 +161,7 @@ class Mapper {
     }
 
     static LocalDate mapXmlGregorianCalendarToLocalDate(XMLGregorianCalendar gregorianDateToMap) {
+        log.debug("Converting XMLGregorianCalendar date to LocalDate date");
         return gregorianDateToMap.toGregorianCalendar().toZonedDateTime().toLocalDate();
     }
 }

@@ -115,6 +115,7 @@
           </execution>
         </executions>
         <configuration>
+          <excludes>/pl/coderstrust/soap/bindingclasses/**</excludes>
           <failsOnError>true</failsOnError>
           <failOnViolation>true</failOnViolation>
           <violationSeverity>warning</violationSeverity>
