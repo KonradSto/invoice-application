@@ -20,8 +20,7 @@ import pl.coderstrust.configuration.InFileDatabaseProperties;
 @ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "in-file")
 @Component
 public class FileHelper {
-    static final String EMPTY_STRING = "";
-
+    private static final String EMPTY_STRING = "";
     private File file;
 
     public FileHelper(InFileDatabaseProperties properties) {

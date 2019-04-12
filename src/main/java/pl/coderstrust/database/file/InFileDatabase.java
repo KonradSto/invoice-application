@@ -26,7 +26,6 @@ public class InFileDatabase implements Database {
     private static final String EXCEPTION_MESSAGE = "An error occurred during reading invoices from inFile database";
     private static final String DATABASE_NOT_EXIST = "InFileDatabase does not exist";
     private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
-    private final InFileDatabaseProperties inFileDatabaseProperties;
     private ObjectMapper mapper;
     private FileHelper fileHelper;
     private String message;
@@ -39,7 +38,6 @@ public class InFileDatabase implements Database {
         ArgumentValidator.ensureNotNull(fileHelper, "fileHelper");
         this.fileHelper = fileHelper;
         ArgumentValidator.ensureNotNull(inFileDatabaseProperties, "inFileDatabaseProperties");
-        this.inFileDatabaseProperties = inFileDatabaseProperties;
     }
 
     @Override

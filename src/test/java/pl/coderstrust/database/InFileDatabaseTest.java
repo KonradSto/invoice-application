@@ -166,7 +166,7 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldAddInvoiceToEmptyDatabase() throws IOException, DatabaseOperationException {
+    void shouldAddInvoiceToEmptyDatabase() throws DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         when(fileHelper.isExist()).thenReturn(true);
@@ -328,7 +328,7 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldReturnEmptyCollectionForEmptyDatabaseDuringGettingAllInvoices() throws IOException, DatabaseOperationException {
+    void shouldReturnEmptyCollectionForEmptyDatabaseDuringGettingAllInvoices() throws DatabaseOperationException {
         //Given
         when(fileHelper.isExist()).thenReturn(true);
 
