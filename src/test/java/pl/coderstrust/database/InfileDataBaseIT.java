@@ -267,7 +267,7 @@ class InfileDataBaseIT {
     }
 
     @Test
-    void shouldThrowExceptionDuringDeletingNonExistingInvoice() throws IOException, DatabaseOperationException {
+    void shouldThrowExceptionDuringDeletingNonExistingInvoice() throws DatabaseOperationException {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
         inFileDataBase.saveInvoice(invoice1);
@@ -321,7 +321,7 @@ class InfileDataBaseIT {
     }
 
     @Test
-    void shouldThrowExceptionForNotExistingDatabaseDuringGettingAllInvoices() throws IOException, DatabaseOperationException {
+    void shouldThrowExceptionForNotExistingDatabaseDuringGettingAllInvoices() throws IOException {
         fileHelper.delete();
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.getAllInvoices());
     }
