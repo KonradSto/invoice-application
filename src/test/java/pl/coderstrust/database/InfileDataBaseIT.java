@@ -396,7 +396,7 @@ class InfileDataBaseIT {
     }
 
     @Test
-    void shouldReturnCorrectNextIdForEmptyDatabase() throws DatabaseOperationException {
+    void shouldReturnCorrectNextIdForEmptyDatabase()  {
         //Given
         Long expected = 1L;
 

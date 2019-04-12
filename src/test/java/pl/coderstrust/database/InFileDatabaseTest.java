@@ -138,7 +138,7 @@ class InFileDatabaseTest {
     void shouldCreateInFileDatabaseWhenAddingInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
         //Given
         final Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
-        when(fileHelper.isExist()).thenReturn(false,true);
+        when(fileHelper.isExist()).thenReturn(false, true);
         doNothing().when(fileHelper).create();
 
         //When
@@ -150,7 +150,7 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldAddInvoiceToNotExistentDatabase() throws  DatabaseOperationException {
+    void shouldAddInvoiceToNotExistentDatabase() throws DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         when(fileHelper.isExist()).thenReturn(false);
@@ -329,10 +329,10 @@ class InFileDatabaseTest {
         when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
-        Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
+        final Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
         //When
-        Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
+        final Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
 
         //Then
         verify(fileHelper).isExist();
@@ -386,10 +386,10 @@ class InFileDatabaseTest {
         when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
-        Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
+        final Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
         //When
-        long actual = inFileDataBase.countInvoices();
+        final long actual = inFileDataBase.countInvoices();
 
         //Then
         verify(fileHelper).isExist();
