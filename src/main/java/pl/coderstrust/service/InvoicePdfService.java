@@ -30,7 +30,7 @@ public class InvoicePdfService {
     private String message;
 
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
-        log.debug("Getting an invoice as PDF");
+        log.debug("Getting an invoice as PDF by id: {}", invoice.getId());
         ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -43,7 +43,7 @@ public class InvoicePdfService {
             invoicePdf.close();
             return byteArrayOutputStream.toByteArray();
         } catch (DocumentException e) {
-            message = "An error occurred during getting PDF file of invoice.";
+            message = "An error occurred during getting invoice as PDF.";
             log.error(message, e);
             throw new ServiceOperationException(message, e);
         }

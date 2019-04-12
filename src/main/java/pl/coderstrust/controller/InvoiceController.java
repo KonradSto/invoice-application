@@ -250,8 +250,10 @@ public class InvoiceController {
         @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoiceAsPdf(@PathVariable Long id) {
         try {
+            log.debug("Getting an invoice as PDF by id: {}", id);
             Optional<Invoice> invoice = invoiceService.getInvoice(id);
             if (!invoice.isPresent()) {
+                log.error("An error occurred during getting an invoice as PDF, invoice not found for passed id: {}", id);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             byte[] invoiceAsPdf = invoicePdfService.getInvoiceAsPdf(invoice.get());
@@ -259,6 +261,7 @@ public class InvoiceController {
             responseHeaders.setContentType(MediaType.APPLICATION_PDF);
             return ResponseEntity.ok().headers(responseHeaders).body(invoiceAsPdf);
         } catch (Exception e) {
+            log.error("An error occurred during getting invoice as PDF.", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
