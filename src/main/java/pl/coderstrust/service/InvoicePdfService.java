@@ -14,6 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Company;
 import pl.coderstrust.model.Invoice;
@@ -24,7 +26,11 @@ import pl.coderstrust.utils.ArgumentValidator;
 @Service
 public class InvoicePdfService {
 
+    private static Logger log = LoggerFactory.getLogger(InvoicePdfService.class);
+    private String message;
+
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
+        log.debug("Getting an invoice as PDF");
         ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -36,8 +42,10 @@ public class InvoicePdfService {
             addEntriesSection(invoicePdf, invoice);
             invoicePdf.close();
             return byteArrayOutputStream.toByteArray();
-        } catch (DocumentException ex) {
-            throw new ServiceOperationException("An error occurred during getting PDF file of invoice", ex);
+        } catch (DocumentException e) {
+            message = "An error occurred during getting PDF file of invoice.";
+            log.error(message, e);
+            throw new ServiceOperationException(message, e);
         }
     }
 

@@ -17,7 +17,7 @@ import pl.coderstrust.model.Invoice;
 @Repository
 public class InMemoryDatabase implements Database {
 
-    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
+    private static Logger log = LoggerFactory.getLogger(InMemoryDatabase.class);
 
     private Map<Long, Invoice> invoiceMap;
     private Long nextId = 1L;

@@ -17,7 +17,7 @@ class InvoicePdfServiceTest {
     private InvoicePdfService invoicePdfService;
 
     @BeforeEach
-    private void setup() throws IOException, DocumentException {
+    private void setup() {
         invoicePdfService = new InvoicePdfService();
     }
 

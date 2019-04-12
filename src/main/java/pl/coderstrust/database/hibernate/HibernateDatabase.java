@@ -18,7 +18,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 @Repository
 public class HibernateDatabase implements Database {
 
-    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
+    private static Logger log = LoggerFactory.getLogger(HibernateDatabase.class);
 
     @Autowired
     private InvoiceRepository invoiceRepository;

@@ -17,7 +17,7 @@ import pl.coderstrust.utils.ArgumentValidator;
 @Service
 public class InvoiceService {
 
-    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
+    private static Logger log = LoggerFactory.getLogger(InvoiceService.class);
     private Database database;
     private String message;
 
