@@ -62,7 +62,7 @@ public class InvoiceEndpoint {
                 pl.coderstrust.soap.bindingclasses.Invoice resultInvoice = Mapper.mapInvoice(invoice);
                 return createSuccessSingleInvoiceResponse(resultInvoice);
             }
-            message = "No existing invoice with given Id";
+            message = "Invoice with given id does not exist";
             log.error(message);
             return createErrorSingleInvoiceResponse(message);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
