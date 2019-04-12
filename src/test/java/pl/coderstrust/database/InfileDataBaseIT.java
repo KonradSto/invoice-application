@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.util.ReflectionTestUtils.invokeMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -103,7 +102,7 @@ class InfileDataBaseIT {
     }
 
     @Test
-    void shouldReturnFalseForEmptyInFileDatabaseDuringCheckingInvoiceExistence() throws IOException, DatabaseOperationException {
+    void shouldReturnFalseForEmptyInFileDatabaseDuringCheckingForInvoiceExistence() throws IOException, DatabaseOperationException {
         //Given
         fileHelper.clear();
 
@@ -115,7 +114,7 @@ class InfileDataBaseIT {
     }
 
     @Test
-    void shouldCreateInFileDatabaseWhenAddingInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
+    void shouldCreateInFileDatabaseWhenAddingInvoiceToNotExistingDatabase() throws IOException, DatabaseOperationException {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         fileHelper.delete();
@@ -128,7 +127,7 @@ class InfileDataBaseIT {
     }
 
     @Test
-    void shouldAddInvoiceToNotExistentDatabase() throws IOException, DatabaseOperationException {
+    void shouldAddInvoiceToNotExistingDatabase() throws IOException, DatabaseOperationException {
         //Given
         fileHelper.delete();
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
@@ -268,6 +267,21 @@ class InfileDataBaseIT {
     }
 
     @Test
+    void shouldThrowExceptionDuringDeletingNonExistingInvoice() throws IOException, DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice1);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
+        inFileDataBase.saveInvoice(invoice2);
+        assertTrue(inFileDataBase.invoiceExists(1L));
+        assertTrue(inFileDataBase.invoiceExists(2L));
+        assertFalse(inFileDataBase.invoiceExists(3L));
+
+        //Then
+        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.deleteInvoice(3L));
+    }
+
+    @Test
     void shouldReturnEmptyOptionalDuringGettingNotExistingInvoice() throws DatabaseOperationException {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
@@ -280,6 +294,13 @@ class InfileDataBaseIT {
 
         //Then
         assertFalse(invoice.isPresent());
+    }
+
+
+    @Test
+    void shouldThrowExceptionForNotExistingDatabaseDuringGettingInvoice() throws IOException {
+        fileHelper.delete();
+        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.getInvoice(1L));
     }
 
     @Test
@@ -297,6 +318,12 @@ class InfileDataBaseIT {
         //Then
         assertTrue(invoice.isPresent());
         assertEquals(expected, invoice.get());
+    }
+
+    @Test
+    void shouldThrowExceptionForNotExistingDatabaseDuringGettingAllInvoices() throws IOException, DatabaseOperationException {
+        fileHelper.delete();
+        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.getAllInvoices());
     }
 
     @Test
@@ -374,58 +401,5 @@ class InfileDataBaseIT {
 
         //Then
         assertEquals(3, invoiceCount);
-    }
-
-    @Test
-    void shouldReturnCorrectNextIdForNonEmptyDatabase() throws DatabaseOperationException {
-        //Given
-        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
-        inFileDataBase.saveInvoice(invoice1);
-        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
-        inFileDataBase.saveInvoice(invoice2);
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
-        inFileDataBase.saveInvoice(invoice3);
-        Long expected = 4L;
-
-        //When
-        InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
-
-        //Then
-        assertEquals(expected, invokeMethod(inFileDatabase, "getNextId"));
-        ;
-    }
-
-    @Test
-    void shouldReturnCorrectNextIdForEmptyDatabase()  {
-        //Given
-        Long expected = 1L;
-
-        //When
-        InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
-
-        //Then
-        assertEquals(expected, invokeMethod(inFileDatabase, "getNextId"));
-    }
-
-    @Test
-    void shouldReturnCorrectNextIdForNonEmptyDatabaseWhenInvoiceUpdated() throws DatabaseOperationException {
-        //Given
-        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithoutId();
-        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithoutId();
-        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithoutId();
-        inFileDataBase.saveInvoice(invoice1);
-        inFileDataBase.saveInvoice(invoice2);
-        inFileDataBase.saveInvoice(invoice3);
-        Invoice invoice1Update = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
-        inFileDataBase.saveInvoice(invoice1Update);
-        assertEquals(3, inFileDataBase.countInvoices());
-        Long expected = 4L;
-
-        //When
-        InFileDatabase inFileDatabase = new InFileDatabase(mapper, fileHelper, inFileDatabaseProperties);
-
-        //Then
-        // TODO: 11/04/2019  is it good practice to use reflection here?
-        assertEquals(expected, invokeMethod(inFileDatabase, "getNextId"));
     }
 }

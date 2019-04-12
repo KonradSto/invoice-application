@@ -170,7 +170,6 @@ class InFileDatabaseTest {
         //Given
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         when(fileHelper.isExist()).thenReturn(true);
-        when(fileHelper.isEmpty()).thenReturn(true);
 
         //When
         Invoice returned = inFileDataBase.saveInvoice(invoice);
@@ -178,7 +177,6 @@ class InFileDatabaseTest {
 
         //Then
         verify(fileHelper, atLeast(1)).isExist();
-        verify(fileHelper, atLeast(1)).isEmpty();
         assertEquals(inserted, returned);
     }
 
@@ -191,10 +189,10 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenCheckingIfDatabaseEmptyDuringAddingInvoice() throws IOException {
+    void shouldThrowExceptionWhenWritingJsonToDatabaseDuringAddingInvoice() throws IOException {
         Invoice invoice = InvoiceGenerator.getRandomInvoiceWithoutId();
         when(fileHelper.isExist()).thenReturn(true);
-        doThrow(new IOException()).when(fileHelper).isEmpty();
+        doThrow(new IOException()).when(fileHelper).writeLine(mapper.writeValueAsString(Mockito.anyString()));
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.saveInvoice(invoice));
     }
 
@@ -243,6 +241,20 @@ class InFileDatabaseTest {
     }
 
     @Test
+    void shouldThrowExceptionDuringAttemptOfDeletingNonExistentInvoice() throws IOException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
+        String invoice1AsJson = mapper.writeValueAsString(invoice1);
+        Invoice invoice2 = InvoiceGenerator.getRandomInvoiceWithSpecificId(2L);
+        String invoice2AsJson = mapper.writeValueAsString(invoice2);
+        List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson);
+        when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
+
+        //Then
+        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.deleteInvoice(3L));
+    }
+
+    @Test
     void shouldDeleteInvoice() throws IOException, DatabaseOperationException {
         //Given
         Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
@@ -267,16 +279,9 @@ class InFileDatabaseTest {
     }
 
     @Test
-    void shouldReturnEmptyOptionalDuringGettingInvoiceFromNotExistingDatabase() throws IOException, DatabaseOperationException {
-        //Given
-        when(!fileHelper.isExist()).thenReturn(false);
-
-        //When
-        Optional<Invoice> invoice = inFileDataBase.getInvoice(2L);
-
-        //Then
-        verify(fileHelper, atLeast(1)).isExist();
-        assertFalse(invoice.isPresent());
+    void shouldThrowExceptionForNotExistingDatabaseDuringGettingInvoice() throws IOException {
+        when(fileHelper.readLinesFromFile()).thenThrow(IOException.class);
+        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.getInvoice(1L));
     }
 
     @Test
@@ -302,17 +307,36 @@ class InFileDatabaseTest {
     }
 
     @Test
+    void shouldReturnOptionalEmptyForNotExistingInvoice() throws IOException, DatabaseOperationException {
+        //Given
+        Invoice invoice1 = InvoiceGenerator.getRandomInvoiceWithSpecificId(1L);
+        Invoice invoice3 = InvoiceGenerator.getRandomInvoiceWithSpecificId(3L);
+        Invoice invoice4 = InvoiceGenerator.getRandomInvoiceWithSpecificId(4L);
+        String invoice1AsJson = mapper.writeValueAsString(invoice1);
+        String invoice3AsJson = mapper.writeValueAsString(invoice3);
+        String invoice4AsJson = mapper.writeValueAsString(invoice4);
+        List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice3AsJson, invoice4AsJson);
+        when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
+        when(fileHelper.isExist()).thenReturn(true);
+
+        //When
+        Optional<Invoice> invoice = inFileDataBase.getInvoice(2L);
+
+        //Then
+        verify(fileHelper).readLinesFromFile();
+        assertFalse(invoice.isPresent());
+    }
+
+    @Test
     void shouldReturnEmptyCollectionForEmptyDatabaseDuringGettingAllInvoices() throws IOException, DatabaseOperationException {
         //Given
         when(fileHelper.isExist()).thenReturn(true);
-        when(fileHelper.isEmpty()).thenReturn(true);
 
         //When
         Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
 
         //Then
         verify(fileHelper).isExist();
-        verify(fileHelper).isEmpty();
         assertTrue(invoices.isEmpty());
     }
 
@@ -327,7 +351,6 @@ class InFileDatabaseTest {
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
         when(fileHelper.isExist()).thenReturn(true);
-        when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
         final Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
@@ -336,28 +359,27 @@ class InFileDatabaseTest {
 
         //Then
         verify(fileHelper).isExist();
-        verify(fileHelper).isEmpty();
         verify(fileHelper).readLinesFromFile();
         assertFalse(invoices.isEmpty());
         assertEquals(expected, invoices);
     }
 
     @Test
-    void shouldThrowExceptionForNotExistingDatabaseWhenCheckingDatabaseIsEmptyDuringGettingAllInvoices() throws IOException {
-        when(fileHelper.isEmpty()).thenThrow(IOException.class);
+    void shouldThrowExceptionForNotExistingDatabaseWhenCheckingDatabaseExistsDuringGettingAllInvoices() {
+        when(fileHelper.isExist()).thenReturn(false);
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.getAllInvoices());
     }
 
     @Test
     void shouldThrowExceptionForNotExistingDatabaseDuringGettingAllInvoices() throws IOException {
-        when(fileHelper.isEmpty()).thenReturn(false);
+        when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.readLinesFromFile()).thenThrow(IOException.class);
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.getAllInvoices());
     }
 
     @Test
-    void shouldThrowExceptionForNotExistingDatabaseDuringDeletingAllInvoices() {
-        when(!fileHelper.isExist()).thenReturn(false);
+    void shouldThrowExceptionForNotExistingDatabaseDuringDeletingAllInvoices() throws IOException {
+        doThrow(IOException.class).when(fileHelper).clear();
         assertThrows(DatabaseOperationException.class, () -> inFileDataBase.deleteAllInvoices());
     }
 
@@ -384,7 +406,6 @@ class InFileDatabaseTest {
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
         when(fileHelper.isExist()).thenReturn(true);
-        when(fileHelper.isEmpty()).thenReturn(false);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
         final Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
@@ -393,7 +414,6 @@ class InFileDatabaseTest {
 
         //Then
         verify(fileHelper).isExist();
-        verify(fileHelper).isEmpty();
         verify(fileHelper).readLinesFromFile();
         assertEquals(expected.size(), actual);
     }

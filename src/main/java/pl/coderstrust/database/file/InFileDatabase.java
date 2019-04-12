@@ -66,9 +66,6 @@ public class InFileDatabase implements Database {
     public synchronized Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(id, "id");
         try {
-            if (!fileHelper.isExist()) {
-                return Optional.empty();
-            }
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (String invoiceAsJson : invoicesAsJson) {
                 Invoice invoice = mapper.readValue(invoiceAsJson, Invoice.class);
@@ -89,9 +86,6 @@ public class InFileDatabase implements Database {
         }
         List<Invoice> invoices = new ArrayList<>();
         try {
-            if (fileHelper.isEmpty()) {
-                return invoices;
-            }
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (String invoiceAsJson : invoicesAsJson) {
                 invoices.add(mapper.readValue(invoiceAsJson, Invoice.class));
@@ -104,9 +98,6 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized void deleteAllInvoices() throws DatabaseOperationException {
-        if (!fileHelper.isExist()) {
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
-        }
         try {
             fileHelper.clear();
         } catch (IOException e) {
