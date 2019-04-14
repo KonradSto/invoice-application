@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
@@ -29,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderstrust.model.Invoice;
-import pl.coderstrust.service.InvoicePdfService;
 import pl.coderstrust.service.InvoiceEmailService;
+import pl.coderstrust.service.InvoicePdfService;
 import pl.coderstrust.service.InvoiceService;
 import pl.coderstrust.utils.ArgumentValidator;
 
@@ -50,6 +49,7 @@ public class InvoiceController {
         log.debug("Launching to REST service");
         ArgumentValidator.ensureNotNull(invoiceService, "invoiceService");
         ArgumentValidator.ensureNotNull(invoicePdfService, "invoicePdfService");
+        ArgumentValidator.ensureNotNull(invoiceEmailService, "invoiceEmailService");
         this.invoiceService = invoiceService;
         this.invoicePdfService = invoicePdfService;
         this.invoiceEmailService = invoiceEmailService;
