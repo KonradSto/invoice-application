@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +27,9 @@ class Mapper {
 
     static Invoice mapInvoice(pl.coderstrust.soap.bindingclasses.Invoice invoiceToMap) {
         log.debug("Mapping generated SOAP Invoice to model Invoice");
+        Long id = invoiceToMap.getId() == null ? null : invoiceToMap.getId().getValue();
         return new Invoice(
-            invoiceToMap.getId(),
+            id,
             invoiceToMap.getNumber(),
             mapXmlGregorianCalendarToLocalDate(invoiceToMap.getIssuedDate()),
             mapXmlGregorianCalendarToLocalDate(invoiceToMap.getDueDate()),
@@ -39,7 +42,8 @@ class Mapper {
     static pl.coderstrust.soap.bindingclasses.Invoice mapInvoice(Invoice invoiceToMap) throws DatatypeConfigurationException {
         log.debug("Mapping model Invoice to generated SOAP Invoice");
         pl.coderstrust.soap.bindingclasses.Invoice mappedInvoice = new pl.coderstrust.soap.bindingclasses.Invoice();
-        mappedInvoice.setId(invoiceToMap.getId());
+        JAXBElement<Long> id = new JAXBElement<>(QName.valueOf("ns2:id"), Long.class, invoiceToMap.getId());
+        mappedInvoice.setId(id);
         mappedInvoice.setNumber(invoiceToMap.getNumber());
         mappedInvoice.setIssuedDate(mapLocalDateToXmlGregorianCalendar((invoiceToMap.getIssuedDate())));
         mappedInvoice.setDueDate(mapLocalDateToXmlGregorianCalendar(invoiceToMap.getDueDate()));

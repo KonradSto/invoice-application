@@ -111,7 +111,7 @@
 
   <xs:complexType name="invoice">
     <xs:sequence>
-      <xs:element name="id" type="xs:long"/>
+      <xs:element name="id" type="xs:long" nillable="true" minOccurs="0" form="qualified" />
       <xs:element name="number" type="xs:string"/>
       <xs:element name="issuedDate" type="xs:date"/>
       <xs:element name="dueDate" type="xs:date"/>

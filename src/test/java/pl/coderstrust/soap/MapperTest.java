@@ -10,9 +10,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,7 +90,8 @@ class MapperTest {
 
     private pl.coderstrust.soap.bindingclasses.Invoice convertModelInvoiceToSoapInvoice(Invoice invoice) throws DatatypeConfigurationException {
         pl.coderstrust.soap.bindingclasses.Invoice soapInvoice = new pl.coderstrust.soap.bindingclasses.Invoice();
-        soapInvoice.setId(invoice.getId());
+        JAXBElement<Long> id = new JAXBElement<>(QName.valueOf("ns2:id"), Long.class, invoice.getId());
+        soapInvoice.setId(id);
         soapInvoice.setNumber(invoice.getNumber());
         soapInvoice.setIssuedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(
                 invoice.getIssuedDate().getYear(),
