@@ -25,7 +25,7 @@ import pl.coderstrust.model.Invoice;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:test.properties")
-class InfileDataBaseIT {
+class InFileDatabaseIntegrationTests {
 
     @Autowired
     private ObjectMapper mapper;

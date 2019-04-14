@@ -32,7 +32,7 @@ public class InFileDatabase implements Database {
 
     @Autowired
     public InFileDatabase(ObjectMapper mapper, FileHelper fileHelper, InFileDatabaseProperties inFileDatabaseProperties) {
-        log.debug("Launching to InFileDatabase");
+        log.debug("Load InFileDatabase");
         ArgumentValidator.ensureNotNull(mapper, "mapper");
         this.mapper = mapper;
         ArgumentValidator.ensureNotNull(fileHelper, "fileHelper");
@@ -44,8 +44,10 @@ public class InFileDatabase implements Database {
     public synchronized Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
         ArgumentValidator.ensureNotNull(invoice, "invoice");
         if (invoice.getId() == null) {
+            log.debug("Inserting invoice");
             return insertInvoice(invoice);
         }
+        log.debug("Updating invoice");
         return update(invoice);
     }
 
@@ -93,10 +95,6 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
-        if (!fileHelper.isExist()) {
-            log.error(DATABASE_NOT_EXIST);
-            throw new DatabaseOperationException(DATABASE_NOT_EXIST);
-        }
         List<Invoice> invoices = new ArrayList<>();
         try {
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
@@ -151,10 +149,11 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
-        log.debug("Saving invoice: {}", invoice);
+        log.debug("Adding invoice: {}", invoice);
         if (!fileHelper.isExist()) {
             try {
                 fileHelper.create();
+                log.debug("Invoice: {} successfully added", invoice);
             } catch (IOException e) {
                 log.error(DATABASE_NOT_EXIST);
                 throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
@@ -190,7 +189,6 @@ public class InFileDatabase implements Database {
     }
 
     private Long getNextId() throws DatabaseOperationException {
-        log.debug("Getting id for next invoice");
         return this.countInvoices() + 1;
     }
 }

@@ -112,7 +112,7 @@ class InFileDatabaseTest {
 
     @Test
     void shouldThrowExceptionForNullInvoice() {
-        assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> inFileDataBase.saveInvoice(null));
+        assertThrows(IllegalArgumentException.class, () -> inFileDataBase.saveInvoice(null));
     }
 
     @Test
@@ -231,7 +231,7 @@ class InFileDatabaseTest {
 
     @Test
     void shouldThrowExceptionForNullInvoiceIdDuringDeletingInvoice() {
-        assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> inFileDataBase.deleteInvoice(null));
+        assertThrows(IllegalArgumentException.class, () -> inFileDataBase.deleteInvoice(null));
     }
 
     @Test
@@ -275,7 +275,7 @@ class InFileDatabaseTest {
 
     @Test
     void shouldThrowExceptionForNullInvoiceIdDuringGettingInvoice() {
-        assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> inFileDataBase.getInvoice(null));
+        assertThrows(IllegalArgumentException.class, () -> inFileDataBase.getInvoice(null));
     }
 
     @Test
@@ -329,14 +329,10 @@ class InFileDatabaseTest {
 
     @Test
     void shouldReturnEmptyCollectionForEmptyDatabaseDuringGettingAllInvoices() throws DatabaseOperationException {
-        //Given
-        when(fileHelper.isExist()).thenReturn(true);
-
         //When
         Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
 
         //Then
-        verify(fileHelper).isExist();
         assertTrue(invoices.isEmpty());
     }
 
@@ -350,7 +346,6 @@ class InFileDatabaseTest {
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
-        when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
         final Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
@@ -358,16 +353,9 @@ class InFileDatabaseTest {
         final Collection<Invoice> invoices = inFileDataBase.getAllInvoices();
 
         //Then
-        verify(fileHelper).isExist();
         verify(fileHelper).readLinesFromFile();
         assertFalse(invoices.isEmpty());
         assertEquals(expected, invoices);
-    }
-
-    @Test
-    void shouldThrowExceptionForNotExistingDatabaseWhenCheckingDatabaseExistsDuringGettingAllInvoices() {
-        when(fileHelper.isExist()).thenReturn(false);
-        assertThrows(DatabaseOperationException.class, () -> inFileDataBase.getAllInvoices());
     }
 
     @Test
@@ -405,7 +393,6 @@ class InFileDatabaseTest {
         String invoice2AsJson = mapper.writeValueAsString(invoice2);
         String invoice3AsJson = mapper.writeValueAsString(invoice3);
         List<String> invoicesAsJson = Arrays.asList(invoice1AsJson, invoice2AsJson, invoice3AsJson);
-        when(fileHelper.isExist()).thenReturn(true);
         when(fileHelper.readLinesFromFile()).thenReturn(invoicesAsJson);
         final Collection<Invoice> expected = Arrays.asList(invoice1, invoice2, invoice3);
 
@@ -413,7 +400,6 @@ class InFileDatabaseTest {
         final long actual = inFileDataBase.countInvoices();
 
         //Then
-        verify(fileHelper).isExist();
         verify(fileHelper).readLinesFromFile();
         assertEquals(expected.size(), actual);
     }
