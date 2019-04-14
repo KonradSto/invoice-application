@@ -28,7 +28,7 @@ import pl.coderstrust.soap.bindingclasses.GetInvoicesByDateRequest;
 import pl.coderstrust.soap.bindingclasses.GetInvoicesBySellerRequest;
 import pl.coderstrust.soap.bindingclasses.InvoiceResponse;
 import pl.coderstrust.soap.bindingclasses.InvoicesResponse;
-import pl.coderstrust.soap.bindingclasses.ResponseBase;
+import pl.coderstrust.soap.bindingclasses.Response;
 import pl.coderstrust.soap.bindingclasses.SaveInvoiceRequest;
 import pl.coderstrust.utils.ArgumentValidator;
 
@@ -131,7 +131,7 @@ public class InvoiceEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteInvoiceRequest")
     @ResponsePayload
-    public ResponseBase deleteInvoice(@RequestPayload DeleteInvoiceRequest request) {
+    public Response deleteInvoice(@RequestPayload DeleteInvoiceRequest request) {
         try {
             log.debug("Deleting invoice by id: {}", request.getId());
             Optional<Invoice> invoice = invoiceService.getInvoice(request.getId());
@@ -151,7 +151,7 @@ public class InvoiceEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteAllInvoicesRequest")
     @ResponsePayload
-    public ResponseBase deleteAllInvoices() {
+    public Response deleteAllInvoices() {
         try {
             log.debug("Deleting all invoices");
             invoiceService.deleteAllInvoices();
@@ -212,17 +212,17 @@ public class InvoiceEndpoint {
         return invoicesResponse;
     }
 
-    private ResponseBase createSuccessResponseBase() {
-        ResponseBase responseBase = new ResponseBase();
-        responseBase.setStatus(SUCCESS);
-        responseBase.setMessage("");
-        return responseBase;
+    private Response createSuccessResponseBase() {
+        Response response = new Response();
+        response.setStatus(SUCCESS);
+        response.setMessage("");
+        return response;
     }
 
-    private ResponseBase createErrorResponseBase(String errorMessage) {
-        ResponseBase responseBase = new ResponseBase();
-        responseBase.setStatus(FAILURE);
-        responseBase.setMessage(errorMessage);
-        return responseBase;
+    private Response createErrorResponseBase(String errorMessage) {
+        Response response = new Response();
+        response.setStatus(FAILURE);
+        response.setMessage(errorMessage);
+        return response;
     }
 }

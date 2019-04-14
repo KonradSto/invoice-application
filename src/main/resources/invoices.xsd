@@ -69,25 +69,38 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="invoiceResponse">
-    <xs:complexContent>
-      <xs:extension base="tns:responseBase">
-        <xs:sequence>
-          <xs:element name="invoice" type="tns:invoice"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
+  <xs:element name="response">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="tns:responseBase">
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
 
-  <xs:complexType name="invoicesResponse">
-    <xs:complexContent>
-      <xs:extension base="tns:responseBase">
-        <xs:sequence>
-          <xs:element name="invoices" type="tns:invoice" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
+  <xs:element name="invoiceResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="tns:responseBase">
+          <xs:sequence>
+            <xs:element name="invoice" type="tns:invoice"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="invoicesResponse">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="tns:responseBase">
+          <xs:sequence>
+            <xs:element name="invoices" type="tns:invoice" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
 
   <xs:simpleType name="responseStatus">
     <xs:restriction base="xs:string">
