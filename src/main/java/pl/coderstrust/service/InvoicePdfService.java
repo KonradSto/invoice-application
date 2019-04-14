@@ -29,7 +29,7 @@ public class InvoicePdfService {
     private static Logger log = LoggerFactory.getLogger(InvoicePdfService.class);
 
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
-        ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
+        ArgumentValidator.ensureNotNull(invoice, "Invoice");
         log.debug("Getting an invoice as PDF by id: {}", invoice.getId());
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
