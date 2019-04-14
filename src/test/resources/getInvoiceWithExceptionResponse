@@ -1,6 +1,4 @@
-<ns2:singleInvoiceResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
-  <ns2:response>
+<ns2:invoiceResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
     <ns2:status>FAILURE</ns2:status>
     <ns2:message>An error occurred during getting invoice</ns2:message>
-  </ns2:response>
-</ns2:singleInvoiceResponse>
+</ns2:invoiceResponse>

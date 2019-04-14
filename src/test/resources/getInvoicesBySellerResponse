@@ -1,12 +1,11 @@
-<ns2:InvoicesListResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
-  <ns2:response>
+<ns2:invoicesResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
     <ns2:status>SUCCESS</ns2:status>
     <ns2:message/>
     <ns2:invoices>
       <ns2:id>1</ns2:id>
       <ns2:number>1/2019</ns2:number>
       <ns2:issuedDate>2019-03-01Z</ns2:issuedDate>
-      <ns2:localDate>2019-03-20Z</ns2:localDate>
+      <ns2:dueDate>2019-03-20Z</ns2:dueDate>
       <ns2:seller>
         <ns2:id>3</ns2:id>
         <ns2:name>ABC</ns2:name>
@@ -48,5 +47,4 @@
         </ns2:invoiceEntry>
       </ns2:entries>
     </ns2:invoices>
-  </ns2:response>
-</ns2:InvoicesListResponse>
+</ns2:invoicesResponse>

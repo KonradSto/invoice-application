@@ -37,7 +37,7 @@ class MapperTest {
         soapInvoice = convertModelInvoiceToSoapInvoice(modelInvoice);
         modelInvoices = Arrays.asList(InvoiceGenerator.getRandomInvoice(), InvoiceGenerator.getRandomInvoice(), InvoiceGenerator.getRandomInvoice());
         soapInvoices = new ArrayList<>();
-        for (Invoice modelInvoice : modelInvoices){
+        for (Invoice modelInvoice : modelInvoices) {
             soapInvoices.add(convertModelInvoiceToSoapInvoice(modelInvoice));
         }
     }
@@ -94,23 +94,23 @@ class MapperTest {
         soapInvoice.setId(id);
         soapInvoice.setNumber(invoice.getNumber());
         soapInvoice.setIssuedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(
-                invoice.getIssuedDate().getYear(),
-                invoice.getIssuedDate().getMonth().getValue(),
-                invoice.getIssuedDate().getDayOfMonth(),
-                0,
-                0,
-                0,
-                0,
-                0));
+            invoice.getIssuedDate().getYear(),
+            invoice.getIssuedDate().getMonth().getValue(),
+            invoice.getIssuedDate().getDayOfMonth(),
+            0,
+            0,
+            0,
+            0,
+            0));
         soapInvoice.setDueDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(
-                invoice.getDueDate().getYear(),
-                invoice.getDueDate().getMonth().getValue(),
-                invoice.getDueDate().getDayOfMonth(),
-                0,
-                0,
-                0,
-                0,
-                0));
+            invoice.getDueDate().getYear(),
+            invoice.getDueDate().getMonth().getValue(),
+            invoice.getDueDate().getDayOfMonth(),
+            0,
+            0,
+            0,
+            0,
+            0));
         soapInvoice.setSeller(convertModelCompanyToSoapCompany(invoice.getSeller()));
         soapInvoice.setBuyer(convertModelCompanyToSoapCompany(invoice.getBuyer()));
         pl.coderstrust.soap.bindingclasses.Entries mappedEntries = new Entries();
@@ -142,9 +142,7 @@ class MapperTest {
         soapInvoiceEntry.setPrice(invoiceEntry.getPrice());
         soapInvoiceEntry.setNettValue(invoiceEntry.getNetValue());
         soapInvoiceEntry.setGrossValue(invoiceEntry.getGrossValue());
-        soapInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingclasses.Vat.valueOf(soapInvoiceEntry.getVatRate().toString()));
+        soapInvoiceEntry.setVatRate(pl.coderstrust.soap.bindingclasses.Vat.valueOf(invoiceEntry.getVatRate().toString()));
         return soapInvoiceEntry;
     }
-
-
 }

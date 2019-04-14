@@ -1,6 +1,4 @@
-    <ns2:InvoicesListResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
-      <ns2:response>
+    <ns2:invoicesResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
         <ns2:status>SUCCESS</ns2:status>
         <ns2:message> </ns2:message>
-      </ns2:response>
-    </ns2:InvoicesListResponse>
+    </ns2:invoicesResponse>

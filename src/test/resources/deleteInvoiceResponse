@@ -1,6 +1,4 @@
-    <ns2:StatusResponse xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
-      <ns2:response>
+    <ns2:response xmlns:ns2="http://project-9-karolina-konrad-lukasz-piotr">
         <ns2:status>SUCCESS</ns2:status>
         <ns2:message> </ns2:message>
-      </ns2:response>
-    </ns2:StatusResponse>
+    </ns2:response>
