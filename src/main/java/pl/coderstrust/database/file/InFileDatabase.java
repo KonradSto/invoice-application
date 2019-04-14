@@ -171,7 +171,7 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice update(Invoice invoice) throws DatabaseOperationException {
-        if (!this.invoiceExists(invoice.getId())) {
+        if (!invoiceExists(invoice.getId())) {
             message = String.format("Invoice with following id does not exist: %d", invoice.getId());
             log.error(message);
             throw new DatabaseOperationException(message);
@@ -180,7 +180,7 @@ public class InFileDatabase implements Database {
             log.debug("Updating invoice: {}", invoice);
             Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
             fileHelper.writeLine(mapper.writeValueAsString(updatedInvoice));
-            this.deleteInvoice(invoice.getId());
+            deleteInvoice(invoice.getId());
             return updatedInvoice;
         } catch (IOException e) {
             log.error(DATABASE_NOT_EXIST);
@@ -189,6 +189,6 @@ public class InFileDatabase implements Database {
     }
 
     private Long getNextId() throws DatabaseOperationException {
-        return this.countInvoices() + 1;
+        return countInvoices() + 1;
     }
 }
