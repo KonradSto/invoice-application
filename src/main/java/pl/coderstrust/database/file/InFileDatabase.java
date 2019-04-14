@@ -53,13 +53,13 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized void deleteInvoice(Long id) throws DatabaseOperationException {
+        log.debug("Deleting invoice by id: {}", id);
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (int line = 0; line < invoicesAsJson.size(); line++) {
                 Invoice invoice = mapper.readValue(invoicesAsJson.get(line), Invoice.class);
                 if (id.equals(invoice.getId())) {
-                    log.debug("Deleting invoice by id: {}", id);
                     fileHelper.removeLine(++line);
                     return;
                 }
@@ -75,17 +75,16 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized Optional<Invoice> getInvoice(Long id) throws DatabaseOperationException {
+        log.debug("Getting invoice by id: {}", id);
         ArgumentValidator.ensureNotNull(id, "id");
         try {
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
             for (String invoiceAsJson : invoicesAsJson) {
                 Invoice invoice = mapper.readValue(invoiceAsJson, Invoice.class);
                 if (id.equals(invoice.getId())) {
-                    log.debug("Getting invoice by id: {}", id);
                     return Optional.of(invoice);
                 }
             }
-            log.debug("Getting invoice by id: {}", id);
             return Optional.empty();
         } catch (IOException e) {
             log.error(EXCEPTION_MESSAGE);
@@ -95,6 +94,7 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized Collection<Invoice> getAllInvoices() throws DatabaseOperationException {
+        log.debug("Getting all invoices");
         List<Invoice> invoices = new ArrayList<>();
         try {
             List<String> invoicesAsJson = fileHelper.readLinesFromFile();
@@ -105,14 +105,14 @@ public class InFileDatabase implements Database {
             log.error(EXCEPTION_MESSAGE);
             throw new DatabaseOperationException(EXCEPTION_MESSAGE, e);
         }
-        log.debug("Getting all invoices");
+        log.debug("Getting {} invoices.", invoices.size());
         return invoices;
     }
 
     @Override
     public synchronized void deleteAllInvoices() throws DatabaseOperationException {
+        log.debug("Deleting all invoices");
         try {
-            log.debug("Deleting all invoices");
             fileHelper.clear();
         } catch (IOException e) {
             log.error(DATABASE_NOT_EXIST);
@@ -144,8 +144,9 @@ public class InFileDatabase implements Database {
 
     @Override
     public synchronized long countInvoices() throws DatabaseOperationException {
-        log.debug("Counting number of invoices");
-        return getAllInvoices().size();
+        long number = getAllInvoices().size();
+        log.debug("{} invoices counted", number);
+        return number;
     }
 
     private Invoice insertInvoice(Invoice invoice) throws DatabaseOperationException {
@@ -153,7 +154,7 @@ public class InFileDatabase implements Database {
         if (!fileHelper.isExist()) {
             try {
                 fileHelper.create();
-                log.debug("Invoice: {} successfully added", invoice);
+                log.debug("Invoice: {} added successfully", invoice);
             } catch (IOException e) {
                 log.error(DATABASE_NOT_EXIST);
                 throw new DatabaseOperationException(DATABASE_NOT_EXIST, e);
@@ -171,13 +172,8 @@ public class InFileDatabase implements Database {
     }
 
     private Invoice update(Invoice invoice) throws DatabaseOperationException {
-        if (!invoiceExists(invoice.getId())) {
-            message = String.format("Invoice with following id does not exist: %d", invoice.getId());
-            log.error(message);
-            throw new DatabaseOperationException(message);
-        }
+        log.debug("Updating invoice: {}", invoice);
         try {
-            log.debug("Updating invoice: {}", invoice);
             Invoice updatedInvoice = new Invoice(invoice.getId(), invoice.getNumber(), invoice.getIssuedDate(), invoice.getDueDate(), invoice.getSeller(), invoice.getBuyer(), invoice.getEntries());
             fileHelper.writeLine(mapper.writeValueAsString(updatedInvoice));
             deleteInvoice(invoice.getId());
