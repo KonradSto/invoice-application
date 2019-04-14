@@ -28,6 +28,9 @@ public class InvoiceEmailService {
         this.invoicePdfService = invoicePdfService;
         this.emailSender = emailSender;
         this.mailProperties = mailProperties;
+        ArgumentValidator.ensureNotNull(invoicePdfService, "invoicePdfService");
+        ArgumentValidator.ensureNotNull(emailSender, "emailSender");
+        ArgumentValidator.ensureNotNull(mailProperties, "mailProperties");
     }
 
     @Async
@@ -44,8 +47,7 @@ public class InvoiceEmailService {
             helper.setText("Please see attachments for your saved invoice");
             emailSender.send(email);
         } catch (ServiceOperationException | MessagingException e) {
-            log.error("An error occurred during sending an invoice.", e);
-            e.printStackTrace();
+            log.error("An error occurred during sending an e-mail with invoice.", e);
         }
     }
 }
