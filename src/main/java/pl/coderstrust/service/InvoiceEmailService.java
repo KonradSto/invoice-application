@@ -25,12 +25,12 @@ public class InvoiceEmailService {
 
     @Autowired
     public InvoiceEmailService(InvoicePdfService invoicePdfService, JavaMailSender emailSender, MailProperties mailProperties) {
-        this.invoicePdfService = invoicePdfService;
-        this.emailSender = emailSender;
-        this.mailProperties = mailProperties;
         ArgumentValidator.ensureNotNull(invoicePdfService, "invoicePdfService");
         ArgumentValidator.ensureNotNull(emailSender, "emailSender");
         ArgumentValidator.ensureNotNull(mailProperties, "mailProperties");
+        this.invoicePdfService = invoicePdfService;
+        this.emailSender = emailSender;
+        this.mailProperties = mailProperties;
     }
 
     @Async
