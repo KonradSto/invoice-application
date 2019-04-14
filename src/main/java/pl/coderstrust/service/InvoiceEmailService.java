@@ -3,6 +3,8 @@ package pl.coderstrust.service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.core.io.ByteArrayResource;
@@ -10,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import pl.coderstrust.controller.InvoiceController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.utils.ArgumentValidator;
 
@@ -19,6 +22,7 @@ public class InvoiceEmailService {
     private InvoicePdfService invoicePdfService;
     private JavaMailSender emailSender;
     private MailProperties mailProperties;
+    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
 
     @Autowired
     public InvoiceEmailService(InvoicePdfService invoicePdfService, JavaMailSender emailSender, MailProperties mailProperties) {
@@ -30,6 +34,7 @@ public class InvoiceEmailService {
     @Async
     public void sendEmailWithInvoice(Invoice invoice) {
         ArgumentValidator.ensureNotNull(invoice, "Invoice");
+        log.debug("Sending an e-mail with invoice: {}", invoice);
         try {
             MimeMessage email = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(email, true);
@@ -40,6 +45,7 @@ public class InvoiceEmailService {
             helper.setText("Please see attachments for your saved invoice");
             emailSender.send(email);
         } catch (ServiceOperationException | MessagingException e) {
+            log.error("An error occurred during sending an invoice.", e);
             e.printStackTrace();
         }
     }
