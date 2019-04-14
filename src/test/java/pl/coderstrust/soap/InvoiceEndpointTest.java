@@ -64,7 +64,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetInvoiceResponse() throws IOException, ServiceOperationException {
+    void shouldReturnInvoice() throws IOException, ServiceOperationException {
         //Given
         Optional<Invoice> invoiceOptional = Optional.of(invoice1);
         when(invoiceService.getInvoice(1L)).thenReturn(invoiceOptional);
@@ -83,7 +83,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetInvoiceResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
+    void shouldReturnErrorResponseWhenAnErrorOccurredDuringGettingInvoice() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getInvoice(1L)).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/getInvoiceRequest";
@@ -100,7 +100,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetAllInvoicesResponse() throws IOException, ServiceOperationException {
+    void shouldReturnAllInvoices() throws IOException, ServiceOperationException {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoices()).thenReturn(invoices);
@@ -119,7 +119,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetAllInvoicesResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
+    void shouldReturnErrorResponseWhenAnErrorOccurredDuringGettingAllInvoices() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoices()).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/getAllInvoicesRequest";
@@ -136,7 +136,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetAllInvoicesResponseWhenThereAreNoInvoices() throws IOException, ServiceOperationException {
+    void shouldReturnEmptyListWhenThereIsNoInvoices() throws IOException, ServiceOperationException {
         //Given
         Collection<Invoice> invoices = new ArrayList<>();
         when(invoiceService.getAllInvoices()).thenReturn(invoices);
@@ -155,7 +155,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetAllInvoicesByDateResponse() throws IOException, ServiceOperationException {
+    void shouldReturnInvoicesByDate() throws IOException, ServiceOperationException {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoicesByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 1))).thenReturn(invoices);
@@ -174,7 +174,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetAllInvoicesByDateResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
+    void shouldReturnErrorResponseWhenAnErrorOccurredDuringGettingInvoicesByDate() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoicesByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 1))).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/getAllInvoicesByDateRequest";
@@ -191,7 +191,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetAllInvoicesBySellerResponse() throws IOException, ServiceOperationException {
+    void shouldReturnInvoicesBySeller() throws IOException, ServiceOperationException {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoicesBySeller(3L)).thenReturn(invoices);
@@ -210,7 +210,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetInvoicesByGivenSellerResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
+    void shouldReturnErrorResponseWhenAnErrorOccurredDuringGettingInvoicesBySeller() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoicesBySeller(3L)).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/getInvoicesBySellerRequest";
@@ -227,7 +227,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetAllInvoicesByBuyerResponse() throws IOException, ServiceOperationException {
+    void shouldReturnInvoicesByBuyer() throws IOException, ServiceOperationException {
         //Given
         Collection<Invoice> invoices = Arrays.asList(invoice1);
         when(invoiceService.getAllInvoicesByBuyer(4L)).thenReturn(invoices);
@@ -246,7 +246,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdGetInvoicesByGivenBuyerResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
+    void shouldReturnErrorResponseWhenAnErrorOccurredDuringGettingInvoicesByBuyer() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.getAllInvoicesByBuyer(4L)).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/getInvoicesByBuyerRequest";
@@ -263,7 +263,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdDeleteInvoiceResponse() throws IOException, ServiceOperationException {
+    void shouldDeleteInvoice() throws IOException, ServiceOperationException {
         //Given
         Optional<Invoice> invoiceOptional = Optional.of(invoice1);
         when(invoiceService.getInvoice(1L)).thenReturn(invoiceOptional);
@@ -282,7 +282,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdDeleteAllInvoicesResponse() throws IOException {
+    void shouldDeleteAllInvoices() throws IOException {
         //Given
         String filePathRequest = "src/test/resources/deleteAllInvoicesRequest";
         String filePathResponse = "src/test/resources/deleteAllInvoicesResponse";
@@ -299,7 +299,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdSaveInvoiceResponse() throws ServiceOperationException, IOException {
+    void shouldSaveInvoice() throws ServiceOperationException, IOException {
         //Given
         when(invoiceService.saveInvoice(invoice1)).thenReturn(invoice1);
         String filePathRequest = "src/test/resources/saveInvoiceRequest";
@@ -317,7 +317,7 @@ class InvoiceEndpointTest {
     }
 
     @Test
-    void shouldValidateXsdSaveInvoiceResponseWhenDataBaseExceptionOccurs() throws IOException, ServiceOperationException {
+    void shouldReturnErrorResponseWhenAnErrorOccurredDuringSavingInvoice() throws IOException, ServiceOperationException {
         //Given
         when(invoiceService.saveInvoice(invoice1)).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/saveInvoiceRequest";

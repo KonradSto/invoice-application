@@ -29,7 +29,7 @@ class Mapper {
             invoiceToMap.getId(),
             invoiceToMap.getNumber(),
             mapXmlGregorianCalendarToLocalDate(invoiceToMap.getIssuedDate()),
-            mapXmlGregorianCalendarToLocalDate(invoiceToMap.getLocalDate()),
+            mapXmlGregorianCalendarToLocalDate(invoiceToMap.getDueDate()),
             mapSeller(invoiceToMap.getSeller()),
             mapBuyer(invoiceToMap.getBuyer()),
             mapInvoiceEntries(invoiceToMap.getEntries().getInvoiceEntry())
@@ -42,7 +42,7 @@ class Mapper {
         mappedInvoice.setId(invoiceToMap.getId());
         mappedInvoice.setNumber(invoiceToMap.getNumber());
         mappedInvoice.setIssuedDate(mapLocalDateToXmlGregorianCalendar((invoiceToMap.getIssuedDate())));
-        mappedInvoice.setLocalDate(mapLocalDateToXmlGregorianCalendar(invoiceToMap.getDueDate()));
+        mappedInvoice.setDueDate(mapLocalDateToXmlGregorianCalendar(invoiceToMap.getDueDate()));
         mappedInvoice.setSeller(mapSeller(invoiceToMap.getSeller()));
         mappedInvoice.setBuyer(mapBuyer(invoiceToMap.getBuyer()));
         pl.coderstrust.soap.bindingclasses.Entries mappedEntries = new Entries();

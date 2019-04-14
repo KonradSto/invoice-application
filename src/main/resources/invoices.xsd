@@ -7,7 +7,6 @@
         <xs:element name="id" type="xs:long"/>
       </xs:sequence>
     </xs:complexType>
-
   </xs:element>
 
   <xs:element name="getAllInvoicesRequest">
@@ -63,30 +62,6 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="singleInvoiceResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:invoiceResponse"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="InvoicesListResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:invoicesResponse"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="StatusResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="response" type="tns:responseBase"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
   <xs:complexType name="responseBase">
     <xs:sequence>
       <xs:element name="status" type="tns:responseStatus"/>
@@ -126,7 +101,7 @@
       <xs:element name="id" type="xs:long"/>
       <xs:element name="number" type="xs:string"/>
       <xs:element name="issuedDate" type="xs:date"/>
-      <xs:element name="localDate" type="xs:date"/>
+      <xs:element name="dueDate" type="xs:date"/>
       <xs:element name="seller" type="tns:company"/>
       <xs:element name="buyer" type="tns:company"/>
       <xs:element name="entries" type="tns:entries"/>
