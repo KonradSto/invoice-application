@@ -12,7 +12,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import pl.coderstrust.controller.InvoiceController;
 import pl.coderstrust.model.Invoice;
 import pl.coderstrust.utils.ArgumentValidator;
 
@@ -22,7 +21,7 @@ public class InvoiceEmailService {
     private InvoicePdfService invoicePdfService;
     private JavaMailSender emailSender;
     private MailProperties mailProperties;
-    private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
+    private static Logger log = LoggerFactory.getLogger(InvoiceEmailService.class);
 
     @Autowired
     public InvoiceEmailService(InvoicePdfService invoicePdfService, JavaMailSender emailSender, MailProperties mailProperties) {
