@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.utils.ArgumentValidator;
 
 @Service
 public class InvoiceEmailService {
@@ -28,8 +29,7 @@ public class InvoiceEmailService {
 
     @Async
     public void sendEmailWithInvoice(Invoice invoice) {
-
-        //czy invoice nie jest null
+        ArgumentValidator.ensureNotNull(invoice, "Invoice");
         try {
             MimeMessage email = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(email, true);
