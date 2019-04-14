@@ -27,11 +27,10 @@ import pl.coderstrust.utils.ArgumentValidator;
 public class InvoicePdfService {
 
     private static Logger log = LoggerFactory.getLogger(InvoicePdfService.class);
-    private String message;
 
     public byte[] getInvoiceAsPdf(Invoice invoice) throws ServiceOperationException {
-        log.debug("Getting an invoice as PDF by id: {}", invoice.getId());
         ArgumentValidator.ensureNotNull(invoice, "Invoice cannot be null");
+        log.debug("Getting an invoice as PDF by id: {}", invoice.getId());
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             Document invoicePdf = new Document();
@@ -43,7 +42,7 @@ public class InvoicePdfService {
             invoicePdf.close();
             return byteArrayOutputStream.toByteArray();
         } catch (DocumentException e) {
-            message = "An error occurred during getting invoice as PDF.";
+            String message = String.format("An error occurred during getting PDF for invoice with following id: %d.", invoice.getId());
             log.error(message, e);
             throw new ServiceOperationException(message, e);
         }
