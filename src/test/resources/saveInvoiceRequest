@@ -1,6 +1,5 @@
 <soap:saveInvoiceRequest xmlns:soap="http://project-9-karolina-konrad-lukasz-piotr">
   <soap:invoice>
-    <soap:id></soap:id>
     <soap:number>1/2019</soap:number>
     <soap:issuedDate>2019-03-01</soap:issuedDate>
     <soap:dueDate>2019-03-20</soap:dueDate>
