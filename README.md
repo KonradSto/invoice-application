@@ -1,42 +1,62 @@
 # Invoices Application
 
-A goal of this repository is to create a simple application for invoices management.
+Simple accounting system. Application for invoices management.
 
-## Built With
+##Installation
 
-* [Hibernate](http://hibernate.org) - mapping an object-oriented domain model to a relational database
-* [Jacoco](https://www.eclemma.org/jacoco) - maintaining code coverage over 8.0 and branch coverage over 0.5
-* [Java SE 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) - Java SE Development Kit 8 Downloads
-* [JUnit](https://junit.org)
-* [Logger](https://logging.apache.org/log4j/2.x/)
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [Mockito](https://site.mockito.org/)
-* [Spring](https://spring.io)
-* [Spring boot](https://spring.io/projects/spring-boot)
-* [Spring Security](https://spring.io/projects/spring-security) - authentication and access-control framework
-* [Swagger](https://swagger.io/)
+* Use JDK, version 1.8 or higher
+* Open application with your IDE, we recommend You to use maven project in IntelliJ IDEA
+* Generate binding classes from src\main\resources\invoices.xsd with jax2b plugin
+* Run ```mvn clean verify``` to assure that application works properly
 
 ## Database
 
-* InMemory
-* InFile
-* Hibernate
-
-You can switch database type in 'application.properties' file:
-```
-database = hibernate
-```
-
+Supported databases:
+  * InMemory
+  * InFile
+  * Hibernate
+  
+  To choose database use 'application.properties' file:
+ 
+  ```
+  database = memory
+  ```
+  ```
+  database = in-file
+  ```
+  ```
+  database = hibernate
+  ```
+  
 ## Logger
 
-You can switch logging level in 'application.properties' file:
+To enable [logging level](https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Level.html) setup appropriate log level in 'application.properties' file:
 ```
 logging.level.pl.coderstrust=DEBUG
 ```
 
+## Swagger UI
+
+Run the application and open your browser at a specified URL: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
 ## Changelog
 
-[CHANGELOG.md](CHANGELOG.md) -  record of all notable changes made to a project
+[CHANGELOG.md](CHANGELOG.md) - record of all notable changes made to a project
+
+## Technology Stack
+
+* [Java SE 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Maven](https://maven.apache.org/) - Dependency Management
+* [Hibernate](http://hibernate.org) - mapping an object-oriented domain model to a relational database
+* [Spring boot](https://spring.io/projects/spring-boot)
+* [Spring Security](https://spring.io/projects/spring-security) - authentication and access-control framework
+* [Spring Data](https://spring.io/projects/spring-data)
+* [JUnit](https://junit.org)
+* [Mockito](https://site.mockito.org/)
+* [Jacoco](https://www.eclemma.org/jacoco) - maintaining code coverage over 8.0 and branch coverage over 0.5
+* [Checkstyle](https://maven.apache.org/plugins/maven-checkstyle-plugin/)
+* [Logger](https://logging.apache.org/log4j/2.x/)
+* [Swagger](https://swagger.io/)
 
 ## Authors
 
