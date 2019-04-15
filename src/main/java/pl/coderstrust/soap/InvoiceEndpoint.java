@@ -38,8 +38,6 @@ public class InvoiceEndpoint {
     private static Logger log = LoggerFactory.getLogger(InvoiceController.class);
     private static final String NAMESPACE_URI = "http://project-9-karolina-konrad-lukasz-piotr";
     private InvoiceService invoiceService;
-    private String message;
-
 
     @Autowired
     public InvoiceEndpoint(InvoiceService invoiceService) {
@@ -59,11 +57,11 @@ public class InvoiceEndpoint {
                 pl.coderstrust.soap.bindingclasses.Invoice resultInvoice = Mapper.mapInvoice(invoice);
                 return createSuccessInvoiceResponse(resultInvoice);
             }
-            message = "Invoice with given id does not exist";
+            String message = "Invoice with given id does not exist";
             log.error(message);
             return createErrorInvoiceResponse(message);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            message = "An error occurred during getting invoice";
+            String message = "An error occurred during getting invoice";
             log.error(message);
             return createErrorInvoiceResponse(message);
         }
@@ -78,7 +76,7 @@ public class InvoiceEndpoint {
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
             return createSuccessInvoicesResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            message = "An error occurred during getting all invoices";
+            String message = "An error occurred during getting all invoices";
             log.error(message);
             return createErrorInvoicesResponse(message);
         }
@@ -93,7 +91,7 @@ public class InvoiceEndpoint {
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
             return createSuccessInvoicesResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            message = "An error occurred during getting invoices in given date range";
+            String message = "An error occurred during getting invoices in given date range";
             log.error(message);
             return createErrorInvoicesResponse(message);
         }
@@ -108,7 +106,7 @@ public class InvoiceEndpoint {
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
             return createSuccessInvoicesResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            message = "An error occurred during getting invoices for chosen buyer";
+            String message = "An error occurred during getting invoices for chosen buyer";
             log.error(message);
             return createErrorInvoicesResponse(message);
         }
@@ -123,7 +121,7 @@ public class InvoiceEndpoint {
             Collection<pl.coderstrust.soap.bindingclasses.Invoice> responseInvoices = mapInvoices(invoices);
             return createSuccessInvoicesResponse(responseInvoices);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            message = "An error occurred during getting invoices for chosen seller";
+            String message = "An error occurred during getting invoices for chosen seller";
             log.error(message);
             return createErrorInvoicesResponse(message);
         }
@@ -136,14 +134,14 @@ public class InvoiceEndpoint {
             log.debug("Deleting invoice by id: {}", request.getId());
             Optional<Invoice> invoice = invoiceService.getInvoice(request.getId());
             if (!invoice.isPresent()) {
-                message = "Invoice with given id does not exist";
+                String message = "Invoice with given id does not exist";
                 log.error(message);
                 return createErrorResponseBase(message);
             }
             invoiceService.deleteInvoice(request.getId());
             return createSuccessResponseBase();
         } catch (ServiceOperationException e) {
-            message = "An error occurred during deleting invoice";
+            String message = "An error occurred during deleting invoice";
             log.error(message);
             return createErrorResponseBase(message);
         }
@@ -157,7 +155,7 @@ public class InvoiceEndpoint {
             invoiceService.deleteAllInvoices();
             return createSuccessResponseBase();
         } catch (ServiceOperationException e) {
-            message = "An error occurred during deleting all invoices";
+            String message = "An error occurred during deleting all invoices";
             log.error(message);
             return createErrorResponseBase(message);
         }
@@ -173,7 +171,7 @@ public class InvoiceEndpoint {
             pl.coderstrust.soap.bindingclasses.Invoice responseInvoice = Mapper.mapInvoice(invoice);
             return createSuccessInvoiceResponse(responseInvoice);
         } catch (ServiceOperationException | DatatypeConfigurationException e) {
-            message = "An error occurred during saving invoice";
+            String message = "An error occurred during saving invoice";
             log.error(message);
             return createErrorInvoiceResponse(message);
         }

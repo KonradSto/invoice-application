@@ -351,5 +351,10 @@ class InvoiceEndpointTest {
         String stringResponse = XmlFileReader.readFromFile(filePathResponse);
         Source requestPayload = new StringSource(stringRequest);
         Source responsePayload = new StringSource(stringResponse);
+
+        //When
+        mockClient.sendRequest(withPayload(requestPayload))
+            .andExpect(noFault())
+            .andExpect(payload(responsePayload));
     }
 }

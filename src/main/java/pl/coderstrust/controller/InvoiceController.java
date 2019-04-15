@@ -42,7 +42,6 @@ public class InvoiceController {
     private InvoiceService invoiceService;
     private InvoicePdfService invoicePdfService;
     private InvoiceEmailService invoiceEmailService;
-    private String message;
 
     @Autowired
     public InvoiceController(InvoiceService invoiceService, InvoicePdfService invoicePdfService, InvoiceEmailService invoiceEmailService) {
@@ -107,17 +106,17 @@ public class InvoiceController {
         @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoicesByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
         if (fromDate == null) {
-            message = "fromDate parameter cannot be null.";
+            String message = "fromDate parameter cannot be null.";
             log.error(message);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
         if (toDate == null) {
-            message = "toDate parameter cannot be null.";
+            String message = "toDate parameter cannot be null.";
             log.error(message);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
         if (fromDate.isAfter(toDate)) {
-            message = "fromDate cannot be after toDate.";
+            String message = "fromDate cannot be after toDate.";
             log.error(message);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
@@ -141,7 +140,7 @@ public class InvoiceController {
         @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoicesByBuyer(@RequestParam Long id) {
         if (id == null) {
-            message = "Buyer id cannot be null.";
+            String message = "Buyer id cannot be null.";
             log.error(message);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
@@ -165,7 +164,7 @@ public class InvoiceController {
         @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> getInvoicesBySeller(@RequestParam Long id) {
         if (id == null) {
-            message = "Seller id cannot be null.";
+            String message = "Seller id cannot be null.";
             log.error(message);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
@@ -229,7 +228,7 @@ public class InvoiceController {
         @ApiResponse(code = 500, message = "Internal server error.")})
     ResponseEntity<?> saveInvoice(@RequestBody(required = false) Invoice invoice) {
         if (invoice == null) {
-            message = "Invoice cannot be null.";
+            String message = "Invoice cannot be null.";
             log.error(message);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
