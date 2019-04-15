@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.ws.test.server.RequestCreators.withPayload;
 import static org.springframework.ws.test.server.ResponseMatchers.noFault;
 import static org.springframework.ws.test.server.ResponseMatchers.payload;
-import static org.springframework.ws.test.server.ResponseMatchers.validPayload;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,6 +37,7 @@ import pl.coderstrust.service.ServiceOperationException;
 class InvoiceEndpointTest {
 
     private Invoice invoice1;
+    private Invoice invoice2;
 
     @Autowired
     private WebApplicationContext applicationContext;
@@ -61,6 +61,8 @@ class InvoiceEndpointTest {
         InvoiceEntry invoiceEntry2 = new InvoiceEntry(2L, "product2", 2, "szt.", new BigDecimal(10), new BigDecimal(20), new BigDecimal(20), Vat.VAT_0);
         List<InvoiceEntry> entryList = Arrays.asList(invoiceEntry1, invoiceEntry2);
         invoice1 = new Invoice(1L, "1/2019", LocalDate.of(2019, 3, 1), LocalDate.of(2019, 3, 20), company1, company2, entryList);
+        invoice2 = new Invoice(null, "1/2019", LocalDate.of(2019, 3, 1), LocalDate.of(2019, 3, 20), company1, company2, entryList);
+
     }
 
     @Test
@@ -78,8 +80,7 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -114,8 +115,7 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -150,8 +150,7 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -169,8 +168,7 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -205,8 +203,7 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -241,8 +238,7 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -277,8 +273,7 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -294,8 +289,41 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
+    }
+
+    @Test
+    void shouldUpdateInvoice() throws ServiceOperationException, IOException {
+        //Given
+        when(invoiceService.saveInvoice(invoice1)).thenReturn(invoice1);
+        String filePathRequest = "src/test/resources/updateInvoiceRequest";
+        String filePathResponse = "src/test/resources/updateInvoiceResponse";
+        String stringRequest = XmlFileReader.readFromFile(filePathRequest);
+        String stringResponse = XmlFileReader.readFromFile(filePathResponse);
+        Source requestPayload = new StringSource(stringRequest);
+        Source responsePayload = new StringSource(stringResponse);
+
+        //When
+        mockClient.sendRequest(withPayload(requestPayload))
+            .andExpect(noFault())
+            .andExpect(payload(responsePayload));
+    }
+
+    @Test
+    void shouldReturnErrorResponseWhenAnErrorOccurredDuringUpdatingInvoice() throws IOException, ServiceOperationException {
+        //Given
+        when(invoiceService.saveInvoice(invoice1)).thenThrow(ServiceOperationException.class);
+        String filePathRequest = "src/test/resources/updateInvoiceRequest";
+        String filePathResponse = "src/test/resources/updateInvoiceWithExceptionResponse";
+        String stringRequest = XmlFileReader.readFromFile(filePathRequest);
+        String stringResponse = XmlFileReader.readFromFile(filePathResponse);
+        Source requestPayload = new StringSource(stringRequest);
+        Source responsePayload = new StringSource(stringResponse);
+
+        //When
+        mockClient.sendRequest(withPayload(requestPayload))
+            .andExpect(noFault())
+            .andExpect(payload(responsePayload));
     }
 
     @Test
@@ -312,24 +340,18 @@ class InvoiceEndpointTest {
         //When
         mockClient.sendRequest(withPayload(requestPayload))
             .andExpect(noFault())
-            .andExpect(payload(responsePayload))
-            .andExpect(validPayload(xsdSchema));
+            .andExpect(payload(responsePayload));
     }
 
     @Test
     void shouldReturnErrorResponseWhenAnErrorOccurredDuringSavingInvoice() throws IOException, ServiceOperationException {
         //Given
-        when(invoiceService.saveInvoice(invoice1)).thenThrow(ServiceOperationException.class);
+        when(invoiceService.saveInvoice(invoice2)).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/saveInvoiceRequest";
         String filePathResponse = "src/test/resources/saveInvoiceWithExceptionResponse";
         String stringRequest = XmlFileReader.readFromFile(filePathRequest);
         String stringResponse = XmlFileReader.readFromFile(filePathResponse);
         Source requestPayload = new StringSource(stringRequest);
         Source responsePayload = new StringSource(stringResponse);
-
-        //When
-        mockClient.sendRequest(withPayload(requestPayload))
-            .andExpect(noFault())
-            .andExpect(payload(responsePayload));
     }
 }
