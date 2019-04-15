@@ -22,7 +22,7 @@ public class InMemoryDatabase implements Database {
     private Long nextId = 1L;
 
     public InMemoryDatabase(Map<Long, Invoice> databaseStorage) {
-        log.debug("Launching to InMemoryDatabase");
+        log.debug("Load InFileDatabase");
         if (databaseStorage == null) {
             String message = "Invoice storage cannot be null";
             log.error(message);
