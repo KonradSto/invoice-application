@@ -329,7 +329,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldSaveInvoice() throws ServiceOperationException, IOException {
         //Given
-        when(invoiceService.saveInvoice(invoice1)).thenReturn(invoice1);
+        when(invoiceService.saveInvoice(invoice2)).thenReturn(invoice1);
         String filePathRequest = "src/test/resources/saveInvoiceRequest";
         String filePathResponse = "src/test/resources/saveInvoiceResponse";
         String stringRequest = XmlFileReader.readFromFile(filePathRequest);
