@@ -1,6 +1,7 @@
 package pl.coderstrust.soap;
 
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.ws.test.server.RequestCreators.withPayload;
 import static org.springframework.ws.test.server.ResponseMatchers.noFault;
@@ -36,8 +37,7 @@ import pl.coderstrust.service.ServiceOperationException;
 @SpringBootTest
 class InvoiceEndpointTest {
 
-    private Invoice invoice1;
-    private Invoice invoice2;
+    private Invoice invoice;
 
     @Autowired
     private WebApplicationContext applicationContext;
@@ -60,15 +60,13 @@ class InvoiceEndpointTest {
         InvoiceEntry invoiceEntry1 = new InvoiceEntry(1L, "product1", 5, "szt.", new BigDecimal(20), new BigDecimal(100), new BigDecimal(100), Vat.VAT_0);
         InvoiceEntry invoiceEntry2 = new InvoiceEntry(2L, "product2", 2, "szt.", new BigDecimal(10), new BigDecimal(20), new BigDecimal(20), Vat.VAT_0);
         List<InvoiceEntry> entryList = Arrays.asList(invoiceEntry1, invoiceEntry2);
-        invoice1 = new Invoice(1L, "1/2019", LocalDate.of(2019, 3, 1), LocalDate.of(2019, 3, 20), company1, company2, entryList);
-        invoice2 = new Invoice(null, "1/2019", LocalDate.of(2019, 3, 1), LocalDate.of(2019, 3, 20), company1, company2, entryList);
-
+        invoice = new Invoice(1L, "1/2019", LocalDate.of(2019, 3, 1), LocalDate.of(2019, 3, 20), company1, company2, entryList);
     }
 
     @Test
     void shouldReturnInvoice() throws IOException, ServiceOperationException {
         //Given
-        Optional<Invoice> invoiceOptional = Optional.of(invoice1);
+        Optional<Invoice> invoiceOptional = Optional.of(invoice);
         when(invoiceService.getInvoice(1L)).thenReturn(invoiceOptional);
         String filePathRequest = "src/test/resources/getInvoiceRequest";
         String filePathResponse = "src/test/resources/getInvoiceResponse";
@@ -103,7 +101,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldReturnAllInvoices() throws IOException, ServiceOperationException {
         //Given
-        Collection<Invoice> invoices = Arrays.asList(invoice1);
+        Collection<Invoice> invoices = Arrays.asList(invoice);
         when(invoiceService.getAllInvoices()).thenReturn(invoices);
         String filePathRequest = "src/test/resources/getAllInvoicesRequest";
         String filePathResponse = "src/test/resources/getAllInvoicesResponse";
@@ -156,7 +154,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldReturnInvoicesByDate() throws IOException, ServiceOperationException {
         //Given
-        Collection<Invoice> invoices = Arrays.asList(invoice1);
+        Collection<Invoice> invoices = Arrays.asList(invoice);
         when(invoiceService.getAllInvoicesByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 1))).thenReturn(invoices);
         String filePathRequest = "src/test/resources/getAllInvoicesByDateRequest";
         String filePathResponse = "src/test/resources/getInvoicesByDateResponse";
@@ -191,7 +189,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldReturnInvoicesBySeller() throws IOException, ServiceOperationException {
         //Given
-        Collection<Invoice> invoices = Arrays.asList(invoice1);
+        Collection<Invoice> invoices = Arrays.asList(invoice);
         when(invoiceService.getAllInvoicesBySeller(3L)).thenReturn(invoices);
         String filePathRequest = "src/test/resources/getInvoicesBySellerRequest";
         String filePathResponse = "src/test/resources/getInvoicesBySellerResponse";
@@ -226,7 +224,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldReturnInvoicesByBuyer() throws IOException, ServiceOperationException {
         //Given
-        Collection<Invoice> invoices = Arrays.asList(invoice1);
+        Collection<Invoice> invoices = Arrays.asList(invoice);
         when(invoiceService.getAllInvoicesByBuyer(4L)).thenReturn(invoices);
         String filePathRequest = "src/test/resources/getInvoicesByBuyerRequest";
         String filePathResponse = "src/test/resources/getInvoicesByBuyerResponse";
@@ -261,7 +259,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldDeleteInvoice() throws IOException, ServiceOperationException {
         //Given
-        Optional<Invoice> invoiceOptional = Optional.of(invoice1);
+        Optional<Invoice> invoiceOptional = Optional.of(invoice);
         when(invoiceService.getInvoice(1L)).thenReturn(invoiceOptional);
         String filePathRequest = "src/test/resources/deleteInvoiceRequest";
         String filePathResponse = "src/test/resources/deleteInvoiceResponse";
@@ -295,7 +293,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldUpdateInvoice() throws ServiceOperationException, IOException {
         //Given
-        when(invoiceService.saveInvoice(invoice1)).thenReturn(invoice1);
+        when(invoiceService.saveInvoice(invoice)).thenReturn(invoice);
         String filePathRequest = "src/test/resources/updateInvoiceRequest";
         String filePathResponse = "src/test/resources/updateInvoiceResponse";
         String stringRequest = XmlFileReader.readFromFile(filePathRequest);
@@ -312,7 +310,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldReturnErrorResponseWhenAnErrorOccurredDuringUpdatingInvoice() throws IOException, ServiceOperationException {
         //Given
-        when(invoiceService.saveInvoice(invoice1)).thenThrow(ServiceOperationException.class);
+        when(invoiceService.saveInvoice(invoice)).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/updateInvoiceRequest";
         String filePathResponse = "src/test/resources/updateInvoiceWithExceptionResponse";
         String stringRequest = XmlFileReader.readFromFile(filePathRequest);
@@ -329,7 +327,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldSaveInvoice() throws ServiceOperationException, IOException {
         //Given
-        when(invoiceService.saveInvoice(invoice2)).thenReturn(invoice1);
+        when(invoiceService.saveInvoice(any(Invoice.class))).thenReturn(invoice);
         String filePathRequest = "src/test/resources/saveInvoiceRequest";
         String filePathResponse = "src/test/resources/saveInvoiceResponse";
         String stringRequest = XmlFileReader.readFromFile(filePathRequest);
@@ -346,7 +344,7 @@ class InvoiceEndpointTest {
     @Test
     void shouldReturnErrorResponseWhenAnErrorOccurredDuringSavingInvoice() throws IOException, ServiceOperationException {
         //Given
-        when(invoiceService.saveInvoice(invoice2)).thenThrow(ServiceOperationException.class);
+        when(invoiceService.saveInvoice(any(Invoice.class))).thenThrow(ServiceOperationException.class);
         String filePathRequest = "src/test/resources/saveInvoiceRequest";
         String filePathResponse = "src/test/resources/saveInvoiceWithExceptionResponse";
         String stringRequest = XmlFileReader.readFromFile(filePathRequest);
