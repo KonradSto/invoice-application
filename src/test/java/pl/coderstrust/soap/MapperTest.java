@@ -78,7 +78,6 @@ class MapperTest {
         assertEquals(soapInvoice.getIssuedDate(), resultDate);
     }
 
-
     @Test
     void shouldConvertXmlGregorianCalendarToLocalDate() {
         //When
