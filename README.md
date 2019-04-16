@@ -39,10 +39,6 @@ logging.level.pl.coderstrust=DEBUG
 
 Run the application and open your browser at a specified URL: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-## Changelog
-
-[CHANGELOG.md](CHANGELOG.md) - record of all notable changes made to a project
-
 ## Technology Stack
 
 * [Java SE 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
