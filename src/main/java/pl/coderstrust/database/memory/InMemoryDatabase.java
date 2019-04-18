@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import pl.coderstrust.database.Database;
 import pl.coderstrust.database.DatabaseOperationException;
 import pl.coderstrust.model.Invoice;
+import pl.coderstrust.utils.ArgumentValidator;
 
 @ConditionalOnProperty(name = "pl.coderstrust.database", havingValue = "memory")
 @Repository
@@ -23,21 +24,13 @@ public class InMemoryDatabase implements Database {
 
     public InMemoryDatabase(Map<Long, Invoice> databaseStorage) {
         log.debug("Load InFileDatabase");
-        if (databaseStorage == null) {
-            String message = "Invoice storage cannot be null";
-            log.error(message);
-            throw new IllegalArgumentException(message);
-        }
+        ArgumentValidator.ensureNotNull(databaseStorage, "Invoice storage");
         invoiceMap = databaseStorage;
     }
 
     @Override
     public synchronized Invoice saveInvoice(Invoice invoice) throws DatabaseOperationException {
-        if (invoice == null) {
-            String message = "Invoice cannot be null";
-            log.error(message);
-            throw new IllegalArgumentException(message);
-        }
+        ArgumentValidator.ensureNotNull(invoice, "invoice");
         if ((invoice.getId() == null)) {
             return insertInvoice(invoice);
         }
@@ -66,11 +59,7 @@ public class InMemoryDatabase implements Database {
 
     @Override
     public synchronized void deleteInvoice(Long id) throws DatabaseOperationException {
-        if (id == null) {
-            String message = "Invoice id cannot be null";
-            log.error(message);
-            throw new IllegalArgumentException(message);
-        }
+        ArgumentValidator.ensureNotNull(id, "Invoice id");
         if (!invoiceMap.containsKey(id)) {
             String message = String.format("Invoice with following id does not exist: %d", id);
             log.error(message);
@@ -82,11 +71,7 @@ public class InMemoryDatabase implements Database {
 
     @Override
     public synchronized Optional<Invoice> getInvoice(Long id) {
-        if (id == null) {
-            String message = "Invoice id cannot be null";
-            log.error(message);
-            throw new IllegalArgumentException(message);
-        }
+        ArgumentValidator.ensureNotNull(id, "Invoice id");
         log.debug("Getting invoice by id: {}", id);
         return Optional.ofNullable(invoiceMap.get(id));
     }
@@ -106,11 +91,7 @@ public class InMemoryDatabase implements Database {
     @Override
     public synchronized boolean invoiceExists(Long id) {
         log.debug("Checking invoice existence of id {}: ", id);
-        if (id == null) {
-            String message = "Invoice id cannot be null";
-            log.error(message);
-            throw new IllegalArgumentException(message);
-        }
+        ArgumentValidator.ensureNotNull(id, "Invoice id");
         return invoiceMap.containsKey(id);
     }
 
