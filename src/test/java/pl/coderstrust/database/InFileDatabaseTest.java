@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import pl.coderstrust.configuration.InFileDatabaseProperties;
 import pl.coderstrust.database.file.FileHelper;
@@ -32,6 +33,7 @@ import pl.coderstrust.generators.InvoiceGenerator;
 import pl.coderstrust.model.Invoice;
 
 @ExtendWith(SpringExtension.class)
+@TestPropertySource(locations = "classpath:test.properties")
 @SpringBootTest
 class InFileDatabaseTest {
 
