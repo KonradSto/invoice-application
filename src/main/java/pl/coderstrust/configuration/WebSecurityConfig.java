@@ -31,6 +31,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest()
             .authenticated()
             .and()
+            .headers()
+            .frameOptions()
+            .sameOrigin()
+            .and()
             .httpBasic()
             .and()
             .formLogin();
