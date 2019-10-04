@@ -1,10 +1,20 @@
-node{
-  stage('SCM Checkout'){
-    git 'https://github.com/KonradSto/invoices-application'
+pipeline {
+  agent any
+  
+  stages {
+    stage ('Compile Stage') {
+      steps{
+        withMaven(maven : 'maven_3_6_2') {
+          sh 'mvn clean compile'
+        }
+      }
+    }
+    stage ('Test Stage') {
+      steps{
+        withMaven(maven : 'maven_3_6_2') {
+          sh 'mvn test'
+        }
+      }
+    }
   }
-  stage('Compile-Verify'){
-    def mvn = tool name: 'maven-3', type: 'maven'
-    sh "${mvn}/bin/mvn verify"
-  }
-
 }
